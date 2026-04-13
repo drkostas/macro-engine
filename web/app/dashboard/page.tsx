@@ -211,7 +211,7 @@ export default function Dashboard() {
             carbs: 0,
             fat: 0,
           };
-          const items = (plan.mealsBySlot[slot] ?? []) as Array<{
+          const meals = (plan.mealsBySlot[slot] ?? []) as Array<{
             id: number;
             food_name: string;
             grams: number | null;
@@ -219,6 +219,13 @@ export default function Dashboard() {
             protein: number;
             carbs: number;
             fat: number;
+            items?: Array<{
+              name?: string;
+              ingredient_id?: string;
+              grams?: number;
+              calories?: number;
+              protein?: number;
+            }>;
           }>;
 
           return (
@@ -226,48 +233,54 @@ export default function Dashboard() {
               key={slot}
               slot={slot}
               budget={budget}
-              items={items}
+              items={meals}
               isSkipped={plan.skippedSlots.includes(slot)}
               onAddClick={(s) => {
                 window.location.href = `/log?slot=${s}`;
+              }}
+              onDeleteItem={async (id) => {
+                await fetch(`/api/nutrition/log-meal?id=${id}`, { method: "DELETE" });
+                fetchPlan();
               }}
             />
           );
         })}
       </div>
 
-      {/* TDEE Breakdown */}
+      {/* TDEE Breakdown -- equation style */}
       <div className="bg-slate-900 rounded-xl border border-slate-800 p-5">
-        <h2 className="text-sm font-semibold text-slate-300 mb-3">TDEE Breakdown</h2>
-        <div className="space-y-2">
+        <h2 className="text-sm font-semibold text-slate-300 mb-4">Energy Balance</h2>
+
+        {/* Equation rows */}
+        <div className="space-y-2.5">
           {[
-            { label: "BMR", value: plan.tdee.bmr, color: "#94A3B8", always: true },
-            { label: "Steps", value: plan.tdee.stepCalories, color: "#10B981", always: false },
-            { label: "Exercise", value: plan.tdee.runCalories + plan.tdee.gymCalories, color: "#F59E0B", always: false },
-            { label: "Deficit", value: -plan.tdee.deficit, color: "#EF4444", always: true },
-          ]
-            .filter(({ value, always }) => always || value > 0)
-            .map(({ label, value, color }) => (
-            <div key={label} className="flex items-center gap-3">
-              <div
-                className="h-4 rounded"
-                style={{
-                  width: `${Math.max((Math.abs(value) / plan.tdee.total) * 100, 5)}%`,
-                  backgroundColor: color,
-                  maxWidth: "60%",
-                }}
-              />
-              <span className="text-xs text-slate-400">{label}</span>
-              <span className="text-xs font-medium ml-auto" style={{ color }}>
-                {Math.round(value)} kcal
+            { label: "BMR", value: plan.tdee.bmr, color: "#94A3B8", op: "" },
+            ...(plan.tdee.stepCalories > 0
+              ? [{ label: "Steps", value: plan.tdee.stepCalories, color: "#10B981", op: "+" }]
+              : []),
+            ...(plan.tdee.runCalories + plan.tdee.gymCalories > 0
+              ? [{ label: "Exercise", value: plan.tdee.runCalories + plan.tdee.gymCalories, color: "#F59E0B", op: "+" }]
+              : []),
+            { label: "Deficit", value: plan.tdee.deficit, color: "#EF4444", op: "−" },
+          ].map(({ label, value, color, op }) => (
+            <div key={label} className="flex items-center">
+              <span className="w-6 text-sm text-slate-500 text-center font-mono">{op}</span>
+              <span className="text-sm text-slate-300 flex-1">{label}</span>
+              <span className="text-sm font-semibold tabular-nums" style={{ color }}>
+                {Math.round(value).toLocaleString()}
               </span>
+              <span className="text-xs text-slate-500 ml-1 w-8">kcal</span>
             </div>
           ))}
-          <div className="border-t border-slate-800 pt-2 mt-2 flex justify-between">
-            <span className="text-xs text-slate-400">Target</span>
-            <span className="text-xs font-semibold text-blue-400">
-              {plan.tdee.targetCalories} kcal/day
+
+          {/* Divider + total */}
+          <div className="border-t border-slate-700 pt-2 flex items-center">
+            <span className="w-6 text-sm text-slate-500 text-center font-mono">=</span>
+            <span className="text-sm font-semibold text-slate-200 flex-1">Daily Target</span>
+            <span className="text-lg font-bold text-blue-400 tabular-nums">
+              {plan.tdee.targetCalories.toLocaleString()}
             </span>
+            <span className="text-xs text-slate-500 ml-1 w-8">kcal</span>
           </div>
         </div>
       </div>
