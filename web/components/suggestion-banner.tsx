@@ -35,8 +35,11 @@ export function SuggestionBanner({ remaining, nextSlot }: SuggestionBannerProps)
             {remaining.calories} kcal remaining today
           </p>
         </div>
-        <button className="shrink-0 ml-4 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors">
-          See meal plan
+        <button
+          onClick={() => window.location.href = `/log?slot=${nextSlot}`}
+          className="shrink-0 ml-4 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-2.5 rounded-lg transition-colors"
+        >
+          Log {SLOT_LABELS[nextSlot] ?? nextSlot}
         </button>
       </div>
     </div>

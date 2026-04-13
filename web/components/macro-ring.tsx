@@ -20,7 +20,7 @@ export function MacroRing({ label, current, target, unit, color, size = 120 }: M
   const ringColor = isOver ? (pct > 1.1 ? "#EF4444" : "#F59E0B") : color;
 
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex flex-col items-center gap-1 cursor-default hover:scale-105 transition-transform">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
           {/* Track */}
@@ -43,13 +43,13 @@ export function MacroRing({ label, current, target, unit, color, size = 120 }: M
           <span className="text-lg font-bold" style={{ color: ringColor }}>
             {current.toLocaleString()}
           </span>
-          <span className="text-[10px] text-slate-500">
+          <span className="text-xs text-slate-500">
             / {target.toLocaleString()}{unit}
           </span>
         </div>
       </div>
       <span className="text-xs font-medium text-slate-400">{label}</span>
-      <span className="text-[10px]" style={{ color: ringColor }}>
+      <span className="text-xs" style={{ color: ringColor }}>
         {Math.round(pct * 100)}%
       </span>
     </div>

@@ -105,7 +105,7 @@ function LogPageInner() {
     const today = new Date().toISOString().split("T")[0];
 
     try {
-      await fetch("/api/nutrition/log-meal", {
+      const resp = await fetch("/api/nutrition/log-meal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -121,13 +121,18 @@ function LogPageInner() {
           }],
         }),
       });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error || `Server error ${resp.status}`);
+      }
       setToast(`Logged: ${selectedFood.name} ${grams}g (${s.calories} kcal)`);
       setSelectedFood(null);
       setQuery("");
       setGrams(100);
       setTimeout(() => setToast(null), 3000);
-    } catch {
-      setToast("Failed to log. Try again.");
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : "Failed to log. Try again.");
+      setTimeout(() => setToast(null), 5000);
     } finally {
       setLogging(false);
     }
@@ -139,7 +144,7 @@ function LogPageInner() {
     const today = new Date().toISOString().split("T")[0];
 
     try {
-      await fetch("/api/nutrition/log-meal", {
+      const resp = await fetch("/api/nutrition/log-meal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -155,15 +160,16 @@ function LogPageInner() {
           }],
         }),
       });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error || `Server error ${resp.status}`);
+      }
       setToast(`Logged: ${quickName} (${quickCal} kcal)`);
-      setQuickName("");
-      setQuickCal("");
-      setQuickP("");
-      setQuickC("");
-      setQuickF("");
+      setQuickName(""); setQuickCal(""); setQuickP(""); setQuickC(""); setQuickF("");
       setTimeout(() => setToast(null), 3000);
-    } catch {
-      setToast("Failed to log.");
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : "Failed to log.");
+      setTimeout(() => setToast(null), 5000);
     } finally {
       setLogging(false);
     }
@@ -171,14 +177,7 @@ function LogPageInner() {
 
   return (
     <main className="p-4 md:p-6 max-w-2xl mx-auto space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <a href="/dashboard" className="text-slate-400 hover:text-slate-200 text-sm">
-          &larr; Dashboard
-        </a>
-        <h1 className="text-lg font-bold">Log Food</h1>
-        <div />
-      </div>
+      <h1 className="text-lg font-bold">Log Food</h1>
 
       {/* Slot selector */}
       <div className="flex gap-2">

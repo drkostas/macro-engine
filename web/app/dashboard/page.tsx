@@ -140,15 +140,12 @@ export default function Dashboard() {
     <main className="p-4 md:p-6 max-w-6xl mx-auto space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold">MacroEngine</h1>
-          <p className="text-sm text-slate-400">{today}</p>
-        </div>
+        <p className="text-sm text-slate-400">{today}</p>
         <div className="flex items-center gap-3">
-          <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300">
+          <span className="text-xs px-2.5 py-1.5 rounded-full bg-slate-800 text-slate-300">
             {DAY_TYPE_LABELS[plan.trainingDayType] ?? plan.trainingDayType}
           </span>
-          <span className="text-xs text-slate-500">{plan.weightKg} kg</span>
+          <span className="text-xs text-slate-400">{plan.weightKg.toFixed(1)} kg</span>
         </div>
       </div>
 
@@ -244,11 +241,13 @@ export default function Dashboard() {
         <h2 className="text-sm font-semibold text-slate-300 mb-3">TDEE Breakdown</h2>
         <div className="space-y-2">
           {[
-            { label: "BMR", value: plan.tdee.bmr, color: "#94A3B8" },
-            { label: `Steps (${plan.tdee.stepCalories > 0 ? "+" : ""}${Math.round(plan.tdee.stepCalories)})`, value: plan.tdee.stepCalories, color: "#10B981" },
-            { label: "Exercise", value: plan.tdee.runCalories + plan.tdee.gymCalories, color: "#F59E0B" },
-            { label: "Deficit", value: plan.tdee.deficit, color: "#EF4444" },
-          ].map(({ label, value, color }) => (
+            { label: "BMR", value: plan.tdee.bmr, color: "#94A3B8", always: true },
+            { label: "Steps", value: plan.tdee.stepCalories, color: "#10B981", always: false },
+            { label: "Exercise", value: plan.tdee.runCalories + plan.tdee.gymCalories, color: "#F59E0B", always: false },
+            { label: "Deficit", value: -plan.tdee.deficit, color: "#EF4444", always: true },
+          ]
+            .filter(({ value, always }) => always || value > 0)
+            .map(({ label, value, color }) => (
             <div key={label} className="flex items-center gap-3">
               <div
                 className="h-4 rounded"
@@ -260,7 +259,7 @@ export default function Dashboard() {
               />
               <span className="text-xs text-slate-400">{label}</span>
               <span className="text-xs font-medium ml-auto" style={{ color }}>
-                {value > 0 ? "+" : ""}{Math.round(value)} kcal
+                {Math.round(value)} kcal
               </span>
             </div>
           ))}
@@ -274,7 +273,7 @@ export default function Dashboard() {
       </div>
 
       {/* Status bar */}
-      <div className="flex justify-between text-[11px] text-slate-600 px-1">
+      <div className="flex justify-between text-[11px] text-slate-500 px-1">
         <span>TDEE: {Math.round(plan.tdee.total)} kcal</span>
         {plan.drinkCalories > 0 && (
           <span className="text-amber-600">Alcohol offset: -{plan.drinkCalories} kcal</span>

@@ -104,7 +104,7 @@ export function MealSlotCard({ slot, budget, items, isSkipped, onAddClick }: Mea
         {/* Add button */}
         <button
           onClick={() => onAddClick(slot)}
-          className="w-full py-2 text-xs font-medium rounded-lg border border-dashed border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-colors"
+          className="w-full py-3 text-xs font-medium rounded-lg border border-dashed border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-colors"
         >
           + Add food
         </button>
