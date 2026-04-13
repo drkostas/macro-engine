@@ -326,6 +326,7 @@ def compute_macro_targets(
     fat_g_per_kg: float = 0.8,
     estimated_bf_pct: float | None = None,
     ffm_kg: float | None = None,
+    carb_periodization: bool = False,
 ) -> dict[str, int]:
     """Compute daily macro targets given TDEE, deficit, and training context.
 
@@ -356,15 +357,28 @@ def compute_macro_targets(
         if target_calories < reds_minimum:
             target_calories = reds_minimum
 
-    # 4. Protein
+    # 4. Protein (always fixed at g/kg target)
     protein = round(weight_kg * protein_g_per_kg)
 
-    # 5. Fat
-    fat = round(weight_kg * fat_g_per_kg)
+    # 5. Fat and carbs
+    FAT_FLOOR_G_PER_KG = 0.6  # Minimum fat for hormonal health
 
-    # 6. Carbs = strict remainder after protein and fat (guarantees macro-calorie match)
-    carb_remainder = max((target_calories - (protein * 4) - (fat * 9)) / 4, 0)
-    carbs = round(carb_remainder)
+    if carb_periodization and training_day_type in CARB_TARGETS_G_PER_KG:
+        # Carb periodization: carbs set by training day type, fat is remainder
+        carb_target = CARB_TARGETS_G_PER_KG[training_day_type] * weight_kg
+        fat_remainder = (target_calories - (protein * 4) - (carb_target * 4)) / 9
+
+        if fat_remainder >= FAT_FLOOR_G_PER_KG * weight_kg:
+            fat = round(fat_remainder)
+            carbs = round(carb_target)
+        else:
+            # Fat too low: apply floor, carbs become remainder
+            fat = round(FAT_FLOOR_G_PER_KG * weight_kg)
+            carbs = round(max((target_calories - (protein * 4) - (fat * 9)) / 4, 0))
+    else:
+        # Default: fat from g/kg, carbs as strict remainder
+        fat = round(weight_kg * fat_g_per_kg)
+        carbs = round(max((target_calories - (protein * 4) - (fat * 9)) / 4, 0))
 
     # 7. Fiber (fixed)
     fiber = 35

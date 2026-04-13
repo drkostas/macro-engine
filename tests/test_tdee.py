@@ -93,6 +93,75 @@ class TestComputeDeficitFromGoal:
         assert r["daily_deficit"] == 0
 
 
+class TestCarbPeriodization:
+    """Carb periodization: training_day_type should drive carb targets."""
+
+    def test_rest_day_lower_carbs(self):
+        # Need enough calories for both day types to avoid fat floor
+        rest = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="rest", carb_periodization=True,
+        )
+        hard = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="hard_run", carb_periodization=True,
+        )
+        assert rest["carbs"] < hard["carbs"]
+
+    def test_rest_day_carbs_match_target(self):
+        result = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="rest", carb_periodization=True,
+        )
+        # 3.0 g/kg * 80 kg = 240g
+        assert abs(result["carbs"] - 240) <= 5
+
+    def test_hard_run_carbs_match_target(self):
+        result = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="hard_run", carb_periodization=True,
+        )
+        # 4.25 g/kg * 80 kg = 340g
+        assert abs(result["carbs"] - 340) <= 5
+
+    def test_fat_floor_prevents_negative(self):
+        result = compute_macro_targets(
+            tdee=1800, deficit=400, weight_kg=80,
+            training_day_type="long_run", carb_periodization=True,
+        )
+        assert result["fat"] >= 48  # 0.6 g/kg * 80
+
+    def test_periodization_off_by_default(self):
+        with_flag = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="rest", carb_periodization=True,
+        )
+        without_flag = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="rest", carb_periodization=False,
+        )
+        assert with_flag["carbs"] != without_flag["carbs"]
+
+    def test_unknown_day_type_falls_back(self):
+        result = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="unknown_type", carb_periodization=True,
+        )
+        fallback = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="rest", carb_periodization=False,
+        )
+        assert result["carbs"] == fallback["carbs"]
+
+    def test_calories_still_balance(self):
+        result = compute_macro_targets(
+            tdee=2800, deficit=200, weight_kg=80,
+            training_day_type="hard_run", carb_periodization=True,
+        )
+        total = result["protein"] * 4 + result["carbs"] * 4 + result["fat"] * 9
+        assert abs(total - 2600) <= 10  # tdee 2800 - deficit 200 = 2600
+
+
 class TestBootstrapTdee:
     def test_base_equals_bmr(self):
         assert bootstrap_tdee_base(1800) == 1800

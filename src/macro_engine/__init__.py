@@ -11,6 +11,7 @@ Public API:
 """
 
 from macro_engine.tdee import (
+    CARB_TARGETS_G_PER_KG,
     compute_macro_targets,
     compute_step_calories,
     compute_exercise_calories,
