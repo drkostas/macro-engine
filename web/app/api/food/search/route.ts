@@ -38,17 +38,22 @@ export async function GET(req: NextRequest) {
           ? "AND is_favorite = TRUE"
           : "";
 
-      const custom = await sql(`
-        SELECT
-          id, name, brand, calories, protein, carbs, fat, fiber,
-          serving_size_g, serving_description, barcode, source,
-          use_count, is_favorite, 'custom' as db_source,
-          similarity(name, $1) as rank
-        FROM user_foods
-        WHERE (name ILIKE $2 OR brand ILIKE $2) ${customFilter}
-        ORDER BY use_count DESC, rank DESC
-        LIMIT $3
-      `, [q, `%${q}%`, limit]);
+      const pattern = `%${q}%`;
+      const custom = source === "favorites"
+        ? await sql`
+            SELECT id, name, brand, calories, protein, carbs, fat, fiber,
+              serving_size_g, serving_description, barcode, source,
+              use_count, is_favorite, 'custom' as db_source
+            FROM user_foods
+            WHERE (name ILIKE ${pattern} OR brand ILIKE ${pattern}) AND is_favorite = TRUE
+            ORDER BY use_count DESC LIMIT ${limit}`
+        : await sql`
+            SELECT id, name, brand, calories, protein, carbs, fat, fiber,
+              serving_size_g, serving_description, barcode, source,
+              use_count, is_favorite, 'custom' as db_source
+            FROM user_foods
+            WHERE name ILIKE ${pattern} OR brand ILIKE ${pattern}
+            ORDER BY use_count DESC LIMIT ${limit}`;
 
       results.push(...custom.map((r: Record<string, unknown>) => ({
         ...r,
@@ -60,31 +65,28 @@ export async function GET(req: NextRequest) {
     if (source === "all" || source === "usda") {
       const remaining = limit - results.length;
       if (remaining > 0) {
-        // Hybrid search: full-text (tsvector) for relevance + trigram for fuzzy
-        const usda = await sql(`
+        const pattern = `%${q}%`;
+        const usda = await sql`
           SELECT
             fdc_id as id, description as name, brand_owner as brand,
             calories, protein, carbs, fat, fiber,
             serving_size_g, serving_description,
-            data_type, 'usda' as db_source,
-            ts_rank(search_vector, plainto_tsquery('english', $1)) as ts_rank,
-            similarity(description, $1) as trgm_rank
+            data_type, 'usda' as db_source
           FROM usda_foods
           WHERE
-            search_vector @@ plainto_tsquery('english', $1)
-            OR description % $1
+            search_vector @@ plainto_tsquery('english', ${q})
+            OR description ILIKE ${pattern}
           ORDER BY
-            -- Prefer Foundation/SR Legacy over Branded
             CASE data_type
               WHEN 'foundation' THEN 0
               WHEN 'sr_legacy' THEN 1
               WHEN 'branded_food' THEN 2
               ELSE 3
             END,
-            -- Then by combined relevance score
-            (ts_rank * 2 + trgm_rank) DESC
-          LIMIT $2
-        `, [q, remaining]);
+            ts_rank_cd(search_vector, plainto_tsquery('english', ${q})) DESC,
+            length(description) ASC
+          LIMIT ${remaining}
+        `;
 
         results.push(...usda.map((r: Record<string, unknown>) => ({
           ...r,

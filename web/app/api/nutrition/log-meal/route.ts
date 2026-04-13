@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 
-export const runtime = "edge";
+// Node.js runtime (Neon works better without Edge in dev)
 
 /**
  * POST /api/nutrition/log-meal

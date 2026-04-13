@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import {
   computeStepCalories,
-  computeRunCalories,
   computeTdee,
   computeMacroTargets,
   applyAlcoholOffset,
@@ -10,13 +9,11 @@ import {
   type MacroTargets,
 } from "@/lib/macro-engine";
 
-export const runtime = "edge";
-
 /**
  * GET /api/nutrition/plan?date=2026-04-13
  *
  * Compute daily macro targets, consumed amounts, remaining budgets,
- * and per-slot breakdowns. The core engine route.
+ * and per-slot breakdowns.
  */
 export async function GET(req: NextRequest) {
   const dateParam = req.nextUrl.searchParams.get("date");
@@ -25,16 +22,13 @@ export async function GET(req: NextRequest) {
   const sql = getDb();
 
   try {
-    // Parallel DB reads
-    const [profileRows, dayRows, mealRows, drinkRows, healthRows, weightRows] =
-      await Promise.all([
-        sql`SELECT * FROM nutrition_profile LIMIT 1`,
-        sql`SELECT * FROM nutrition_day WHERE day = ${date} LIMIT 1`,
-        sql`SELECT * FROM meal_log WHERE day = ${date} ORDER BY meal_slot, logged_at`,
-        sql`SELECT * FROM drink_log WHERE day = ${date}`,
-        sql`SELECT * FROM daily_health_summary WHERE day = ${date} LIMIT 1`,
-        sql`SELECT weight_kg FROM weight_log ORDER BY measured_at DESC LIMIT 1`,
-      ]);
+    // Sequential DB reads (Neon free tier has limited concurrent connections)
+    const profileRows = await sql`SELECT * FROM nutrition_profile LIMIT 1`;
+    const dayRows = await sql`SELECT * FROM nutrition_day WHERE date = ${date} LIMIT 1`;
+    const mealRows = await sql`SELECT * FROM meal_log WHERE date = ${date} ORDER BY meal_slot, logged_at`;
+    const drinkRows = await sql`SELECT * FROM drink_log WHERE date = ${date}`;
+    const healthRows = await sql`SELECT * FROM daily_health_summary WHERE date = ${date} LIMIT 1`;
+    const weightRows = await sql`SELECT weight_grams FROM weight_log ORDER BY synced_at DESC LIMIT 1`;
 
     const profile = profileRows[0];
     if (!profile) {
@@ -44,36 +38,54 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Weight: prefer latest from scale, fall back to profile
-    const weightKg = weightRows[0]?.weight_kg ?? profile.weight_kg ?? 80;
+    // Weight: prefer latest from scale (stored in grams), fall back to profile
+    const weightKg = weightRows[0]?.weight_grams
+      ? weightRows[0].weight_grams / 1000
+      : profile.weight_kg ?? 80;
 
     // Health data from Garmin
     const health = healthRows[0];
-    const actualSteps = health?.total_steps ?? profile.expected_steps ?? 8000;
+    const actualSteps = health?.total_steps ?? profile.step_goal ?? 8000;
 
-    // TDEE computation using lib/macro-engine.ts
-    const bmr = health?.bmr_calories ?? (profile.tdee_estimate ?? 2200) * 0.75;
-    const stepCals = computeStepCalories(actualSteps, weightKg, 0);
-    const runCals = computeRunCalories(
-      profile.run_distance_km ?? 0,
-      weightKg,
-    );
-    const gymCals = profile.gym_calories ?? 0;
-    const deficit = profile.deficit ?? 400;
-
-    const tdee = computeTdee(bmr, stepCals, runCals, gymCals, deficit);
-
-    // Macro targets
     const day = dayRows[0];
-    const trainingDayType = day?.training_day_type ?? "rest";
-    const carbPeriodization = profile.carb_periodization ?? false;
+    const deficit = profile.daily_deficit ?? 400;
 
-    const targets = computeMacroTargets({
-      targetCalories: tdee.targetCalories,
-      weightKg,
-      trainingDayType,
-      carbPeriodization,
-    });
+    // TDEE: use pre-computed values from nutrition_day if available (soma pipeline)
+    const bmr = health?.bmr_kilocalories ?? (profile.tdee_estimate ?? 2200) * 0.75;
+    const stepCals = day?.step_calories ?? computeStepCalories(actualSteps, weightKg, 0);
+    const runCals = day?.exercise_calories ?? 0;
+    const gymCals = 0;
+    const tdeeUsed = day?.tdee_used ?? (bmr + stepCals + runCals + gymCals);
+    const deficitUsed = day?.deficit_used ?? deficit;
+
+    const tdee = {
+      bmr,
+      stepCalories: stepCals,
+      runCalories: runCals,
+      gymCalories: gymCals,
+      deficit: deficitUsed,
+      total: tdeeUsed,
+      targetCalories: Math.round(tdeeUsed - deficitUsed),
+    };
+
+    // Macro targets: prefer nutrition_day pre-computed, fall back to engine
+    const trainingDayType = day?.training_day_type ?? "rest";
+
+    const targets = day?.target_calories
+      ? {
+          calories: Math.round(day.target_calories),
+          protein: Math.round(day.target_protein ?? weightKg * 2.2),
+          carbs: Math.round(day.target_carbs ?? 0),
+          fat: Math.round(day.target_fat ?? weightKg * 0.8),
+        }
+      : computeMacroTargets({
+          targetCalories: tdee.targetCalories,
+          weightKg,
+          proteinGPerKg: profile.protein_g_per_kg ?? 2.2,
+          fatGPerKg: profile.fat_g_per_kg ?? 0.8,
+          trainingDayType,
+          carbPeriodization: false,
+        });
 
     // Alcohol offset
     let drinkCalories = 0;
@@ -82,7 +94,7 @@ export async function GET(req: NextRequest) {
     }
     const adjustedTargets = applyAlcoholOffset(targets, drinkCalories);
 
-    // Consumed by slot
+    // Consumed by slot -- meal_log has items as JSONB and top-level calories
     const eatenBySlot: Record<string, MacroTargets> = {};
     const mealsBySlot: Record<string, Array<Record<string, unknown>>> = {};
 
@@ -96,7 +108,29 @@ export async function GET(req: NextRequest) {
       eatenBySlot[slot].protein += m.protein ?? 0;
       eatenBySlot[slot].carbs += m.carbs ?? 0;
       eatenBySlot[slot].fat += m.fat ?? 0;
-      mealsBySlot[slot].push(m);
+
+      // Flatten items from JSONB for the UI
+      const items = m.items ?? [];
+      // Items use ingredient_id (e.g. "oats_dry", "milk_2pct") -- humanize for display
+      const humanize = (id: string) =>
+        id.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+      const mealEntry: Record<string, unknown> = {
+        id: m.id,
+        meal_slot: m.meal_slot,
+        calories: m.calories,
+        protein: m.protein,
+        carbs: m.carbs,
+        fat: m.fat,
+        food_name: Array.isArray(items) && items.length > 0
+          ? items.map((i: Record<string, unknown>) =>
+              (i.name || humanize(String(i.ingredient_id || i.ingredient || ""))) +
+              (i.grams ? ` ${i.grams}g` : "")
+            ).filter(Boolean).join(", ")
+          : m.source ?? "Meal",
+        items,
+        logged_at: m.logged_at,
+      };
+      mealsBySlot[slot].push(mealEntry);
     }
 
     // Remaining + slot budgets
