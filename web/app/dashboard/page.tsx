@@ -4,6 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import { MacroRing } from "@/components/macro-ring";
 import { MealSlotCard } from "@/components/meal-slot-card";
 import { SuggestionBanner } from "@/components/suggestion-banner";
+import { DateNavigator } from "@/components/date-navigator";
+import { ActivitySelector } from "@/components/activity-selector";
+import { DrinkLogger } from "@/components/drink-logger";
+import { TrendTable } from "@/components/trend-table";
 import { DEFAULT_SLOTS, type MacroTargets } from "@/lib/macro-engine";
 import type { Ingredient } from "@/lib/portion-solver";
 import type { PresetMeal } from "@/components/ingredient-picker";
@@ -30,8 +34,20 @@ interface PlanData {
   slotBudgets: SlotBudget[];
   mealsBySlot: Record<string, Array<Record<string, unknown>>>;
   drinkCalories: number;
+  drinks: Array<{
+    id: number; name: string; quantity_ml: number; calories: number;
+    alcohol_grams: number; fat_oxidation_pause_hours: number;
+  }>;
   trainingDayType: string;
   skippedSlots: string[];
+  dayStatus: string;
+  runEnabled: boolean;
+  selectedWorkouts: string[];
+  expectedSteps: number | null;
+  trend: Array<{
+    date: string; target_calories: number; actual_calories: number | null;
+    tdee_used: number | null; deficit_used: number | null; status: string;
+  }>;
   pctComplete: number;
   error?: string;
   needsOnboarding?: boolean;
@@ -43,6 +59,7 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [presets, setPresets] = useState<PresetMeal[]>([]);
+  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split("T")[0]);
   const [previewTotals, setPreviewTotals] = useState<Record<string, MacroTargets>>({});
 
   // Fetch ingredients + presets once
@@ -58,7 +75,7 @@ export default function Dashboard() {
 
   const fetchPlan = useCallback(async () => {
     try {
-      const resp = await fetch("/api/nutrition/plan");
+      const resp = await fetch(`/api/nutrition/plan?date=${currentDate}`);
       const data = await resp.json();
       if (data.error) {
         if (data.needsOnboarding) {
@@ -82,7 +99,7 @@ export default function Dashboard() {
     // SWR-style polling every 60s
     const interval = setInterval(fetchPlan, 60000);
     return () => clearInterval(interval);
-  }, [fetchPlan]);
+  }, [fetchPlan, currentDate]);
 
   if (loading) {
     return (
@@ -137,32 +154,45 @@ export default function Dashboard() {
     (s) => !plan.mealsBySlot[s]?.length && !plan.skippedSlots.includes(s),
   );
 
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
-
-  const DAY_TYPE_LABELS: Record<string, string> = {
-    rest: "Rest Day",
-    easy_run: "Easy Run",
-    hard_run: "Hard Run",
-    long_run: "Long Run",
-    gym: "Gym Day",
-    gym_and_run: "Gym + Run",
-  };
+  const isClosed = plan.dayStatus === "closed";
+  const hasMeals = Object.values(plan.mealsBySlot).some((m) => (m as unknown[]).length > 0);
 
   return (
     <main className="p-4 md:p-6 max-w-6xl mx-auto space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-400">{today}</p>
-        <div className="flex items-center gap-3">
-          <span className="text-xs px-2.5 py-1.5 rounded-full bg-slate-800 text-slate-300">
-            {DAY_TYPE_LABELS[plan.trainingDayType] ?? plan.trainingDayType}
-          </span>
-          <span className="text-xs text-slate-400">{plan.weightKg.toFixed(1)} kg</span>
-        </div>
+      {/* Date Navigator */}
+      <DateNavigator
+        date={plan.date}
+        status={plan.dayStatus}
+        onDateChange={(d) => { setCurrentDate(d); setLoading(true); }}
+        onCloseDay={async () => {
+          await fetch("/api/nutrition/close-day", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date: plan.date }),
+          });
+          fetchPlan();
+        }}
+        onReopenDay={async () => {
+          await fetch("/api/nutrition/reopen-day", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ date: plan.date }),
+          });
+          fetchPlan();
+        }}
+        onCopyYesterday={async () => {
+          const yesterday = new Date(plan.date + "T12:00:00");
+          yesterday.setDate(yesterday.getDate() - 1);
+          await fetch("/api/nutrition/copy-day", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ from_date: yesterday.toISOString().split("T")[0], to_date: plan.date }),
+          });
+          fetchPlan();
+        }}
+        hasMeals={hasMeals}
+      />
+
+      {/* Weight badge */}
+      <div className="flex justify-end -mt-3">
+        <span className="text-xs text-slate-400">{plan.weightKg.toFixed(1)} kg</span>
       </div>
 
       {/* Macro Rings */}
@@ -215,7 +245,20 @@ export default function Dashboard() {
       </div>
 
       {/* Suggestion Banner */}
-      <SuggestionBanner remaining={plan.remaining} nextSlot={nextSlot ?? null} />
+      {!isClosed && (
+        <SuggestionBanner remaining={plan.remaining} nextSlot={nextSlot ?? null} />
+      )}
+
+      {/* Activity Selector */}
+      <ActivitySelector
+        date={plan.date}
+        trainingDayType={plan.trainingDayType}
+        runEnabled={plan.runEnabled}
+        selectedWorkouts={plan.selectedWorkouts}
+        expectedSteps={plan.expectedSteps ?? undefined}
+        disabled={isClosed}
+        onChanged={fetchPlan}
+      />
 
       {/* Meal Slots */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -275,6 +318,15 @@ export default function Dashboard() {
         })}
       </div>
 
+      {/* Drink Logger */}
+      <DrinkLogger
+        date={plan.date}
+        drinks={plan.drinks ?? []}
+        totalDrinkCalories={plan.drinkCalories}
+        disabled={isClosed}
+        onChanged={fetchPlan}
+      />
+
       {/* TDEE Breakdown -- equation style */}
       <div className="bg-slate-900 rounded-xl border border-slate-800 p-5">
         <h2 className="text-sm font-semibold text-slate-300 mb-4">Energy Balance</h2>
@@ -312,6 +364,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* 7-Day Trend */}
+      <TrendTable days={plan.trend ?? []} currentDate={plan.date} />
 
       {/* Status bar */}
       <div className="flex justify-between text-[11px] text-slate-500 px-1">

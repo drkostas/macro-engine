@@ -156,6 +156,27 @@ export async function GET(req: NextRequest) {
       skippedSlots,
     );
 
+    // 7-day trend
+    const trendRows = await sql`
+      SELECT date, target_calories, actual_calories, tdee_used, deficit_used, status
+      FROM nutrition_day
+      WHERE date >= ${date}::date - interval '6 days' AND date <= ${date}::date
+      ORDER BY date ASC
+    `;
+
+    // Drink details for the logger
+    const drinkDetails = drinkRows.map((d: Record<string, unknown>) => ({
+      id: d.id, name: d.name, quantity_ml: d.quantity_ml,
+      calories: d.calories, alcohol_grams: d.alcohol_grams,
+      fat_oxidation_pause_hours: d.fat_oxidation_pause_hours,
+    }));
+
+    // Day status + activity fields
+    const dayStatus = day?.status ?? "active";
+    const runEnabled = day?.run_enabled ?? false;
+    const selectedWorkouts = day?.selected_workouts ?? [];
+    const expectedSteps = day?.expected_steps ?? null;
+
     return NextResponse.json({
       date,
       weightKg,
@@ -166,8 +187,14 @@ export async function GET(req: NextRequest) {
       slotBudgets,
       mealsBySlot,
       drinkCalories,
+      drinks: drinkDetails,
       trainingDayType,
       skippedSlots,
+      dayStatus,
+      runEnabled,
+      selectedWorkouts,
+      expectedSteps,
+      trend: trendRows,
       pctComplete: adjustedTargets.calories > 0
         ? Math.round((totalEaten.calories / adjustedTargets.calories) * 100)
         : 0,
