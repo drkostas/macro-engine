@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type { Ingredient } from "@/lib/portion-solver";
 import { solvePortions, computeItemMacros } from "@/lib/portion-solver";
 import { autoCategorizeFood } from "@/lib/auto-categorize";
@@ -134,8 +134,12 @@ export function MealComposer({
   }, []);
 
   // Live preview: send totals to parent whenever portions change
+  // Use a ref for the callback to avoid dependency cycle
+  const previewRef = useRef(onTotalsPreview);
+  previewRef.current = onTotalsPreview;
+
   useEffect(() => {
-    if (!onTotalsPreview) return;
+    if (!previewRef.current) return;
     const totals = { calories: 0, protein: 0, carbs: 0, fat: 0 };
     for (const p of portions) {
       const m = computeItemMacros(p.ingredient, p.grams);
@@ -144,8 +148,8 @@ export function MealComposer({
       totals.carbs += m.carbs;
       totals.fat += m.fat;
     }
-    onTotalsPreview(totals);
-  }, [portions, onTotalsPreview]);
+    previewRef.current(totals);
+  }, [portions]);
 
   // Log meal
   const handleLog = async () => {

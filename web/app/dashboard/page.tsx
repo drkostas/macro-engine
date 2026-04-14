@@ -73,9 +73,10 @@ export default function Dashboard() {
       .catch(() => {});
   }, []);
 
-  const fetchPlan = useCallback(async () => {
+  const fetchPlan = useCallback(async (dateOverride?: string) => {
+    const d = dateOverride ?? currentDate;
     try {
-      const resp = await fetch(`/api/nutrition/plan?date=${currentDate}`);
+      const resp = await fetch(`/api/nutrition/plan?date=${d}`);
       const data = await resp.json();
       if (data.error) {
         if (data.needsOnboarding) {
@@ -92,14 +93,15 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDate]);
 
   useEffect(() => {
+    setLoading(true);
     fetchPlan();
-    // SWR-style polling every 60s
-    const interval = setInterval(fetchPlan, 60000);
+    const interval = setInterval(() => fetchPlan(), 60000);
     return () => clearInterval(interval);
-  }, [fetchPlan, currentDate]);
+  }, [fetchPlan]);
 
   if (loading) {
     return (
@@ -139,7 +141,7 @@ export default function Dashboard() {
           <h2 className="text-red-400 font-semibold">Error loading plan</h2>
           <p className="text-sm text-red-300/70 mt-1">{error}</p>
           <button
-            onClick={fetchPlan}
+            onClick={() => fetchPlan()}
             className="mt-3 text-sm text-red-400 hover:text-red-300 underline"
           >
             Retry
