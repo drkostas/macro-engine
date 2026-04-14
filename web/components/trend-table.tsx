@@ -15,7 +15,10 @@ interface TrendTableProps {
 }
 
 function shortDate(d: string): string {
-  const date = new Date(d + "T12:00:00");
+  // Handle both "YYYY-MM-DD" and "YYYY-MM-DDT..." formats
+  const dateStr = d.includes("T") ? d : d + "T12:00:00";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return d.substring(0, 10);
   return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 }
 
@@ -54,7 +57,7 @@ export function TrendTable({ days, currentDate }: TrendTableProps) {
 
         {/* Rows */}
         {days.map((d) => {
-          const isCurrentDay = d.date === currentDate;
+          const isCurrentDay = d.date.substring(0, 10) === currentDate.substring(0, 10);
           const ate = d.actual_calories ?? 0;
           const burn = d.tdee_used ?? 0;
           const deficit = burn - ate;

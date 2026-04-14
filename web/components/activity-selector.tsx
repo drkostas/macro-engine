@@ -73,7 +73,7 @@ export function ActivitySelector({
         </span>
       </div>
 
-      <div className="flex flex-wrap gap-1.5 max-h-[72px] overflow-y-auto">
+      <div className="flex flex-wrap gap-1.5">
         {/* Run toggle */}
         <button
           onClick={toggleRun}

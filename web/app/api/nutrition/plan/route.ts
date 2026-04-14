@@ -50,13 +50,40 @@ export async function GET(req: NextRequest) {
     const day = dayRows[0];
     const deficit = profile.daily_deficit ?? 400;
 
-    // TDEE: use pre-computed values from nutrition_day if available (soma pipeline)
+    // TDEE: dynamically compute from activity selections
     const bmr = health?.bmr_kilocalories ?? (profile.tdee_estimate ?? 2200) * 0.75;
-    const stepCals = day?.step_calories ?? computeStepCalories(actualSteps, weightKg, 0);
-    const runCals = day?.exercise_calories ?? 0;
-    const gymCals = 0;
-    const tdeeUsed = day?.tdee_used ?? (bmr + stepCals + runCals + gymCals);
+    const steps = day?.expected_steps ?? health?.total_steps ?? profile.step_goal ?? 8000;
+    const stepCals = computeStepCalories(steps, weightKg, 0);
+
+    // Run calories: from pipeline if available, otherwise estimate from training plan
+    const runEnabled = day?.run_enabled ?? false;
+    let runCals = 0;
+    if (runEnabled && day?.exercise_calories) {
+      runCals = day.exercise_calories;
+    }
+
+    // Gym calories: sum avg_calories for selected workouts
+    let gymCals = 0;
+    const selectedWorkouts: string[] = day?.selected_workouts ?? [];
+    if (selectedWorkouts.length > 0) {
+      try {
+        const gymRows = await sql`
+          WITH ranked AS (
+            SELECT hevy_title, calories,
+              ROW_NUMBER() OVER (PARTITION BY hevy_title ORDER BY workout_date DESC) as rn
+            FROM workout_enrichment
+            WHERE hevy_title = ANY(${selectedWorkouts}) AND calories > 0
+          )
+          SELECT hevy_title, ROUND(AVG(calories))::int AS avg_cal
+          FROM ranked WHERE rn <= 5
+          GROUP BY hevy_title
+        `;
+        gymCals = gymRows.reduce((s: number, r: Record<string, unknown>) => s + (Number(r.avg_cal) || 0), 0);
+      } catch { /* graceful */ }
+    }
+
     const deficitUsed = day?.deficit_used ?? deficit;
+    const tdeeTotal = bmr + stepCals + runCals + gymCals;
 
     const tdee = {
       bmr,
@@ -64,14 +91,15 @@ export async function GET(req: NextRequest) {
       runCalories: runCals,
       gymCalories: gymCals,
       deficit: deficitUsed,
-      total: tdeeUsed,
-      targetCalories: Math.round(tdeeUsed - deficitUsed),
+      total: tdeeTotal,
+      targetCalories: Math.round(tdeeTotal - deficitUsed),
     };
 
     // Macro targets: prefer nutrition_day pre-computed, fall back to engine
     const trainingDayType = day?.training_day_type ?? "rest";
 
-    const targets = day?.target_calories
+    // Always compute targets dynamically (activities change TDEE in real-time)
+    const targets = (day?.manual_override && day?.target_calories)
       ? {
           calories: Math.round(day.target_calories),
           protein: Math.round(day.target_protein ?? weightKg * 2.2),
@@ -173,8 +201,6 @@ export async function GET(req: NextRequest) {
 
     // Day status + activity fields
     const dayStatus = day?.status ?? "active";
-    const runEnabled = day?.run_enabled ?? false;
-    const selectedWorkouts = day?.selected_workouts ?? [];
     const expectedSteps = day?.expected_steps ?? null;
 
     return NextResponse.json({
