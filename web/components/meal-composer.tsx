@@ -16,12 +16,12 @@ interface MealComposerProps {
   presets: PresetMeal[];
   onMealLogged: () => void;
   onCancel: () => void;
-  /** Live preview callback -- fires as portions change so dashboard rings update */
   onTotalsPreview?: (totals: { calories: number; protein: number; carbs: number; fat: number }) => void;
+  onRebalanced?: (changes: Array<{ slot: string; ingredient: string; from: number; to: number }>) => void;
 }
 
 export function MealComposer({
-  slot, slotLabel, budget, date, ingredients, presets, onMealLogged, onCancel, onTotalsPreview,
+  slot, slotLabel, budget, date, ingredients, presets, onMealLogged, onCancel, onTotalsPreview, onRebalanced,
 }: MealComposerProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [portions, setPortions] = useState<PortionEntry[]>([]);
@@ -177,6 +177,20 @@ export function MealComposer({
         body: JSON.stringify({ date, meal_slot: slot, items }),
       });
       if (!resp.ok) throw new Error("Failed to log");
+
+      // Trigger rebalancing
+      try {
+        const rebalResp = await fetch("/api/nutrition/rebalance", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date, changedSlot: slot, lockedSlots: [] }),
+        });
+        const rebalData = await rebalResp.json();
+        if (rebalData.changes?.length > 0 && onRebalanced) {
+          onRebalanced(rebalData.changes);
+        }
+      } catch { /* rebalance is best-effort */ }
+
       onMealLogged();
     } catch {
       // Error handling in parent

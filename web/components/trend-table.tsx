@@ -44,10 +44,10 @@ export function TrendTable({ days, currentDate }: TrendTableProps) {
 
       <div className="space-y-1">
         {/* Header */}
-        <div className="grid grid-cols-5 gap-2 text-[10px] text-slate-500 px-2">
+        <div className="grid grid-cols-4 md:grid-cols-5 gap-2 text-[10px] text-slate-500 px-2">
           <span>Date</span>
           <span className="text-right">Ate</span>
-          <span className="text-right">Burn</span>
+          <span className="text-right hidden md:block">Burn</span>
           <span className="text-right">Deficit</span>
           <span className="text-right">Goal</span>
         </div>
@@ -71,7 +71,7 @@ export function TrendTable({ days, currentDate }: TrendTableProps) {
           return (
             <div
               key={d.date}
-              className={`grid grid-cols-5 gap-2 text-xs px-2 py-1 rounded ${
+              className={`grid grid-cols-4 md:grid-cols-5 gap-2 text-xs px-2 py-1 rounded ${
                 isCurrentDay ? "bg-slate-800/50" : ""
               }`}
             >
@@ -82,7 +82,7 @@ export function TrendTable({ days, currentDate }: TrendTableProps) {
               <span className="text-right text-slate-300">
                 {isClosed ? ate.toLocaleString() : "-"}
               </span>
-              <span className="text-right text-slate-400">
+              <span className="text-right text-slate-400 hidden md:block">
                 {burn > 0 ? burn.toLocaleString() : "-"}
               </span>
               <span className={`text-right ${deficitColor}`}>
@@ -97,10 +97,10 @@ export function TrendTable({ days, currentDate }: TrendTableProps) {
 
         {/* Totals */}
         {closedDays > 0 && (
-          <div className="grid grid-cols-5 gap-2 text-xs px-2 py-1.5 border-t border-slate-800 mt-1 font-medium">
+          <div className="grid grid-cols-4 md:grid-cols-5 gap-2 text-xs px-2 py-1.5 border-t border-slate-800 mt-1 font-medium">
             <span className="text-slate-400">Total ({closedDays}d)</span>
             <span className="text-right text-slate-300">{totalAte.toLocaleString()}</span>
-            <span className="text-right text-slate-400">{totalBurn.toLocaleString()}</span>
+            <span className="text-right text-slate-400 hidden md:block">{totalBurn.toLocaleString()}</span>
             <span className={`text-right ${totalDeficit >= totalGoal ? "text-emerald-400" : "text-amber-400"}`}>
               {totalDeficit.toLocaleString()}
             </span>

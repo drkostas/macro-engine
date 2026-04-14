@@ -177,24 +177,9 @@ function LogPageInner() {
 
   return (
     <main className="p-4 md:p-6 max-w-2xl mx-auto space-y-4">
-      <h1 className="text-lg font-bold">Log Food</h1>
+      <h1 className="text-lg font-bold">Food Library</h1>
 
-      {/* Slot selector */}
-      <div className="flex gap-2">
-        {SLOTS.map((s) => (
-          <button
-            key={s}
-            onClick={() => setActiveSlot(s)}
-            className={`flex-1 py-2 text-xs font-medium rounded-lg transition-colors ${
-              activeSlot === s
-                ? "bg-blue-600 text-white"
-                : "bg-slate-800 text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            {SLOT_LABELS[s]}
-          </button>
-        ))}
-      </div>
+      <p className="text-sm text-slate-400">Browse ingredients, search USDA foods, and manage your custom foods.</p>
 
       {/* Mode toggle */}
       <div className="flex gap-2">
@@ -202,13 +187,13 @@ function LogPageInner() {
           onClick={() => setQuickMode(false)}
           className={`text-xs px-3 py-1.5 rounded-lg ${!quickMode ? "bg-slate-700 text-white" : "text-slate-400"}`}
         >
-          Search
+          Search Foods
         </button>
         <button
           onClick={() => setQuickMode(true)}
           className={`text-xs px-3 py-1.5 rounded-lg ${quickMode ? "bg-slate-700 text-white" : "text-slate-400"}`}
         >
-          Quick Add
+          Create Custom
         </button>
       </div>
 

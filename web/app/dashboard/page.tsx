@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { MacroRing } from "@/components/macro-ring";
 import { MealSlotCard } from "@/components/meal-slot-card";
 import { SuggestionBanner } from "@/components/suggestion-banner";
@@ -54,12 +55,25 @@ interface PlanData {
 }
 
 export default function Dashboard() {
+  return (
+    <Suspense fallback={<div className="p-6 text-slate-500">Loading...</div>}>
+      <DashboardInner />
+    </Suspense>
+  );
+}
+
+function DashboardInner() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [plan, setPlan] = useState<PlanData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [presets, setPresets] = useState<PresetMeal[]>([]);
-  const [currentDate, setCurrentDate] = useState(new Date().toISOString().split("T")[0]);
+  const [currentDate, setCurrentDate] = useState(
+    searchParams.get("date") || new Date().toISOString().split("T")[0]
+  );
   const [previewTotals, setPreviewTotals] = useState<Record<string, MacroTargets>>({});
 
   // Fetch ingredients + presets once
@@ -125,7 +139,7 @@ export default function Dashboard() {
         <h1 className="text-2xl font-bold mb-4">Welcome to MacroEngine</h1>
         <p className="text-slate-400 mb-6">Let's set up your profile to calculate your targets.</p>
         <a
-          href="/setup"
+          href="/onboard"
           className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500"
         >
           Get Started
@@ -165,7 +179,7 @@ export default function Dashboard() {
       <DateNavigator
         date={plan.date}
         status={plan.dayStatus}
-        onDateChange={(d) => { setCurrentDate(d); setLoading(true); }}
+        onDateChange={(d) => { setCurrentDate(d); setLoading(true); router.push(`/dashboard?date=${d}`, { scroll: false }); }}
         onCloseDay={async () => {
           await fetch("/api/nutrition/close-day", {
             method: "POST", headers: { "Content-Type": "application/json" },
@@ -181,12 +195,15 @@ export default function Dashboard() {
           fetchPlan();
         }}
         onCopyYesterday={async () => {
+          if (!confirm("Copy all meals from yesterday? This will replace any meals already logged today.")) return;
           const yesterday = new Date(plan.date + "T12:00:00");
           yesterday.setDate(yesterday.getDate() - 1);
           await fetch("/api/nutrition/copy-day", {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ from_date: yesterday.toISOString().split("T")[0], to_date: plan.date }),
           });
+          setToast("Meals copied from yesterday");
+          setTimeout(() => setToast(null), 3000);
           fetchPlan();
         }}
         hasMeals={hasMeals}
@@ -300,12 +317,20 @@ export default function Dashboard() {
               ingredients={ingredients}
               presets={presets}
               onMealLogged={() => fetchPlan()}
+              onRebalanced={(changes) => {
+                const msg = changes.map((c) => `${c.ingredient} ${c.from}g -> ${c.to}g`).join(", ");
+                setToast(`Rebalanced: ${msg}`);
+                setTimeout(() => setToast(null), 5000);
+              }}
               onSkipSlot={async () => {
                 await fetch("/api/nutrition/skip-slot", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ date: plan.date, slot }),
                 });
+                const slotName = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", pre_sleep: "Pre-Sleep" }[slot] ?? slot;
+                setToast(`${slotName} skipped -- budget moved to other meals`);
+                setTimeout(() => setToast(null), 3000);
                 fetchPlan();
               }}
               onTotalsPreview={(totals) => {
@@ -378,6 +403,12 @@ export default function Dashboard() {
         )}
         <span>{plan.date}</span>
       </div>
+      {/* Toast */}
+      {toast && (
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 bg-emerald-900/90 border border-emerald-700 text-emerald-200 px-4 py-2.5 rounded-xl text-sm shadow-lg z-50">
+          {toast}
+        </div>
+      )}
     </main>
   );
 }

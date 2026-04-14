@@ -35,6 +35,7 @@ interface MealSlotCardProps {
   onDeleteItem?: (id: number) => void;
   onSkipSlot?: () => void;
   onTotalsPreview?: (totals: { calories: number; protein: number; carbs: number; fat: number }) => void;
+  onRebalanced?: (changes: Array<{ slot: string; ingredient: string; from: number; to: number }>) => void;
 }
 
 const SLOT_COLORS: Record<string, string> = {
@@ -57,7 +58,7 @@ function humanize(id: string) {
 
 export function MealSlotCard({
   slot, budget, items, isSkipped, date, ingredients, presets,
-  onMealLogged, onDeleteItem, onSkipSlot, onTotalsPreview,
+  onMealLogged, onDeleteItem, onSkipSlot, onTotalsPreview, onRebalanced,
 }: MealSlotCardProps) {
   const [expanded, setExpanded] = useState(false);
   const color = SLOT_COLORS[slot] ?? "#64748B";
@@ -171,6 +172,7 @@ export function MealSlotCard({
             }}
             onCancel={() => setExpanded(false)}
             onTotalsPreview={onTotalsPreview}
+            onRebalanced={onRebalanced}
           />
         ) : (
           <div className="flex gap-2">
