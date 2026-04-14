@@ -5,6 +5,8 @@ import { MacroRing } from "@/components/macro-ring";
 import { MealSlotCard } from "@/components/meal-slot-card";
 import { SuggestionBanner } from "@/components/suggestion-banner";
 import { DEFAULT_SLOTS, type MacroTargets } from "@/lib/macro-engine";
+import type { Ingredient } from "@/lib/portion-solver";
+import type { PresetMeal } from "@/components/ingredient-picker";
 
 interface SlotBudget extends MacroTargets {
   slot: string;
@@ -39,6 +41,20 @@ export default function Dashboard() {
   const [plan, setPlan] = useState<PlanData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [presets, setPresets] = useState<PresetMeal[]>([]);
+  const [previewTotals, setPreviewTotals] = useState<Record<string, MacroTargets>>({});
+
+  // Fetch ingredients + presets once
+  useEffect(() => {
+    fetch("/api/nutrition/presets")
+      .then((r) => r.json())
+      .then((data) => {
+        setIngredients(data.ingredients ?? []);
+        setPresets(data.presets ?? []);
+      })
+      .catch(() => {});
+  }, []);
 
   const fetchPlan = useCallback(async () => {
     try {
@@ -235,8 +251,20 @@ export default function Dashboard() {
               budget={budget}
               items={meals}
               isSkipped={plan.skippedSlots.includes(slot)}
-              onAddClick={(s) => {
-                window.location.href = `/log?slot=${s}`;
+              date={plan.date}
+              ingredients={ingredients}
+              presets={presets}
+              onMealLogged={() => fetchPlan()}
+              onSkipSlot={async () => {
+                await fetch("/api/nutrition/skip-slot", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ date: plan.date, slot }),
+                });
+                fetchPlan();
+              }}
+              onTotalsPreview={(totals) => {
+                setPreviewTotals((prev) => ({ ...prev, [slot]: totals }));
               }}
               onDeleteItem={async (id) => {
                 await fetch(`/api/nutrition/log-meal?id=${id}`, { method: "DELETE" });
