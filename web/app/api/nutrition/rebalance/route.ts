@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     const c = items.reduce((s, i) => s + (Number(i.carbs) || 0), 0);
     const f = items.reduce((s, i) => s + (Number(i.fat) || 0), 0);
     const fi = items.reduce((s, i) => s + (Number(i.fiber) || 0), 0);
-    await sql`UPDATE meal_log SET items = ${JSON.stringify(items)}::jsonb,
+    await sql`UPDATE meal_log SET items = ${sql.json(items)},
       calories = ${cal}, protein = ${p}, carbs = ${c}, fat = ${f}, fiber = ${fi}
       WHERE id = ${Number(mealId)}`;
   }

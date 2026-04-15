@@ -1,1 +1,174 @@
 @import "tailwindcss";
+
+@theme {
+  --color-base: #0A1720;
+  --color-surface: #0E1A26;
+  --color-surface-elevated: #152232;
+  --color-surface-hover: #1A2E3C;
+  --color-surface-active: #1E3140;
+
+  --color-border: #1A3040;
+  --color-border-subtle: #142530;
+  --color-border-glow: #233D48;
+
+  --color-text: #FDF8F2;
+  --color-text-secondary: #A0B4C0;
+  --color-text-muted: #5A7A8A;
+  --color-text-faint: #3A5565;
+
+  --color-warm: #B17850;
+  --color-warm-light: #C7966E;
+  --color-warm-dim: #8A5D3A;
+  --color-warm-bg: #1D1510;
+
+  --color-teal: #77C8D1;
+  --color-teal-light: #97D9E4;
+  --color-teal-dim: #4A8A95;
+  --color-teal-bg: #0D1F22;
+
+  --color-indigo: #6366B0;
+  --color-indigo-light: #8184CC;
+  --color-indigo-dim: #3E458B;
+  --color-indigo-bg: #121420;
+
+  --color-lime: #CBE896;
+  --color-lime-dim: #8AB060;
+  --color-lime-bg: #131D10;
+
+  --color-success: #6AD4A0;
+  --color-warning: #E0A458;
+  --color-danger: #E06060;
+
+  --color-calories: #77C8D1;
+  --color-protein: #B17850;
+  --color-carbs: #6366B0;
+  --color-fat: #CBE896;
+  --color-fiber: #82D0C8;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-base);
+  color: var(--color-text);
+  font-feature-settings: "cv11", "ss01", "ss02";
+}
+
+/* === Typography scale ============================================ */
+/* Prefixed with `t-` to avoid clash with Tailwind utility names. */
+
+.t-display {
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 768px) {
+  .t-display {
+    font-size: 4rem;
+  }
+}
+
+.t-headline {
+  font-size: 1.5rem;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.t-title {
+  font-size: 1.125rem;
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.t-body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.t-caption {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.t-eyebrow {
+  font-size: 0.6875rem;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.t-micro {
+  font-size: 0.625rem;
+  line-height: 1.2;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.glass {
+  background: rgba(14, 26, 38, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(35, 61, 72, 0.4);
+}
+
+.glass-elevated {
+  background: rgba(21, 34, 50, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(35, 61, 72, 0.5);
+}
+
+.glass-subtle {
+  background: rgba(14, 26, 38, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(26, 48, 64, 0.3);
+}
+
+.border-glow {
+  border: 1px solid var(--color-border-glow);
+  box-shadow: 0 0 20px rgba(35, 61, 72, 0.15), inset 0 1px 0 rgba(119, 200, 209, 0.05);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--color-surface-elevated);
+  border-radius: 999px;
+  height: 6px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-warm);
+  border: 2px solid var(--color-base);
+  cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}

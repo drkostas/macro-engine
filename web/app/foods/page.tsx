@@ -27,7 +27,7 @@ const SLOTS = ["breakfast", "lunch", "dinner", "pre_sleep"];
 
 export default function LogPage() {
   return (
-    <Suspense fallback={<div className="p-6 text-slate-500">Loading...</div>}>
+    <Suspense fallback={<div className="p-6 text-text-muted">Loading...</div>}>
       <LogPageInner />
     </Suspense>
   );
@@ -179,19 +179,19 @@ function LogPageInner() {
     <main className="p-4 md:p-6 max-w-2xl mx-auto space-y-4">
       <h1 className="text-lg font-bold">Food Library</h1>
 
-      <p className="text-sm text-slate-400">Browse ingredients, search USDA foods, and manage your custom foods.</p>
+      <p className="text-sm text-text-secondary">Browse ingredients, search USDA foods, and manage your custom foods.</p>
 
       {/* Mode toggle */}
       <div className="flex gap-2">
         <button
           onClick={() => setQuickMode(false)}
-          className={`text-xs px-3 py-1.5 rounded-lg ${!quickMode ? "bg-slate-700 text-white" : "text-slate-400"}`}
+          className={`text-xs px-3 py-1.5 rounded-lg ${!quickMode ? "bg-slate-700 text-white" : "text-text-secondary"}`}
         >
           Search Foods
         </button>
         <button
           onClick={() => setQuickMode(true)}
-          className={`text-xs px-3 py-1.5 rounded-lg ${quickMode ? "bg-slate-700 text-white" : "text-slate-400"}`}
+          className={`text-xs px-3 py-1.5 rounded-lg ${quickMode ? "bg-slate-700 text-white" : "text-text-secondary"}`}
         >
           Create Custom
         </button>
@@ -205,12 +205,12 @@ function LogPageInner() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search foods (e.g. chicken breast, banana, rice)..."
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm placeholder-slate-500 focus:outline-none focus:border-blue-600"
+            className="w-full bg-surface-elevated border border-border-glow rounded-xl px-4 py-3 text-sm placeholder-text-faint focus:outline-none focus:border-blue-600"
             autoFocus
           />
 
           {/* Results */}
-          {searching && <p className="text-xs text-slate-500">Searching...</p>}
+          {searching && <p className="text-xs text-text-muted">Searching...</p>}
 
           <div className="space-y-1.5 max-h-[400px] overflow-y-auto">
             {results.map((food) => (
@@ -223,26 +223,26 @@ function LogPageInner() {
                 className={`w-full text-left p-3 rounded-lg transition-colors ${
                   selectedFood?.id === food.id && selectedFood?.db_source === food.db_source
                     ? "bg-blue-950 border border-blue-700"
-                    : "bg-slate-800/60 hover:bg-slate-800"
+                    : "bg-surface-elevated/60 hover:bg-surface-elevated"
                 }`}
               >
                 <div className="flex justify-between">
                   <div>
-                    <p className="text-sm text-slate-200">{food.name}</p>
+                    <p className="text-sm text-text">{food.name}</p>
                     {food.brand && (
-                      <p className="text-[11px] text-slate-500">{food.brand}</p>
+                      <p className="text-[11px] text-text-muted">{food.brand}</p>
                     )}
                   </div>
-                  <span className="text-[10px] text-slate-600 uppercase">{food.db_source}</span>
+                  <span className="text-[10px] text-text-faint uppercase">{food.db_source}</span>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-text-secondary mt-1">
                   Per 100g: {food.calories} kcal | {food.protein}g P | {food.carbs}g C | {food.fat}g F
                 </p>
               </button>
             ))}
 
             {query.length >= 2 && !searching && results.length === 0 && (
-              <p className="text-xs text-slate-500 text-center py-4">
+              <p className="text-xs text-text-muted text-center py-4">
                 No results. Try a different search or use Quick Add.
               </p>
             )}
@@ -250,18 +250,18 @@ function LogPageInner() {
 
           {/* Food Detail / Portion Picker */}
           {selectedFood && (
-            <div className="bg-slate-800 rounded-xl border border-slate-700 p-4 space-y-3">
-              <h3 className="text-sm font-semibold text-slate-200">{selectedFood.name}</h3>
+            <div className="bg-surface-elevated rounded-xl border border-border-glow p-4 space-y-3">
+              <h3 className="text-sm font-semibold text-text">{selectedFood.name}</h3>
 
               <div className="flex items-center gap-3">
-                <label className="text-xs text-slate-400">Portion:</label>
+                <label className="text-xs text-text-secondary">Portion:</label>
                 <input
                   type="number"
                   value={grams}
                   onChange={(e) => setGrams(Math.max(1, parseInt(e.target.value) || 0))}
-                  className="w-20 bg-slate-900 border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
+                  className="w-20 bg-surface border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
                 />
-                <span className="text-xs text-slate-400">grams</span>
+                <span className="text-xs text-text-secondary">grams</span>
                 <input
                   type="range"
                   min={10}
@@ -278,21 +278,21 @@ function LogPageInner() {
                 const s = scaled(selectedFood, grams);
                 return (
                   <div className="grid grid-cols-4 gap-2 text-center">
-                    <div className="bg-slate-900 rounded-lg p-2">
+                    <div className="bg-surface rounded-lg p-2">
                       <p className="text-sm font-bold text-blue-400">{s.calories}</p>
-                      <p className="text-[10px] text-slate-500">kcal</p>
+                      <p className="text-[10px] text-text-muted">kcal</p>
                     </div>
-                    <div className="bg-slate-900 rounded-lg p-2">
-                      <p className="text-sm font-bold text-red-400">{s.protein}g</p>
-                      <p className="text-[10px] text-slate-500">Protein</p>
+                    <div className="bg-surface rounded-lg p-2">
+                      <p className="text-sm font-bold text-danger">{s.protein}g</p>
+                      <p className="text-[10px] text-text-muted">Protein</p>
                     </div>
-                    <div className="bg-slate-900 rounded-lg p-2">
+                    <div className="bg-surface rounded-lg p-2">
                       <p className="text-sm font-bold text-amber-400">{s.carbs}g</p>
-                      <p className="text-[10px] text-slate-500">Carbs</p>
+                      <p className="text-[10px] text-text-muted">Carbs</p>
                     </div>
-                    <div className="bg-slate-900 rounded-lg p-2">
+                    <div className="bg-surface rounded-lg p-2">
                       <p className="text-sm font-bold text-emerald-400">{s.fat}g</p>
-                      <p className="text-[10px] text-slate-500">Fat</p>
+                      <p className="text-[10px] text-text-muted">Fat</p>
                     </div>
                   </div>
                 );
@@ -301,7 +301,7 @@ function LogPageInner() {
               <button
                 onClick={logFood}
                 disabled={logging}
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+                className="w-full bg-teal-dim hover:bg-teal text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
               >
                 {logging ? "Logging..." : `Add to ${SLOT_LABELS[activeSlot]}`}
               </button>
@@ -310,61 +310,61 @@ function LogPageInner() {
         </>
       ) : (
         /* Quick Add mode */
-        <div className="bg-slate-800 rounded-xl border border-slate-700 p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-slate-200">Quick Add</h3>
+        <div className="bg-surface-elevated rounded-xl border border-border-glow p-4 space-y-3">
+          <h3 className="text-sm font-semibold text-text">Quick Add</h3>
           <input
             type="text"
             value={quickName}
             onChange={(e) => setQuickName(e.target.value)}
             placeholder="Food name (e.g. Protein Bar)"
-            className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm"
+            className="w-full bg-surface border border-slate-600 rounded-lg px-3 py-2 text-sm"
           />
           <div className="grid grid-cols-4 gap-2">
             <div>
-              <label className="text-[10px] text-slate-500">Calories*</label>
+              <label className="text-[10px] text-text-muted">Calories*</label>
               <input
                 type="number"
                 value={quickCal}
                 onChange={(e) => setQuickCal(e.target.value)}
                 placeholder="200"
-                className="w-full bg-slate-900 border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
+                className="w-full bg-surface border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
               />
             </div>
             <div>
-              <label className="text-[10px] text-slate-500">Protein (g)</label>
+              <label className="text-[10px] text-text-muted">Protein (g)</label>
               <input
                 type="number"
                 value={quickP}
                 onChange={(e) => setQuickP(e.target.value)}
                 placeholder="20"
-                className="w-full bg-slate-900 border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
+                className="w-full bg-surface border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
               />
             </div>
             <div>
-              <label className="text-[10px] text-slate-500">Carbs (g)</label>
+              <label className="text-[10px] text-text-muted">Carbs (g)</label>
               <input
                 type="number"
                 value={quickC}
                 onChange={(e) => setQuickC(e.target.value)}
                 placeholder="25"
-                className="w-full bg-slate-900 border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
+                className="w-full bg-surface border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
               />
             </div>
             <div>
-              <label className="text-[10px] text-slate-500">Fat (g)</label>
+              <label className="text-[10px] text-text-muted">Fat (g)</label>
               <input
                 type="number"
                 value={quickF}
                 onChange={(e) => setQuickF(e.target.value)}
                 placeholder="8"
-                className="w-full bg-slate-900 border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
+                className="w-full bg-surface border border-slate-600 rounded-lg px-2 py-1.5 text-sm text-center"
               />
             </div>
           </div>
           <button
             onClick={logQuickAdd}
             disabled={logging || !quickName || !quickCal}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
+            className="w-full bg-teal-dim hover:bg-teal text-white py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {logging ? "Logging..." : `Add to ${SLOT_LABELS[activeSlot]}`}
           </button>

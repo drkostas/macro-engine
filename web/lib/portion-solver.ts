@@ -17,6 +17,7 @@ export interface Ingredient {
   unit?: string; // 'g' (default), 'egg', 'gel', etc.
   grams_per_unit?: number | null; // grams per 1 unit (e.g., 50 for eggs)
   unit_step?: number | null; // step increment for count-based (default 0.25, 1 for whole-only)
+  is_favorite?: boolean;
 }
 
 /** Check if an ingredient uses count-based units instead of grams */

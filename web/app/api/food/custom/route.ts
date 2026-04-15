@@ -8,10 +8,9 @@ export async function GET(req: NextRequest) {
   const favOnly = req.nextUrl.searchParams.get("favorites") === "true";
   const sql = getDb();
 
-  const filter = favOnly ? "WHERE is_favorite = TRUE" : "";
-  const rows = await sql(`
-    SELECT * FROM user_foods ${filter} ORDER BY use_count DESC, created_at DESC LIMIT 200
-  `);
+  const rows = favOnly
+    ? await sql`SELECT * FROM user_foods WHERE is_favorite = TRUE ORDER BY use_count DESC, created_at DESC LIMIT 200`
+    : await sql`SELECT * FROM user_foods ORDER BY use_count DESC, created_at DESC LIMIT 200`;
 
   return NextResponse.json({ foods: rows });
 }
