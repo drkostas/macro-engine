@@ -71,8 +71,10 @@ test.describe("Natural-language meal logging", () => {
     expect(resp.status()).toBe(200);
     expect(routeFired).toBe(true);
 
-    await expect(page.getByText("Test Chicken")).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText("Test Rice")).toBeVisible();
+    // "Test Chicken" appears both in the VariationStrip (auto-named variation)
+    // and in the ingredient editor list. `.first()` matches whichever renders first.
+    await expect(page.getByText("Test Chicken").first()).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText("Test Rice").first()).toBeVisible();
   });
 
   test("shows error message when API returns 503 (gateway missing)", async ({ page }) => {

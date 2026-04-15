@@ -202,7 +202,9 @@ export function MealSlotCard({
       <div className="p-3 space-y-2">
         {/* Logged items */}
         {items.map((meal) => {
-          const mealIngredients = meal.items ?? [];
+          // Defensive: meal.items should be jsonb array, but guard against
+          // legacy rows where it may have been stored as a stringified string.
+          const mealIngredients = Array.isArray(meal.items) ? meal.items : [];
           return (
             <div key={meal.id} className="space-y-0.5">
               {mealIngredients.length > 0 ? (
