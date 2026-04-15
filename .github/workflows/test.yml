@@ -54,6 +54,7 @@ jobs:
         run: |
           PGPASSWORD=macroengine psql -h localhost -U macroengine -d macroengine -f db/schema.sql
           PGPASSWORD=macroengine psql -h localhost -U macroengine -d macroengine -f db/seed.sql
+          PGPASSWORD=macroengine psql -h localhost -U macroengine -d macroengine -f db/test-seed.sql
       - run: npm ci
       - run: npx playwright install chromium --with-deps
       - run: npm run e2e -- --project=desktop
