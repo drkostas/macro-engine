@@ -21,6 +21,7 @@
     "@neondatabase/serverless": "^0.10.0",
     "ai": "^6.0.161",
     "next": "^16.1.0",
+    "postgres": "^3.4.9",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "zod": "^4.3.6"
