@@ -43,6 +43,7 @@ interface PlanData {
   remaining: MacroTargets;
   slotBudgets: SlotBudget[];
   mealsBySlot: Record<string, Array<Record<string, unknown>>>;
+  plannedBySlot?: Record<string, Array<Record<string, unknown>>>;
   drinkCalories: number;
   drinks: Array<{
     id: number; name: string; quantity_ml: number; calories: number;
@@ -222,6 +223,7 @@ function DashboardInner() {
   const exerciseCals = plan.tdee.runCalories + plan.tdee.gymCalories;
   const today = new Date().toISOString().split("T")[0];
   const isPastDay = plan.date < today;
+  const isFutureDay = plan.date > today;
   const showQuickEstimate = isPastDay && !hasMeals;
 
   return (
@@ -516,12 +518,16 @@ function DashboardInner() {
             }>;
           }>;
 
+          const plannedMeals = ((plan.plannedBySlot ?? {})[slot] ?? []) as typeof meals;
+
           return (
             <MealSlotCard
               key={slot}
               slot={slot}
               budget={budget}
               items={meals}
+              plannedItems={plannedMeals}
+              isFuture={isFutureDay}
               isSkipped={plan.skippedSlots.includes(slot)}
               date={plan.date}
               ingredients={ingredients}

@@ -12,16 +12,19 @@ interface MealComposerProps {
   slotLabel: string;
   budget: { calories: number; protein: number; carbs: number; fat: number };
   date: string;
+  isFuture?: boolean;
   ingredients: Ingredient[];
   presets: PresetMeal[];
   onMealLogged: () => void;
   onCancel: () => void;
-  onTotalsPreview?: (totals: { calories: number; protein: number; carbs: number; fat: number }) => void;
+  onTotalsPreview?: (totals: { calories: number; protein: number; carbs: number; fat: number; fiber?: number }) => void;
   onRebalanced?: (changes: Array<{ slot: string; ingredient: string; from: number; to: number }>) => void;
+  recentIds?: string[];
 }
 
 export function MealComposer({
-  slot, slotLabel, budget, date, ingredients, presets, onMealLogged, onCancel, onTotalsPreview, onRebalanced,
+  slot, slotLabel, budget, date, isFuture = false,
+  ingredients, presets, onMealLogged, onCancel, onTotalsPreview, onRebalanced, recentIds,
 }: MealComposerProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [portions, setPortions] = useState<PortionEntry[]>([]);
@@ -151,8 +154,16 @@ export function MealComposer({
     previewRef.current(totals);
   }, [portions]);
 
+  // Bulk scale all portions by factor (Linked mode)
+  const handleBulkScale = useCallback((factor: number) => {
+    setPortions((prev) => prev.map((p) => ({
+      ...p,
+      grams: Math.max(5, Math.round(p.grams * factor)),
+    })));
+  }, []);
+
   // Log meal
-  const handleLog = async () => {
+  const handleLog = async (opts?: { notes?: string; weigh_method?: string; planned?: boolean }) => {
     if (portions.length === 0) return;
     setLogging(true);
 
@@ -174,7 +185,11 @@ export function MealComposer({
       const resp = await fetch("/api/nutrition/log-meal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date, meal_slot: slot, items }),
+        body: JSON.stringify({
+          date, meal_slot: slot, items,
+          notes: opts?.notes, weigh_method: opts?.weigh_method,
+          planned: opts?.planned ?? false,
+        }),
       });
       if (!resp.ok) throw new Error("Failed to log");
 
@@ -199,8 +214,8 @@ export function MealComposer({
     }
   };
 
-  // Save as preset
-  const handleSavePreset = async () => {
+  // Save as preset with user-chosen name
+  const handleSavePreset = async (name: string) => {
     const items = portions.map((p) => ({
       ingredient_id: p.ingredient.id,
       grams: Math.round(p.grams),
@@ -214,10 +229,6 @@ export function MealComposer({
       totals.fat += m.fat;
       totals.fiber += m.fiber;
     }
-    const name = portions
-      .slice(0, 3)
-      .map((p) => p.ingredient.name)
-      .join(", ");
 
     await fetch("/api/nutrition/presets", {
       method: "POST",
@@ -236,23 +247,26 @@ export function MealComposer({
           onAddUsda={handleAddUsda}
           presets={slotPresets}
           onLoadPreset={handleLoadPreset}
+          recentIds={recentIds}
         />
       ) : (
         <>
           {/* Back to picker */}
           <button
             onClick={() => setPhase("pick")}
-            className="text-xs text-slate-500 hover:text-slate-300"
+            className="text-xs text-text-muted hover:text-text"
           >
             + Add more ingredients
           </button>
           <CompositionView
             portions={portions}
             budget={budget}
+            isFuture={isFuture}
             onPortionChange={handlePortionChange}
             onRemove={handleRemove}
             onLog={handleLog}
             onSavePreset={handleSavePreset}
+            onBulkScale={handleBulkScale}
             onCancel={onCancel}
             logging={logging}
             slotLabel={slotLabel}
@@ -270,7 +284,7 @@ export function MealComposer({
             ];
             runSolver(allIngs);
           }}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-sm font-medium transition-colors"
+          className="w-full bg-teal-dim hover:bg-teal text-white py-2 rounded-lg text-sm font-medium transition-colors"
         >
           Compose meal ({selected.size} ingredients)
         </button>
