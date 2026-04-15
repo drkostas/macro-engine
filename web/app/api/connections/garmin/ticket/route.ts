@@ -33,13 +33,13 @@ export async function POST(req: NextRequest) {
       VALUES (
         'garmin',
         'oauth_di',
-        jsonb_build_object('garmin_tokens', ${JSON.stringify(payload)}::jsonb),
+        jsonb_build_object('garmin_tokens', ${sql.json(payload)}),
         'active',
         NOW()
       )
       ON CONFLICT (platform)
       DO UPDATE SET
-        credentials = jsonb_build_object('garmin_tokens', ${JSON.stringify(payload)}::jsonb),
+        credentials = jsonb_build_object('garmin_tokens', ${sql.json(payload)}),
         status = 'active',
         connected_at = NOW()
     `;

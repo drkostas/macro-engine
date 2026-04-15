@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       INSERT INTO meal_log (date, meal_slot, source, preset_meal_id, items, calories, protein, carbs, fat, fiber, portion_multiplier, notes, weigh_method, planned, logged_at)
       VALUES (
         ${date}, ${meal_slot}, ${source ?? 'macro_engine'}, ${preset_meal_id ?? null},
-        ${JSON.stringify(jsonbItems)}::jsonb,
+        ${sql.json(jsonbItems)},
         ${totalCal}, ${totalP}, ${totalC}, ${totalF}, ${totalFiber},
         1.0, ${notes ?? null}, ${weigh_method ?? null}, ${Boolean(planned)}, NOW()
       )
@@ -92,7 +92,7 @@ export async function PATCH(req: NextRequest) {
       const totalFiber = items.reduce((s, i) => s + Number(i.fiber ?? 0), 0);
       await sql`
         UPDATE meal_log SET
-          items = ${JSON.stringify(items)}::jsonb,
+          items = ${sql.json(items)},
           calories = ${totalCal}, protein = ${totalP}, carbs = ${totalC},
           fat = ${totalF}, fiber = ${totalFiber},
           notes = COALESCE(${notes ?? null}, notes),

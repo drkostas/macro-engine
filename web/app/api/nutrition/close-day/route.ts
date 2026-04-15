@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     UPDATE nutrition_day SET
       actual_calories = ${actual.calories}, actual_protein = ${actual.protein},
       actual_carbs = ${actual.carbs}, actual_fat = ${actual.fat}, actual_fiber = ${actual.fiber},
-      plan = ${JSON.stringify(reconciledPlan)}::jsonb, status = 'closed'
+      plan = ${sql.json(reconciledPlan)}, status = 'closed'
     WHERE date = ${date}
   `;
 
@@ -110,11 +110,12 @@ export async function POST(req: NextRequest) {
       const ffm = newWeightKg * (1 - currentBf / 100);
       const targetWeight = ffm / (1 - targetBf / 100);
       const fatToLose = Math.max(0, newWeightKg - targetWeight);
-      const daysLeft = Math.max(1, Math.ceil(
-        (new Date(profile[0].target_date as string).getTime() - new Date(date).getTime()) / 86400000
-      ));
-      const rawDeficit = (fatToLose * 7700) / daysLeft;
+      const msLeft = new Date(profile[0].target_date as string).getTime() - new Date(date).getTime();
+      const daysLeft = Math.max(7, Math.ceil(msLeft / 86400000)); // min 7 days to prevent deficit spikes
       const currentDeficit = Number(profile[0].daily_deficit) || 800;
+
+      // Skip deficit recalculation if target date passed or already at/below target weight
+      const rawDeficit = fatToLose > 0.5 ? (fatToLose * 7700) / daysLeft : 0;
       const cappedDeficit = Math.min(rawDeficit, currentDeficit);
       const newBfPct = Math.round(((newWeightKg - ffm) / newWeightKg) * 1000) / 10;
 

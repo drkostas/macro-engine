@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     await sql`
       INSERT INTO meal_log (date, meal_slot, source, preset_meal_id, portion_multiplier, items, calories, protein, carbs, fat, fiber, notes)
       VALUES (${to_date}, ${m.meal_slot}, ${m.source}, ${m.preset_meal_id}, ${m.portion_multiplier},
-        ${m.items ? JSON.stringify(m.items) : null}::jsonb, ${m.calories}, ${m.protein}, ${m.carbs}, ${m.fat}, ${m.fiber}, ${m.notes})
+        ${m.items ? sql.json(m.items) : null}, ${m.calories}, ${m.protein}, ${m.carbs}, ${m.fat}, ${m.fiber}, ${m.notes})
     `;
     copied++;
   }
