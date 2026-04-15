@@ -14,6 +14,7 @@ import { QuickEstimate } from "@/components/quick-estimate";
 import { WeeklySummary } from "@/components/weekly-summary";
 import { OnboardingTour } from "@/components/onboarding-tour";
 import { WeighInWidget } from "@/components/weigh-in-widget";
+import { DayCompleteModal, type DayCompleteData } from "@/components/day-complete-modal";
 import { useReminders } from "@/lib/use-reminders";
 import { DEFAULT_SLOTS, type MacroTargets } from "@/lib/macro-engine";
 import { MACRO_COLORS, progressColor } from "@/lib/macro-colors";
@@ -88,6 +89,7 @@ function DashboardInner() {
   const [tdeeExpanded, setTdeeExpanded] = useState(false);
   const [recentIds, setRecentIds] = useState<string[]>([]);
   const [recentMeals, setRecentMeals] = useState<Record<string, Array<Record<string, unknown>>>>({});
+  const [dayComplete, setDayComplete] = useState<DayCompleteData | null>(null);
 
   // Fire scheduled reminders when browser tab is open
   useReminders();
@@ -234,6 +236,25 @@ function DashboardInner() {
           await fetch("/api/nutrition/close-day", {
             method: "POST", headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ date: plan.date }),
+          });
+          // Fetch streak for milestone detection (endpoint created in Phase 9; fail silently if absent)
+          let streak = 0;
+          try {
+            const sr = await fetch("/api/nutrition/streak");
+            if (sr.ok) {
+              const sd = await sr.json();
+              streak = Number(sd.streak) || 0;
+            }
+          } catch { /* pre-Phase-9: streak endpoint may not exist yet */ }
+
+          setDayComplete({
+            actualCalories: plan.eaten.calories,
+            targetCalories: plan.targets.calories,
+            tdee: plan.tdee.total,
+            goalDeficit: plan.tdee.deficit,
+            actualProtein: plan.eaten.protein,
+            proteinTarget: plan.targets.protein,
+            streak,
           });
           fetchPlan();
         }}
@@ -578,6 +599,13 @@ function DashboardInner() {
 
       {/* First-visit onboarding tour */}
       <OnboardingTour />
+
+      {/* Day-close celebration modal */}
+      <DayCompleteModal
+        open={dayComplete !== null}
+        data={dayComplete}
+        onDismiss={() => setDayComplete(null)}
+      />
     </main>
   );
 }
