@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# Only run tests if files in web/ changed
+if git diff --cached --name-only | grep -qE '^web/'; then
+  cd web
+  npm test -- --run --reporter=dot || exit 1
+fi

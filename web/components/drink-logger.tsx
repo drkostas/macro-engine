@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { InfoTip } from "./info-tip";
 
 interface DrinkType {
   name: string;
@@ -63,35 +64,43 @@ export function DrinkLogger({ date, drinks, totalDrinkCalories, disabled, onChan
   };
 
   return (
-    <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full px-4 py-2.5 flex justify-between items-center"
-      >
-        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Drinks</span>
-        <div className="flex items-center gap-2">
+    <div className="bg-surface rounded-2xl border border-border overflow-hidden">
+      <div className="w-full px-4 py-3 flex justify-between items-center min-h-[44px]">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center text-xs font-semibold text-text-secondary uppercase tracking-wider gap-1"
+        >
+          Drinks
+          <span className="text-xs text-text-muted">{expanded ? "▲" : "▼"}</span>
+        </button>
+        <InfoTip text="Alcohol calories are offset from carbs and fat targets. Alcohol also pauses fat oxidation for several hours per drink." />
+        <div className="flex items-center gap-2 ml-auto">
           {totalDrinkCalories > 0 && (
-            <span className="text-xs text-amber-400">{totalDrinkCalories} kcal</span>
+            <span className="text-xs text-warm">{totalDrinkCalories} kcal</span>
           )}
           {totalPauseHours > 0 && (
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-400 border border-amber-800">
-              Fat oxidation paused ~{totalPauseHours}h
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-warm-bg text-warm border border-warm-dim">
+              Fat burn paused ~{totalPauseHours}h
             </span>
           )}
-          <span className="text-xs text-slate-500">{expanded ? "▲" : "▼"}</span>
         </div>
-      </button>
+      </div>
 
       {expanded && (
         <div className="px-4 pb-4 space-y-3">
           {/* Logged drinks */}
           {drinks.map((d) => (
-            <div key={d.id} className="flex items-center justify-between bg-slate-950/40 rounded-md px-3 py-1.5">
-              <span className="text-sm text-slate-200">{d.name} ({d.quantity_ml}ml)</span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-400">{d.calories} kcal</span>
+            <div key={d.id} className="flex items-center justify-between bg-base/50 rounded-md px-3 py-2.5 min-h-[44px]">
+              <span className="text-sm text-text">{d.name} ({d.quantity_ml}ml)</span>
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-text-secondary">{d.calories} kcal</span>
                 {!disabled && (
-                  <button onClick={() => deleteDrink(d.id)} className="text-xs text-slate-600 hover:text-red-400">x</button>
+                  <button
+                    onClick={() => deleteDrink(d.id)}
+                    className="w-8 h-8 flex items-center justify-center text-sm text-text-faint hover:text-danger rounded"
+                  >
+                    x
+                  </button>
                 )}
               </div>
             </div>
@@ -101,29 +110,35 @@ export function DrinkLogger({ date, drinks, totalDrinkCalories, disabled, onChan
           {!disabled && (
             <div className="flex gap-2 items-end">
               <div className="flex-1">
-                <label className="text-[10px] text-slate-500 block mb-1">Type</label>
+                <label className="text-[10px] text-text-muted block mb-1">Type</label>
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200"
+                  className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2.5 text-xs text-text min-h-[44px]"
                 >
                   {Object.entries(drinkTypes).map(([key, dt]) => (
                     <option key={key} value={key}>{dt.name} ({dt.default_ml}ml)</option>
                   ))}
                 </select>
               </div>
-              <div className="w-16">
-                <label className="text-[10px] text-slate-500 block mb-1">Qty</label>
-                <div className="flex items-center gap-0.5">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-5 h-7 bg-slate-800 rounded text-slate-400 text-xs">-</button>
-                  <span className="text-xs text-slate-200 w-4 text-center">{quantity}</span>
-                  <button onClick={() => setQuantity(quantity + 1)} className="w-5 h-7 bg-slate-800 rounded text-slate-400 text-xs">+</button>
+              <div className="w-20">
+                <label className="text-[10px] text-text-muted block mb-1">Qty</label>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-9 h-9 bg-surface-elevated rounded-lg text-text-secondary text-sm hover:bg-surface-hover"
+                  >-</button>
+                  <span className="text-xs text-text w-5 text-center">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-9 h-9 bg-surface-elevated rounded-lg text-text-secondary text-sm hover:bg-surface-hover"
+                  >+</button>
                 </div>
               </div>
               <button
                 onClick={logDrink}
                 disabled={logging}
-                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs rounded-lg font-medium disabled:opacity-50"
+                className="px-4 py-2.5 bg-warm hover:bg-warm-light text-white text-xs rounded-lg font-medium disabled:opacity-50 min-h-[44px]"
               >
                 Log
               </button>

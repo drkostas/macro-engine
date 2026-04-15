@@ -87,27 +87,27 @@ export default function SetupPage() {
       <div className="max-w-lg w-full space-y-8">
         <div>
           <h1 className="text-3xl font-bold">MacroEngine Setup</h1>
-          <p className="text-slate-400 mt-2">Connect your Garmin account to get started.</p>
+          <p className="text-text-secondary mt-2">Connect your Garmin account to get started.</p>
         </div>
 
-        <div className="bg-slate-900 rounded-xl p-6 border border-slate-800 space-y-4">
+        <div className="bg-surface rounded-xl p-6 border border-border space-y-4">
           <h2 className="text-lg font-semibold">Step 1: Sign into Garmin</h2>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-text-secondary">
             Click the button below, sign in, then copy the URL from the page you land on.
           </p>
           <a
             href={GARMIN_SSO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-500"
+            className="inline-block bg-teal-dim text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal"
           >
             Sign into Garmin
           </a>
         </div>
 
-        <div className="bg-slate-900 rounded-xl p-6 border border-slate-800 space-y-4">
+        <div className="bg-surface rounded-xl p-6 border border-border space-y-4">
           <h2 className="text-lg font-semibold">Step 2: Paste the URL</h2>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-text-secondary">
             After signing in, copy the URL from your browser (it contains a ticket=ST-... parameter).
           </p>
           <input
@@ -115,12 +115,12 @@ export default function SetupPage() {
             value={ticketUrl}
             onChange={(e) => setTicketUrl(e.target.value)}
             placeholder="https://sso.garmin.com/sso/embed?ticket=ST-..."
-            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm"
+            className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2 text-sm"
           />
           <button
             onClick={exchangeTicket}
             disabled={status === "loading"}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-500 disabled:opacity-50"
+            className="bg-teal-dim text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal disabled:opacity-50"
           >
             {status === "loading" ? "Connecting..." : "Connect Garmin"}
           </button>
@@ -131,8 +131,8 @@ export default function SetupPage() {
                 status === "success"
                   ? "text-green-400"
                   : status === "error"
-                    ? "text-red-400"
-                    : "text-slate-400"
+                    ? "text-danger"
+                    : "text-text-secondary"
               }`}
             >
               {message}
@@ -141,7 +141,7 @@ export default function SetupPage() {
         </div>
 
         <div className="text-center">
-          <a href="/dashboard" className="text-sm text-slate-500 hover:text-slate-300">
+          <a href="/dashboard" className="text-sm text-text-muted hover:text-text">
             Skip for now (no Garmin data)
           </a>
         </div>

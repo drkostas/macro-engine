@@ -74,36 +74,36 @@ export default function OnboardPage() {
       <div className="max-w-md w-full space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Set Up Your Profile</h1>
-          <p className="text-slate-400 mt-1 text-sm">
+          <p className="text-text-secondary mt-1 text-sm">
             We'll calculate your targets from this info.
           </p>
         </div>
 
         {/* Body */}
-        <div className="bg-slate-900 rounded-xl border border-slate-800 p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-slate-300">Body</h2>
+        <div className="bg-surface rounded-xl border border-border p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-text">Body</h2>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-xs text-slate-500 block mb-1">Weight (kg)</label>
+              <label className="text-xs text-text-muted block mb-1">Weight (kg)</label>
               <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
+                className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs text-slate-500 block mb-1">Height (cm)</label>
+              <label className="text-xs text-text-muted block mb-1">Height (cm)</label>
               <input type="number" value={height} onChange={(e) => setHeight(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
+                className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs text-slate-500 block mb-1">Age</label>
+              <label className="text-xs text-text-muted block mb-1">Age</label>
               <input type="number" value={age} onChange={(e) => setAge(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
+                className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2 text-sm" />
             </div>
           </div>
           <div className="flex gap-3">
             {(["male", "female"] as const).map((s) => (
               <button key={s} onClick={() => setSex(s)}
                 className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
-                  sex === s ? "bg-blue-600 text-white" : "bg-slate-800 text-slate-400"
+                  sex === s ? "bg-teal-dim text-white" : "bg-surface-elevated text-text-secondary"
                 }`}>
                 {s === "male" ? "Male" : "Female"}
               </button>
@@ -112,17 +112,17 @@ export default function OnboardPage() {
         </div>
 
         {/* Goal */}
-        <div className="bg-slate-900 rounded-xl border border-slate-800 p-5 space-y-4">
-          <h2 className="text-sm font-semibold text-slate-300">Goal</h2>
+        <div className="bg-surface rounded-xl border border-border p-5 space-y-4">
+          <h2 className="text-sm font-semibold text-text">Goal</h2>
           <div className="flex gap-2">
             {([
-              { key: "lose", label: "Lose Fat", color: "text-red-400" },
+              { key: "lose", label: "Lose Fat", color: "text-danger" },
               { key: "maintain", label: "Maintain", color: "text-blue-400" },
               { key: "gain", label: "Build Muscle", color: "text-emerald-400" },
             ] as const).map((g) => (
               <button key={g.key} onClick={() => setGoal(g.key)}
                 className={`flex-1 py-2.5 text-sm rounded-lg border transition-colors ${
-                  goal === g.key ? "bg-slate-800 border-slate-600 " + g.color : "border-slate-800 text-slate-500"
+                  goal === g.key ? "bg-surface-elevated border-slate-600 " + g.color : "border-border text-text-muted"
                 }`}>
                 {g.label}
               </button>
@@ -131,14 +131,14 @@ export default function OnboardPage() {
 
           {goal !== "maintain" && (
             <div>
-              <label className="text-xs text-slate-500 block mb-1">
+              <label className="text-xs text-text-muted block mb-1">
                 Daily {goal === "lose" ? "deficit" : "surplus"} (kcal)
               </label>
               <div className="flex gap-2">
                 {["300", "500", "800"].map((d) => (
                   <button key={d} onClick={() => setDeficit(d)}
                     className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
-                      deficit === d ? "bg-blue-600 text-white" : "bg-slate-800 text-slate-400"
+                      deficit === d ? "bg-teal-dim text-white" : "bg-surface-elevated text-text-secondary"
                     }`}>
                     {d}
                   </button>
@@ -148,16 +148,16 @@ export default function OnboardPage() {
           )}
 
           <div>
-            <label className="text-xs text-slate-500 block mb-1">Target body fat %</label>
+            <label className="text-xs text-text-muted block mb-1">Target body fat %</label>
             <input type="number" value={targetBf} onChange={(e) => setTargetBf(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm" />
+              className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2 text-sm" />
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
         <button onClick={handleSubmit} disabled={saving}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-semibold disabled:opacity-50 transition-colors">
+          className="w-full bg-teal-dim hover:bg-teal text-white py-3 rounded-xl text-sm font-semibold disabled:opacity-50 transition-colors">
           {saving ? "Saving..." : "Calculate My Targets"}
         </button>
       </div>
