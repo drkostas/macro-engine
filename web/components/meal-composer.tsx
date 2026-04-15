@@ -6,6 +6,7 @@ import { solvePortions, computeItemMacros } from "@/lib/portion-solver";
 import { autoCategorizeFood } from "@/lib/auto-categorize";
 import { IngredientPicker, type PresetMeal } from "./ingredient-picker";
 import { CompositionView, type PortionEntry } from "./composition-view";
+import { NLInput, type ParsedItem } from "./nl-input";
 
 interface MealComposerProps {
   slot: string;
@@ -79,6 +80,42 @@ export function MealComposer({
 
   // Track USDA foods added as temporary ingredients
   const [tempIngredients, setTempIngredients] = useState<Ingredient[]>([]);
+
+  // Parse a free-text meal description into ingredients + portions, then jump to compose
+  const handleNLItems = useCallback((parsed: ParsedItem[]) => {
+    const newIngs: Ingredient[] = [];
+    const newEntries: PortionEntry[] = [];
+    const ids = new Set<string>();
+    for (const p of parsed) {
+      // Normalize per-100g from the parsed macros
+      const scale = 100 / Math.max(1, p.grams);
+      const category = autoCategorizeFood({
+        calories: p.calories * scale,
+        protein: p.protein * scale,
+        carbs: p.carbs * scale,
+        fat: p.fat * scale,
+        fiber: (p.fiber ?? 0) * scale,
+      });
+      const id = `nl_${p.name.toLowerCase().replace(/[^a-z0-9]+/g, "_")}_${Date.now()}`;
+      const ing: Ingredient = {
+        id,
+        name: p.name,
+        calories_per_100g: p.calories * scale,
+        protein_per_100g: p.protein * scale,
+        carbs_per_100g: p.carbs * scale,
+        fat_per_100g: p.fat * scale,
+        fiber_per_100g: (p.fiber ?? 0) * scale,
+        category,
+      };
+      newIngs.push(ing);
+      newEntries.push({ ingredient: ing, grams: p.grams });
+      ids.add(id);
+    }
+    setTempIngredients((prev) => [...prev, ...newIngs]);
+    setSelected((prev) => new Set([...prev, ...ids]));
+    setPortions((prev) => [...prev, ...newEntries]);
+    setPhase("compose");
+  }, []);
 
   // Add USDA food as a one-time ingredient (just add to selection, solver runs on "Compose")
   const handleAddUsda = useCallback(
@@ -240,15 +277,18 @@ export function MealComposer({
   return (
     <div className="space-y-3 pt-2">
       {phase === "pick" ? (
-        <IngredientPicker
-          ingredients={ingredients}
-          selected={selected}
-          onToggle={handleToggle}
-          onAddUsda={handleAddUsda}
-          presets={slotPresets}
-          onLoadPreset={handleLoadPreset}
-          recentIds={recentIds}
-        />
+        <>
+          <NLInput onItems={handleNLItems} />
+          <IngredientPicker
+            ingredients={ingredients}
+            selected={selected}
+            onToggle={handleToggle}
+            onAddUsda={handleAddUsda}
+            presets={slotPresets}
+            onLoadPreset={handleLoadPreset}
+            recentIds={recentIds}
+          />
+        </>
       ) : (
         <>
           {/* Back to picker */}
