@@ -24,12 +24,12 @@ export function MacroPreviewBars({ current, budget }: MacroPreviewBarsProps) {
         return (
           <div key={key} className="space-y-1">
             <div className="flex justify-between text-[10px]">
-              <span className="text-slate-400">{label}</span>
-              <span className={isOver ? "text-amber-400" : "text-slate-300"}>
+              <span className="text-text-secondary">{label}</span>
+              <span className={isOver ? "text-warm" : "text-text"}>
                 {Math.round(cur)}/{Math.round(bud)}
               </span>
             </div>
-            <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-surface-elevated rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-200"
                 style={{

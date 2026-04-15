@@ -8,11 +8,12 @@
 
 // -- Constants ---------------------------------------------------------------
 
-export const SLOT_DISTRIBUTION: Record<string, number> = {
-  breakfast: 0.28,
-  lunch: 0.25,
-  dinner: 0.37,
-  pre_sleep: 0.1,
+/** Per-macro slot distribution (protein timing matters for MPS) */
+export const SLOT_DISTRIBUTION: Record<string, Record<string, number>> = {
+  breakfast: { calories: 0.28, protein: 0.25, carbs: 0.28, fat: 0.28, fiber: 0.20 },
+  lunch:     { calories: 0.25, protein: 0.25, carbs: 0.25, fat: 0.25, fiber: 0.30 },
+  dinner:    { calories: 0.37, protein: 0.32, carbs: 0.37, fat: 0.37, fiber: 0.35 },
+  pre_sleep: { calories: 0.10, protein: 0.18, carbs: 0.10, fat: 0.10, fiber: 0.15 },
 };
 
 export const DEFAULT_SLOTS = ["breakfast", "lunch", "dinner", "pre_sleep"];
@@ -35,6 +36,7 @@ export interface MacroTargets {
   protein: number;
   carbs: number;
   fat: number;
+  fiber: number;
 }
 
 export interface SlotBudget extends MacroTargets {
@@ -136,7 +138,10 @@ export function computeMacroTargets(opts: MacroTargetOptions): MacroTargets {
     );
   }
 
-  return { calories: targetCalories, protein, carbs, fat };
+  // Fiber: ~14g per 1000 kcal is the standard recommendation
+  const fiber = Math.round(targetCalories * 14 / 1000);
+
+  return { calories: targetCalories, protein, carbs, fat, fiber };
 }
 
 // -- Alcohol Offset ----------------------------------------------------------
@@ -147,13 +152,16 @@ export function applyAlcoholOffset(
 ): MacroTargets {
   if (drinkCalories <= 0) return { ...targets };
 
-  let remaining = drinkCalories;
-  const carbCut = Math.min(Math.floor(remaining / 4), targets.carbs);
-  remaining -= carbCut * 4;
-  const fatCut = Math.min(Math.floor(remaining / 9), targets.fat);
+  // Reduce total calorie budget AND offset carbs/fat (soma approach)
+  const adjustedCalories = Math.max(0, targets.calories - drinkCalories);
+  let rem = drinkCalories;
+  const carbCut = Math.min(Math.round(rem / 4), targets.carbs);
+  rem -= carbCut * 4;
+  const fatCut = rem > 0 ? Math.min(Math.round(rem / 9), targets.fat) : 0;
 
   return {
     ...targets,
+    calories: adjustedCalories,
     carbs: targets.carbs - carbCut,
     fat: targets.fat - fatCut,
   };
@@ -169,16 +177,17 @@ export function fatOxidationPauseHours(ethanolGrams: number): number {
 export function computeSlotTargets(
   targets: MacroTargets,
   slots: string[] = DEFAULT_SLOTS,
-  distribution: Record<string, number> = SLOT_DISTRIBUTION,
+  distribution: Record<string, Record<string, number>> = SLOT_DISTRIBUTION,
 ): SlotBudget[] {
   return slots.map((slot) => {
-    const pct = distribution[slot] ?? 0.25;
+    const d = distribution[slot] ?? { calories: 0.25, protein: 0.25, carbs: 0.25, fat: 0.25, fiber: 0.25 };
     return {
       slot,
-      calories: Math.round(targets.calories * pct),
-      protein: Math.round(targets.protein * pct),
-      carbs: Math.round(targets.carbs * pct),
-      fat: Math.round(targets.fat * pct),
+      calories: Math.round(targets.calories * d.calories),
+      protein: Math.round(targets.protein * d.protein),
+      carbs: Math.round(targets.carbs * d.carbs),
+      fat: Math.round(targets.fat * d.fat),
+      fiber: Math.round((targets.fiber ?? 0) * d.fiber),
     };
   });
 }
@@ -188,14 +197,15 @@ export function redistributeRemaining(
   eatenBySlot: Record<string, MacroTargets>,
   skippedSlots: string[] = [],
   slots: string[] = DEFAULT_SLOTS,
-  distribution: Record<string, number> = SLOT_DISTRIBUTION,
+  distribution: Record<string, Record<string, number>> = SLOT_DISTRIBUTION,
 ): SlotBudget[] {
-  const eaten: MacroTargets = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+  const eaten: MacroTargets = { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
   for (const slotMacros of Object.values(eatenBySlot)) {
     eaten.calories += slotMacros.calories;
     eaten.protein += slotMacros.protein;
     eaten.carbs += slotMacros.carbs;
     eaten.fat += slotMacros.fat;
+    eaten.fiber += slotMacros.fiber ?? 0;
   }
 
   const remaining: MacroTargets = {
@@ -203,6 +213,7 @@ export function redistributeRemaining(
     protein: Math.max(targets.protein - eaten.protein, 0),
     carbs: Math.max(targets.carbs - eaten.carbs, 0),
     fat: Math.max(targets.fat - eaten.fat, 0),
+    fiber: Math.max((targets.fiber ?? 0) - eaten.fiber, 0),
   };
 
   const openSlots = slots.filter(
@@ -212,29 +223,35 @@ export function redistributeRemaining(
   if (openSlots.length === 0) {
     return slots.map((slot) => ({
       slot,
-      ...(eatenBySlot[slot] ?? { calories: 0, protein: 0, carbs: 0, fat: 0 }),
+      ...(eatenBySlot[slot] ?? { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }),
     }));
   }
 
-  const totalPct = openSlots.reduce(
-    (sum, s) => sum + (distribution[s] ?? 0.25),
-    0,
-  );
+  // Per-macro total weights for open slots
+  const macroKeys = ["calories", "protein", "carbs", "fat", "fiber"] as const;
+  const totalPctByMacro: Record<string, number> = {};
+  for (const m of macroKeys) {
+    totalPctByMacro[m] = openSlots.reduce(
+      (sum, s) => sum + (distribution[s]?.[m] ?? 0.25),
+      0,
+    );
+  }
 
   return slots.map((slot) => {
     if (eatenBySlot[slot]) {
       return { slot, ...eatenBySlot[slot] };
     }
     if (skippedSlots.includes(slot)) {
-      return { slot, calories: 0, protein: 0, carbs: 0, fat: 0 };
+      return { slot, calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
     }
-    const pct = (distribution[slot] ?? 0.25) / totalPct;
+    const d = distribution[slot] ?? { calories: 0.25, protein: 0.25, carbs: 0.25, fat: 0.25, fiber: 0.25 };
     return {
       slot,
-      calories: Math.round(remaining.calories * pct),
-      protein: Math.round(remaining.protein * pct),
-      carbs: Math.round(remaining.carbs * pct),
-      fat: Math.round(remaining.fat * pct),
+      calories: Math.round(remaining.calories * (d.calories / (totalPctByMacro.calories || 1))),
+      protein: Math.round(remaining.protein * (d.protein / (totalPctByMacro.protein || 1))),
+      carbs: Math.round(remaining.carbs * (d.carbs / (totalPctByMacro.carbs || 1))),
+      fat: Math.round(remaining.fat * (d.fat / (totalPctByMacro.fat || 1))),
+      fiber: Math.round(remaining.fiber * (d.fiber / (totalPctByMacro.fiber || 1))),
     };
   });
 }

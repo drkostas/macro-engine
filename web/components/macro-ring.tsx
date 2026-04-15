@@ -17,7 +17,8 @@ export function MacroRing({ label, current, target, unit, color, size = 120 }: M
   const strokeDashoffset = circumference * (1 - Math.min(pct, 1));
   const center = size / 2;
 
-  const ringColor = isOver ? (pct > 1.1 ? "#EF4444" : "#F59E0B") : color;
+  // Over target: warning, then danger
+  const ringColor = isOver ? (pct > 1.1 ? "#E06060" : "#E0A458") : color;
 
   return (
     <div className="flex flex-col items-center gap-1 cursor-default hover:scale-105 transition-transform">
@@ -26,30 +27,33 @@ export function MacroRing({ label, current, target, unit, color, size = 120 }: M
           {/* Track */}
           <circle
             cx={center} cy={center} r={radius}
-            fill="none" stroke="#1E293B" strokeWidth={8}
+            fill="none" stroke="var(--color-surface-elevated)" strokeWidth={size > 80 ? 8 : 6}
           />
-          {/* Progress */}
+          {/* Progress arc */}
           <circle
             cx={center} cy={center} r={radius}
-            fill="none" stroke={ringColor} strokeWidth={8}
+            fill="none" stroke={ringColor} strokeWidth={size > 80 ? 8 : 6}
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
-            style={{ transition: "stroke-dashoffset 0.5s ease" }}
+            style={{
+              transition: "stroke-dashoffset 0.5s ease",
+              filter: `drop-shadow(0 0 ${size > 80 ? 4 : 2}px ${ringColor}40)`,
+            }}
           />
         </svg>
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-lg font-bold" style={{ color: ringColor }}>
+          <span className={`font-bold ${size > 80 ? "text-lg" : "text-sm"}`} style={{ color: ringColor }}>
             {current.toLocaleString()}
           </span>
-          <span className="text-xs text-slate-500">
+          <span className={`text-text-muted ${size > 80 ? "text-xs" : "text-[9px]"}`}>
             / {target.toLocaleString()}{unit}
           </span>
         </div>
       </div>
-      <span className="text-xs font-medium text-slate-400">{label}</span>
-      <span className="text-xs" style={{ color: ringColor }}>
+      <span className="text-xs font-medium text-text-secondary">{label}</span>
+      <span className="text-[10px]" style={{ color: ringColor }}>
         {Math.round(pct * 100)}%
       </span>
     </div>
