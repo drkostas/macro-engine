@@ -14,6 +14,7 @@ import { QuickEstimate } from "@/components/quick-estimate";
 import { WeeklySummary } from "@/components/weekly-summary";
 import { OnboardingTour } from "@/components/onboarding-tour";
 import { WeighInWidget } from "@/components/weigh-in-widget";
+import { StreakBadge } from "@/components/streak-badge";
 import { DayCompleteModal, type DayCompleteData } from "@/components/day-complete-modal";
 import { useReminders } from "@/lib/use-reminders";
 import { useUndoToast } from "@/lib/use-undo-toast";
@@ -370,9 +371,10 @@ function DashboardInner() {
             {/* Full hero card — stays in normal flow, no sticky, no jank */}
             <div data-tour="hero" className="bg-surface-elevated rounded-3xl border border-border-glow p-5 md:p-7">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <span className="t-eyebrow">Today</span>
                   <WeighInWidget currentWeight={plan.weightKg} onSaved={() => fetchPlan()} />
+                  <StreakBadge />
                 </div>
                 <InfoTip text="Your daily macro targets adapt based on weight, training day type, and activity selection. Carbs adjust by training intensity." />
               </div>
