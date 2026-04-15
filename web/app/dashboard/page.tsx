@@ -16,6 +16,7 @@ import { OnboardingTour } from "@/components/onboarding-tour";
 import { WeighInWidget } from "@/components/weigh-in-widget";
 import { DayCompleteModal, type DayCompleteData } from "@/components/day-complete-modal";
 import { useReminders } from "@/lib/use-reminders";
+import { useUndoToast } from "@/lib/use-undo-toast";
 import { DEFAULT_SLOTS, type MacroTargets } from "@/lib/macro-engine";
 import { MACRO_COLORS, progressColor } from "@/lib/macro-colors";
 import { InfoTip } from "@/components/info-tip";
@@ -94,6 +95,7 @@ function DashboardInner() {
 
   // Fire scheduled reminders when browser tab is open
   useReminders();
+  const undoToast = useUndoToast();
   const [ringSize, setRingSize] = useState(110);
   const [isCompact, setIsCompact] = useState(false);
 
@@ -235,11 +237,11 @@ function DashboardInner() {
         trainingDayType={plan.trainingDayType}
         onDateChange={(d) => { setCurrentDate(d); setLoading(true); router.push(`/dashboard?date=${d}`, { scroll: false }); }}
         onCloseDay={async () => {
+          const closeDate = plan.date;
           await fetch("/api/nutrition/close-day", {
             method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ date: plan.date }),
+            body: JSON.stringify({ date: closeDate }),
           });
-          // Fetch streak for milestone detection (endpoint created in Phase 9; fail silently if absent)
           let streak = 0;
           try {
             const sr = await fetch("/api/nutrition/streak");
@@ -247,7 +249,7 @@ function DashboardInner() {
               const sd = await sr.json();
               streak = Number(sd.streak) || 0;
             }
-          } catch { /* pre-Phase-9: streak endpoint may not exist yet */ }
+          } catch { /* pre-Phase-9 */ }
 
           setDayComplete({
             actualCalories: plan.eaten.calories,
@@ -259,6 +261,16 @@ function DashboardInner() {
             streak,
           });
           fetchPlan();
+          undoToast.show({
+            label: "Day closed",
+            onUndo: async () => {
+              await fetch("/api/nutrition/reopen-day", {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ date: closeDate }),
+              });
+              fetchPlan();
+            },
+          });
         }}
         onReopenDay={async () => {
           await fetch("/api/nutrition/reopen-day", {
@@ -544,22 +556,61 @@ function DashboardInner() {
                 setTimeout(() => setToast(null), 5000);
               }}
               onSkipSlot={async () => {
+                const skipSlot = slot;
+                const skipDate = plan.date;
+                const wasSkipped = plan.skippedSlots.includes(skipSlot);
                 await fetch("/api/nutrition/skip-slot", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ date: plan.date, slot }),
+                  body: JSON.stringify({ date: skipDate, slot: skipSlot }),
                 });
-                const slotName = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", pre_sleep: "Pre-Sleep" }[slot] ?? slot;
-                setToast(`${slotName} skipped -- budget moved to other meals`);
-                setTimeout(() => setToast(null), 3000);
+                const slotName = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", pre_sleep: "Pre-Sleep" }[skipSlot] ?? skipSlot;
                 fetchPlan();
+                undoToast.show({
+                  label: wasSkipped ? `${slotName} reopened` : `${slotName} skipped`,
+                  onUndo: async () => {
+                    // Toggle back
+                    await fetch("/api/nutrition/skip-slot", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ date: skipDate, slot: skipSlot }),
+                    });
+                    fetchPlan();
+                  },
+                });
               }}
               onTotalsPreview={(totals) => {
                 setPreviewTotals((prev) => ({ ...prev, [slot]: { ...totals, fiber: totals.fiber ?? 0 } }));
               }}
               onDeleteItem={async (id) => {
+                const deletedDate = plan.date;
+                const deletedSlot = slot;
+                // Snapshot the meal before deleting so we can restore it
+                const mealToDelete = (plan.mealsBySlot[deletedSlot] ?? []).find(
+                  (m) => (m as { id: number }).id === id,
+                ) as { items?: Array<Record<string, unknown>>; notes?: string | null; weigh_method?: string | null } | undefined;
                 await fetch(`/api/nutrition/log-meal?id=${id}`, { method: "DELETE" });
                 fetchPlan();
+                if (mealToDelete?.items?.length) {
+                  undoToast.show({
+                    label: "Meal removed",
+                    onUndo: async () => {
+                      await fetch("/api/nutrition/log-meal", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          date: deletedDate,
+                          meal_slot: deletedSlot,
+                          source: "undo_delete",
+                          items: mealToDelete.items,
+                          notes: mealToDelete.notes,
+                          weigh_method: mealToDelete.weigh_method,
+                        }),
+                      });
+                      fetchPlan();
+                    },
+                  });
+                }
               }}
             />
           );
