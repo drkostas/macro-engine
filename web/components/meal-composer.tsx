@@ -211,6 +211,26 @@ export function MealComposer({
     previewRef.current(computeVariationMacros(active));
   }, [variations, activeId, active]);
 
+  // Solve active variation's portions against the slot's macro budget
+  const handleSolve = useCallback(() => {
+    if (active.portions.length === 0) return;
+    const ings = active.portions.map((p) => p.ingredient);
+    const solved = solvePortions(ings, {
+      calories: budget.calories,
+      protein: budget.protein,
+      carbs: budget.carbs,
+      fat: budget.fat,
+      fiber: 0,
+    });
+    const entries: PortionEntry[] = solved
+      .map((s) => ({
+        ingredient: ings.find((i) => i.id === s.ingredient_id)!,
+        grams: s.grams,
+      }))
+      .filter((e) => e.ingredient);
+    updateActive((v) => ({ ...v, portions: entries }));
+  }, [active, budget, updateActive]);
+
   // Bulk scale all portions by factor (Linked mode)
   const handleBulkScale = useCallback((factor: number) => {
     updateActive((v) => ({
@@ -349,13 +369,23 @@ export function MealComposer({
         </>
       ) : (
         <>
-          {/* Back to picker */}
-          <button
-            onClick={() => setPhase("pick")}
-            className="text-xs text-text-muted hover:text-text"
-          >
-            + Add more ingredients
-          </button>
+          {/* Editor header: back-to-picker + Solve to targets */}
+          <div className="flex items-center justify-between gap-2">
+            <button
+              onClick={() => setPhase("pick")}
+              className="text-xs text-text-muted hover:text-text"
+            >
+              + Add more ingredients
+            </button>
+            {active.portions.length > 0 && (
+              <button
+                onClick={handleSolve}
+                className="text-[11px] text-teal border border-teal rounded-md px-2 py-1 hover:bg-teal-bg transition-colors"
+              >
+                ⚖ Solve to targets
+              </button>
+            )}
+          </div>
           <CompositionView
             portions={active.portions}
             budget={budget}
