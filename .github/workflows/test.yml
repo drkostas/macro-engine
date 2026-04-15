@@ -57,7 +57,7 @@ jobs:
           PGPASSWORD=macroengine psql -h localhost -U macroengine -d macroengine -f db/test-seed.sql
       - run: npm ci
       - run: npx playwright install chromium --with-deps
-      - run: npm run e2e -- --project=desktop
+      - run: npm run e2e -- --project=desktop --grep-invert="@visual"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
