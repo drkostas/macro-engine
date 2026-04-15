@@ -15,6 +15,7 @@ import { WeeklySummary } from "@/components/weekly-summary";
 import { OnboardingTour } from "@/components/onboarding-tour";
 import { WeighInWidget } from "@/components/weigh-in-widget";
 import { StreakBadge } from "@/components/streak-badge";
+import { MilestoneToast } from "@/components/milestone-toast";
 import { DayCompleteModal, type DayCompleteData } from "@/components/day-complete-modal";
 import { useReminders } from "@/lib/use-reminders";
 import { useUndoToast } from "@/lib/use-undo-toast";
@@ -655,6 +656,9 @@ function DashboardInner() {
           {toast}
         </div>
       )}
+
+      {/* Milestone achievement toast */}
+      <MilestoneToast />
 
       {/* First-visit onboarding tour */}
       <OnboardingTour />
