@@ -7,6 +7,12 @@ import { autoCategorizeFood } from "@/lib/auto-categorize";
 import { IngredientPicker, type PresetMeal } from "./ingredient-picker";
 import { CompositionView, type PortionEntry } from "./composition-view";
 import { NLInput, type ParsedItem } from "./nl-input";
+import { VariationStrip } from "./variation-strip";
+import {
+  createVariation,
+  computeVariationMacros,
+  type Variation,
+} from "@/lib/variation-state";
 
 interface MealComposerProps {
   slot: string;
@@ -27,10 +33,20 @@ export function MealComposer({
   slot, slotLabel, budget, date, isFuture = false,
   ingredients, presets, onMealLogged, onCancel, onTotalsPreview, onRebalanced, recentIds,
 }: MealComposerProps) {
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [portions, setPortions] = useState<PortionEntry[]>([]);
+  const [variations, setVariations] = useState<Variation[]>(() => [createVariation()]);
+  const [activeId, setActiveId] = useState<string>(() => variations[0].id);
   const [logging, setLogging] = useState(false);
   const [phase, setPhase] = useState<"pick" | "compose">("pick");
+
+  const active = variations.find((v) => v.id === activeId) ?? variations[0];
+
+  // Helper to update the currently active variation.
+  const updateActive = useCallback(
+    (updater: (v: Variation) => Variation) => {
+      setVariations((prev) => prev.map((v) => (v.id === activeId ? updater(v) : v)));
+    },
+    [activeId],
+  );
 
   // Filter presets for this slot
   const slotPresets = presets.filter(
@@ -41,7 +57,7 @@ export function MealComposer({
   const runSolver = useCallback(
     (selectedIngs: Ingredient[]) => {
       if (selectedIngs.length === 0) {
-        setPortions([]);
+        updateActive((v) => ({ ...v, portions: [] }));
         return;
       }
       const target = {
@@ -56,30 +72,27 @@ export function MealComposer({
         ingredient: selectedIngs.find((i) => i.id === s.ingredient_id)!,
         grams: s.grams,
       })).filter((e) => e.ingredient);
-      setPortions(entries);
+      updateActive((v) => ({ ...v, portions: entries }));
       setPhase("compose");
     },
-    [budget],
+    [budget, updateActive],
   );
 
   // Toggle ingredient (just toggle selection, don't run solver yet)
   const handleToggle = useCallback(
     (ing: Ingredient) => {
-      setSelected((prev) => {
-        const next = new Set(prev);
+      updateActive((v) => {
+        const next = new Set(v.selected);
         if (next.has(ing.id)) {
           next.delete(ing.id);
         } else {
           next.add(ing.id);
         }
-        return next;
+        return { ...v, selected: next };
       });
     },
-    [],
+    [updateActive],
   );
-
-  // Track USDA foods added as temporary ingredients
-  const [tempIngredients, setTempIngredients] = useState<Ingredient[]>([]);
 
   // Parse a free-text meal description into ingredients + portions, then jump to compose
   const handleNLItems = useCallback((parsed: ParsedItem[]) => {
@@ -111,11 +124,14 @@ export function MealComposer({
       newEntries.push({ ingredient: ing, grams: p.grams });
       ids.add(id);
     }
-    setTempIngredients((prev) => [...prev, ...newIngs]);
-    setSelected((prev) => new Set([...prev, ...ids]));
-    setPortions((prev) => [...prev, ...newEntries]);
+    updateActive((v) => ({
+      ...v,
+      tempIngredients: [...v.tempIngredients, ...newIngs],
+      selected: new Set([...v.selected, ...ids]),
+      portions: [...v.portions, ...newEntries],
+    }));
     setPhase("compose");
-  }, []);
+  }, [updateActive]);
 
   // Add USDA food as a one-time ingredient (just add to selection, solver runs on "Compose")
   const handleAddUsda = useCallback(
@@ -134,10 +150,13 @@ export function MealComposer({
         fiber_per_100g: food.fiber ?? 0,
         category,
       };
-      setTempIngredients((prev) => [...prev.filter((t) => t.id !== ing.id), ing]);
-      setSelected((prev) => new Set([...prev, ing.id]));
+      updateActive((v) => ({
+        ...v,
+        tempIngredients: [...v.tempIngredients.filter((t) => t.id !== ing.id), ing],
+        selected: new Set([...v.selected, ing.id]),
+      }));
     },
-    [],
+    [updateActive],
   );
 
   // Load preset
@@ -155,23 +174,32 @@ export function MealComposer({
           ids.add(ing.id);
         }
       }
-      setSelected(ids);
-      setPortions(entries);
+      updateActive((v) => ({
+        ...v,
+        selected: ids,
+        portions: entries,
+      }));
       setPhase("compose");
     },
-    [ingredients],
+    [ingredients, updateActive],
   );
 
   // Portion change
   const handlePortionChange = useCallback((id: string, grams: number) => {
-    setPortions((prev) => prev.map((p) => (p.ingredient.id === id ? { ...p, grams } : p)));
-  }, []);
+    updateActive((v) => ({
+      ...v,
+      portions: v.portions.map((p) => (p.ingredient.id === id ? { ...p, grams } : p)),
+    }));
+  }, [updateActive]);
 
   // Remove ingredient
   const handleRemove = useCallback((id: string) => {
-    setSelected((prev) => { const n = new Set(prev); n.delete(id); return n; });
-    setPortions((prev) => prev.filter((p) => p.ingredient.id !== id));
-  }, []);
+    updateActive((v) => ({
+      ...v,
+      selected: new Set([...v.selected].filter((s) => s !== id)),
+      portions: v.portions.filter((p) => p.ingredient.id !== id),
+    }));
+  }, [updateActive]);
 
   // Live preview: send totals to parent whenever portions change
   // Use a ref for the callback to avoid dependency cycle
@@ -180,31 +208,37 @@ export function MealComposer({
 
   useEffect(() => {
     if (!previewRef.current) return;
-    const totals = { calories: 0, protein: 0, carbs: 0, fat: 0 };
-    for (const p of portions) {
-      const m = computeItemMacros(p.ingredient, p.grams);
-      totals.calories += m.calories;
-      totals.protein += m.protein;
-      totals.carbs += m.carbs;
-      totals.fat += m.fat;
-    }
-    previewRef.current(totals);
-  }, [portions]);
+    previewRef.current(computeVariationMacros(active));
+  }, [variations, activeId, active]);
 
   // Bulk scale all portions by factor (Linked mode)
   const handleBulkScale = useCallback((factor: number) => {
-    setPortions((prev) => prev.map((p) => ({
-      ...p,
-      grams: Math.max(5, Math.round(p.grams * factor)),
-    })));
+    updateActive((v) => ({
+      ...v,
+      portions: v.portions.map((p) => ({
+        ...p,
+        grams: Math.max(5, Math.round(p.grams * factor)),
+      })),
+    }));
+  }, [updateActive]);
+
+  // Add a new variation and switch to it
+  const handleAddVariation = useCallback(() => {
+    const v = createVariation();
+    setVariations((prev) => [...prev, v]);
+    setActiveId(v.id);
+    setPhase("pick");
   }, []);
 
-  // Log meal
-  const handleLog = async (opts?: { notes?: string; weigh_method?: string; planned?: boolean }) => {
-    if (portions.length === 0) return;
+  // Core log routine — works against any variation id
+  const logVariation = async (
+    v: Variation,
+    opts?: { notes?: string; weigh_method?: string; planned?: boolean },
+  ) => {
+    if (v.portions.length === 0) return;
     setLogging(true);
 
-    const items = portions.map((p) => {
+    const items = v.portions.map((p) => {
       const m = computeItemMacros(p.ingredient, p.grams);
       return {
         ingredient_id: p.ingredient.id,
@@ -251,14 +285,26 @@ export function MealComposer({
     }
   };
 
-  // Save as preset with user-chosen name
+  // Log the active variation (from CompositionView's Log button)
+  const handleLog = (opts?: { notes?: string; weigh_method?: string; planned?: boolean }) => {
+    return logVariation(active, opts);
+  };
+
+  // Log a variation by id (from VariationStrip's per-row Log button)
+  const handleLogVariation = (id: string) => {
+    const v = variations.find((x) => x.id === id);
+    if (!v) return;
+    return logVariation(v);
+  };
+
+  // Save as preset with user-chosen name (active variation's composition)
   const handleSavePreset = async (name: string) => {
-    const items = portions.map((p) => ({
+    const items = active.portions.map((p) => ({
       ingredient_id: p.ingredient.id,
       grams: Math.round(p.grams),
     }));
     const totals = { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
-    for (const p of portions) {
+    for (const p of active.portions) {
       const m = computeItemMacros(p.ingredient, p.grams);
       totals.calories += m.calories;
       totals.protein += m.protein;
@@ -274,14 +320,26 @@ export function MealComposer({
     });
   };
 
+  const stripMacros = new Map(variations.map((v) => [v.id, computeVariationMacros(v)]));
+
   return (
     <div className="space-y-3 pt-2">
+      <VariationStrip
+        variations={variations}
+        activeId={activeId}
+        macros={stripMacros}
+        budget={budget}
+        onSwitch={(id) => { setActiveId(id); setPhase("pick"); }}
+        onLog={handleLogVariation}
+        onAdd={handleAddVariation}
+      />
+
       {phase === "pick" ? (
         <>
           <NLInput onItems={handleNLItems} />
           <IngredientPicker
             ingredients={ingredients}
-            selected={selected}
+            selected={active.selected}
             onToggle={handleToggle}
             onAddUsda={handleAddUsda}
             presets={slotPresets}
@@ -299,7 +357,7 @@ export function MealComposer({
             + Add more ingredients
           </button>
           <CompositionView
-            portions={portions}
+            portions={active.portions}
             budget={budget}
             isFuture={isFuture}
             onPortionChange={handlePortionChange}
@@ -315,18 +373,18 @@ export function MealComposer({
       )}
 
       {/* Show "Compose meal" button when in pick phase with selections */}
-      {phase === "pick" && selected.size > 0 && (
+      {phase === "pick" && active.selected.size > 0 && (
         <button
           onClick={() => {
             const allIngs = [
-              ...ingredients.filter((i) => selected.has(i.id)),
-              ...tempIngredients.filter((i) => selected.has(i.id)),
+              ...ingredients.filter((i) => active.selected.has(i.id)),
+              ...active.tempIngredients.filter((i) => active.selected.has(i.id)),
             ];
             runSolver(allIngs);
           }}
           className="w-full bg-teal-dim hover:bg-teal text-white py-2 rounded-lg text-sm font-medium transition-colors"
         >
-          Compose meal ({selected.size} ingredients)
+          Compose meal ({active.selected.size} ingredients)
         </button>
       )}
     </div>
