@@ -13,6 +13,7 @@ import { WeightChart } from "@/components/weight-chart";
 import { QuickEstimate } from "@/components/quick-estimate";
 import { WeeklySummary } from "@/components/weekly-summary";
 import { OnboardingTour } from "@/components/onboarding-tour";
+import { WeighInWidget } from "@/components/weigh-in-widget";
 import { useReminders } from "@/lib/use-reminders";
 import { DEFAULT_SLOTS, type MacroTargets } from "@/lib/macro-engine";
 import { MACRO_COLORS, progressColor } from "@/lib/macro-colors";
@@ -135,7 +136,7 @@ function DashboardInner() {
   const fetchPlan = useCallback(async (dateOverride?: string) => {
     const d = dateOverride ?? currentDate;
     try {
-      const resp = await fetch(`/api/nutrition/plan?date=${d}`);
+      const resp = await fetch(`/api/nutrition/plan?date=${d}`, { cache: "no-store" });
       const data = await resp.json();
       if (data.error) {
         if (data.needsOnboarding) {
@@ -336,7 +337,7 @@ function DashboardInner() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <span className="t-eyebrow">Today</span>
-                  <span className="t-caption text-text-muted tnum">{plan.weightKg.toFixed(1)} kg</span>
+                  <WeighInWidget currentWeight={plan.weightKg} onSaved={() => fetchPlan()} />
                 </div>
                 <InfoTip text="Your daily macro targets adapt based on weight, training day type, and activity selection. Carbs adjust by training intensity." />
               </div>
