@@ -9,7 +9,14 @@ import { DateNavigator } from "@/components/date-navigator";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
+import { WeightChart } from "@/components/weight-chart";
+import { QuickEstimate } from "@/components/quick-estimate";
+import { WeeklySummary } from "@/components/weekly-summary";
+import { OnboardingTour } from "@/components/onboarding-tour";
+import { useReminders } from "@/lib/use-reminders";
 import { DEFAULT_SLOTS, type MacroTargets } from "@/lib/macro-engine";
+import { MACRO_COLORS, progressColor } from "@/lib/macro-colors";
+import { InfoTip } from "@/components/info-tip";
 import type { Ingredient } from "@/lib/portion-solver";
 import type { PresetMeal } from "@/components/ingredient-picker";
 
@@ -48,15 +55,17 @@ interface PlanData {
   trend: Array<{
     date: string; target_calories: number; actual_calories: number | null;
     tdee_used: number | null; deficit_used: number | null; status: string;
+    training_day_type?: string;
   }>;
   pctComplete: number;
+  autoDetected?: { run: boolean; gym: string[] };
   error?: string;
   needsOnboarding?: boolean;
 }
 
 export default function Dashboard() {
   return (
-    <Suspense fallback={<div className="p-6 text-slate-500">Loading...</div>}>
+    <Suspense fallback={<div className="p-6 text-text-muted">Loading...</div>}>
       <DashboardInner />
     </Suspense>
   );
@@ -75,8 +84,31 @@ function DashboardInner() {
     searchParams.get("date") || new Date().toISOString().split("T")[0]
   );
   const [previewTotals, setPreviewTotals] = useState<Record<string, MacroTargets>>({});
+  const [tdeeExpanded, setTdeeExpanded] = useState(false);
+  const [recentIds, setRecentIds] = useState<string[]>([]);
+  const [recentMeals, setRecentMeals] = useState<Record<string, Array<Record<string, unknown>>>>({});
 
-  // Fetch ingredients + presets once
+  // Fire scheduled reminders when browser tab is open
+  useReminders();
+  const [ringSize, setRingSize] = useState(110);
+  const [isCompact, setIsCompact] = useState(false);
+
+  // Responsive ring size
+  useEffect(() => {
+    const update = () => setRingSize(window.innerWidth < 640 ? 62 : 100);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  // Shrink hero when scrolled past threshold
+  useEffect(() => {
+    const onScroll = () => setIsCompact(window.scrollY > 160);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Fetch ingredients, presets, and recent data once
   useEffect(() => {
     fetch("/api/nutrition/presets")
       .then((r) => r.json())
@@ -85,6 +117,19 @@ function DashboardInner() {
         setPresets(data.presets ?? []);
       })
       .catch(() => {});
+    fetch("/api/food/recent")
+      .then((r) => r.json())
+      .then((data) => setRecentIds(data.recentIds ?? []))
+      .catch(() => {});
+    // Fetch recent meals for each slot
+    for (const slot of DEFAULT_SLOTS) {
+      fetch(`/api/nutrition/recent-meals?slot=${slot}`)
+        .then((r) => r.json())
+        .then((data) => {
+          setRecentMeals((prev) => ({ ...prev, [slot]: data.meals ?? [] }));
+        })
+        .catch(() => {});
+    }
   }, []);
 
   const fetchPlan = useCallback(async (dateOverride?: string) => {
@@ -121,11 +166,11 @@ function DashboardInner() {
     return (
       <main className="p-6 max-w-6xl mx-auto">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-slate-800 rounded w-48" />
-          <div className="h-32 bg-slate-800 rounded-xl" />
+          <div className="h-8 bg-surface-elevated rounded w-48" />
+          <div className="h-32 bg-surface-elevated rounded-xl" />
           <div className="grid grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-48 bg-slate-800 rounded-xl" />
+              <div key={i} className="h-48 bg-surface-elevated rounded-xl" />
             ))}
           </div>
         </div>
@@ -137,10 +182,10 @@ function DashboardInner() {
     return (
       <main className="p-6 max-w-lg mx-auto text-center mt-20">
         <h1 className="text-2xl font-bold mb-4">Welcome to MacroEngine</h1>
-        <p className="text-slate-400 mb-6">Let's set up your profile to calculate your targets.</p>
+        <p className="text-text-secondary mb-6">Let's set up your profile to calculate your targets.</p>
         <a
           href="/onboard"
-          className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-500"
+          className="inline-block bg-teal-dim text-white px-6 py-3 rounded-lg font-medium hover:bg-teal"
         >
           Get Started
         </a>
@@ -151,12 +196,12 @@ function DashboardInner() {
   if (error || !plan) {
     return (
       <main className="p-6 max-w-6xl mx-auto">
-        <div className="bg-red-950/30 border border-red-800/40 rounded-xl p-6">
-          <h2 className="text-red-400 font-semibold">Error loading plan</h2>
-          <p className="text-sm text-red-300/70 mt-1">{error}</p>
+        <div className="bg-danger/10 border border-danger/30 rounded-2xl p-6">
+          <h2 className="text-danger font-semibold">Error loading plan</h2>
+          <p className="text-sm text-danger/70 mt-1">{error}</p>
           <button
             onClick={() => fetchPlan()}
-            className="mt-3 text-sm text-red-400 hover:text-red-300 underline"
+            className="mt-3 text-sm text-danger hover:text-danger underline"
           >
             Retry
           </button>
@@ -165,20 +210,24 @@ function DashboardInner() {
     );
   }
 
-  // Find next unfilled slot for suggestion banner
   const nextSlot = DEFAULT_SLOTS.find(
     (s) => !plan.mealsBySlot[s]?.length && !plan.skippedSlots.includes(s),
   );
 
   const isClosed = plan.dayStatus === "closed";
   const hasMeals = Object.values(plan.mealsBySlot).some((m) => (m as unknown[]).length > 0);
+  const exerciseCals = plan.tdee.runCalories + plan.tdee.gymCalories;
+  const today = new Date().toISOString().split("T")[0];
+  const isPastDay = plan.date < today;
+  const showQuickEstimate = isPastDay && !hasMeals;
 
   return (
-    <main className="p-4 md:p-6 max-w-6xl mx-auto space-y-5">
-      {/* Date Navigator */}
+    <main className="p-4 md:p-8 max-w-6xl mx-auto space-y-6 md:space-y-8">
+      {/* Date Navigator + Training Day Type */}
       <DateNavigator
         date={plan.date}
         status={plan.dayStatus}
+        trainingDayType={plan.trainingDayType}
         onDateChange={(d) => { setCurrentDate(d); setLoading(true); router.push(`/dashboard?date=${d}`, { scroll: false }); }}
         onCloseDay={async () => {
           await fetch("/api/nutrition/close-day", {
@@ -209,66 +258,194 @@ function DashboardInner() {
         hasMeals={hasMeals}
       />
 
-      {/* Weight badge */}
-      <div className="flex justify-end -mt-3">
-        <span className="text-xs text-slate-400">{plan.weightKg.toFixed(1)} kg</span>
-      </div>
+      {(() => {
+        const preview = Object.values(previewTotals).reduce((acc, t) => ({
+          calories: acc.calories + (t.calories ?? 0),
+          protein: acc.protein + (t.protein ?? 0),
+          carbs: acc.carbs + (t.carbs ?? 0),
+          fat: acc.fat + (t.fat ?? 0),
+          fiber: acc.fiber + (t.fiber ?? 0),
+        }), { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 });
+        const hasPreview = preview.calories > 0;
+        const projected = {
+          calories: plan.eaten.calories + preview.calories,
+          protein: plan.eaten.protein + preview.protein,
+          carbs: plan.eaten.carbs + preview.carbs,
+          fat: plan.eaten.fat + preview.fat,
+          fiber: (plan.eaten.fiber ?? 0) + preview.fiber,
+        };
+        const projectedPct = plan.targets.calories > 0
+          ? Math.round((projected.calories / plan.targets.calories) * 100)
+          : 0;
+        const projectedRem = plan.targets.calories - projected.calories;
 
-      {/* Macro Rings */}
-      <div className="bg-slate-900 rounded-xl border border-slate-800 p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-slate-300">Today's Macros</h2>
-          <span className="text-xs text-emerald-400 font-medium">
-            {plan.pctComplete}% of daily goal
+        const macroBars = [
+          { label: "P", val: projected.protein, target: plan.targets.protein, color: "bg-warm" },
+          { label: "C", val: projected.carbs, target: plan.targets.carbs, color: "bg-indigo" },
+          { label: "F", val: projected.fat, target: plan.targets.fat, color: "bg-lime" },
+          { label: "Fi", val: projected.fiber, target: plan.targets.fiber ?? 0, color: "bg-teal-light" },
+        ];
+
+        return (
+          <>
+            {/* Floating compact bar — fixed, slides in from top when scrolled */}
+            <div
+              className={`fixed left-0 right-0 top-[56px] z-30 transition-transform duration-200 ${
+                isCompact ? "translate-y-0" : "-translate-y-full pointer-events-none"
+              }`}
+            >
+              <div className="max-w-6xl mx-auto px-4 md:px-8">
+                <div className="bg-surface-elevated border border-border-glow shadow-xl rounded-b-2xl px-4 py-3">
+                  <div className="flex items-center gap-3 md:gap-4 mb-2">
+                    <div className="flex items-baseline gap-1.5 shrink-0">
+                      <span className="t-title tnum text-text">{Math.round(projected.calories).toLocaleString()}</span>
+                      <span className="t-caption text-text-muted tnum">/ {plan.targets.calories.toLocaleString()}</span>
+                      {hasPreview && <span className="t-caption text-warm tnum">+{Math.round(preview.calories)}</span>}
+                    </div>
+                    <div className="flex-1 h-1.5 bg-surface rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-300 ${
+                          projectedPct > 110 ? "bg-warning" : projectedPct > 90 ? "bg-success" : "bg-teal"
+                        }`}
+                        style={{ width: `${Math.min(projectedPct, 100)}%` }}
+                      />
+                    </div>
+                    <span className="t-caption text-text-muted tnum shrink-0">{projectedPct}%</span>
+                  </div>
+                  {/* Macro bars row */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {macroBars.map((m) => {
+                      const pct = m.target > 0 ? Math.min(100, (m.val / m.target) * 100) : 0;
+                      return (
+                        <div key={m.label} className="flex items-center gap-1.5">
+                          <span className="t-micro tnum text-text-muted w-4 shrink-0">{m.label}</span>
+                          <div className="flex-1 h-1 bg-surface rounded-full overflow-hidden">
+                            <div className={`h-full ${m.color} rounded-full transition-all duration-300`} style={{ width: `${pct}%` }} />
+                          </div>
+                          <span className="t-micro tnum text-text-muted shrink-0 w-7 text-right">{Math.round(m.val)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Full hero card — stays in normal flow, no sticky, no jank */}
+            <div data-tour="hero" className="bg-surface-elevated rounded-3xl border border-border-glow p-5 md:p-7">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <span className="t-eyebrow">Today</span>
+                  <span className="t-caption text-text-muted tnum">{plan.weightKg.toFixed(1)} kg</span>
+                </div>
+                <InfoTip text="Your daily macro targets adapt based on weight, training day type, and activity selection. Carbs adjust by training intensity." />
+              </div>
+
+              {/* Hero metric */}
+              <div className="flex items-baseline gap-2 md:gap-3 mb-1">
+                <span className="t-display tnum text-text">{plan.eaten.calories.toLocaleString()}</span>
+                {hasPreview && (
+                  <span className="t-headline text-warm tnum">+{Math.round(preview.calories).toLocaleString()}</span>
+                )}
+                <span className="t-title text-text-muted tnum">/ {plan.targets.calories.toLocaleString()}</span>
+                <span className="t-caption text-text-faint uppercase tracking-wider">kcal</span>
+              </div>
+
+              {/* Status line */}
+              <div className="flex items-center gap-3 mb-6 flex-wrap">
+                <span className="t-body text-text-secondary">
+                  {(hasPreview ? projectedRem : plan.remaining.calories) > 0
+                    ? <><span className="text-text tnum">{Math.round(hasPreview ? projectedRem : plan.remaining.calories).toLocaleString()}</span> remaining</>
+                    : <span className="text-warning tnum">+{Math.abs(Math.round(hasPreview ? projectedRem : plan.remaining.calories)).toLocaleString()} over target</span>}
+                </span>
+                <span className="text-text-faint">·</span>
+                <span className={`t-body tnum ${progressColor(hasPreview ? projectedPct : plan.pctComplete)}`}>
+                  {hasPreview ? projectedPct : plan.pctComplete}% {hasPreview ? "projected" : "complete"}
+                </span>
+                {hasPreview && (
+                  <span className="t-caption text-warm">(composing)</span>
+                )}
+              </div>
+
+              {/* Supporting macro rings */}
+              <div className="grid grid-cols-5 gap-1 md:gap-4 justify-items-center">
+                <MacroRing label="Calories" current={projected.calories} target={plan.targets.calories} unit="" color={MACRO_COLORS.calories.hex} size={ringSize} />
+                <MacroRing label="Protein" current={projected.protein} target={plan.targets.protein} unit="g" color={MACRO_COLORS.protein.hex} size={ringSize} />
+                <MacroRing label="Carbs" current={projected.carbs} target={plan.targets.carbs} unit="g" color={MACRO_COLORS.carbs.hex} size={ringSize} />
+                <MacroRing label="Fat" current={projected.fat} target={plan.targets.fat} unit="g" color={MACRO_COLORS.fat.hex} size={ringSize} />
+                <MacroRing label="Fiber" current={projected.fiber} target={plan.targets.fiber ?? 0} unit="g" color={MACRO_COLORS.fiber.hex} size={ringSize} />
+              </div>
+            </div>
+          </>
+        );
+      })()}
+
+      {/* TDEE breakdown - separate collapsible card */}
+      <div className="bg-surface rounded-2xl border border-border p-4">
+        <button
+          onClick={() => setTdeeExpanded(!tdeeExpanded)}
+          className="w-full flex items-center justify-between t-caption text-text-muted hover:text-text-secondary transition-colors"
+        >
+          <span className="tnum">
+            BMR {Math.round(plan.tdee.bmr)}
+            {plan.tdee.stepCalories > 0 && <> + Steps {Math.round(plan.tdee.stepCalories)}</>}
+            {exerciseCals > 0 && <> + Exercise {Math.round(exerciseCals)}</>}
+            {" "}− Deficit {Math.round(plan.tdee.deficit)}
           </span>
-        </div>
+          <span className="text-text-faint ml-2">{tdeeExpanded ? "−" : "+"}</span>
+        </button>
 
-        <div className="flex justify-center gap-6 md:gap-12 flex-wrap">
-          <MacroRing
-            label="Calories"
-            current={plan.eaten.calories}
-            target={plan.targets.calories}
-            unit=" kcal"
-            color="#3B82F6"
-            size={110}
-          />
-          <MacroRing
-            label="Protein"
-            current={plan.eaten.protein}
-            target={plan.targets.protein}
-            unit="g"
-            color="#EF4444"
-            size={110}
-          />
-          <MacroRing
-            label="Carbs"
-            current={plan.eaten.carbs}
-            target={plan.targets.carbs}
-            unit="g"
-            color="#F59E0B"
-            size={110}
-          />
-          <MacroRing
-            label="Fat"
-            current={plan.eaten.fat}
-            target={plan.targets.fat}
-            unit="g"
-            color="#10B981"
-            size={110}
-          />
-        </div>
-
-        <p className="text-center text-xs text-slate-500 mt-4">
-          Remaining: {plan.remaining.calories} kcal | {plan.remaining.protein}g P | {plan.remaining.carbs}g C | {plan.remaining.fat}g F
-        </p>
+        {tdeeExpanded && (
+          <div className="mt-3 space-y-2">
+            {[
+              { label: "BMR", value: plan.tdee.bmr, op: "", tip: "Basal Metabolic Rate — calories your body burns at rest." },
+              ...(plan.tdee.stepCalories > 0
+                ? [{ label: "Steps", value: plan.tdee.stepCalories, op: "+", tip: "NEAT. Calories burned from daily walking and movement." }]
+                : []),
+              ...(plan.tdee.runCalories > 0
+                ? [{ label: "Run", value: plan.tdee.runCalories, op: "+", tip: "Running calories from your training plan or Garmin data." }]
+                : []),
+              ...(plan.tdee.gymCalories > 0
+                ? [{ label: "Gym", value: plan.tdee.gymCalories, op: "+", tip: "Average calories for your selected gym workouts." }]
+                : []),
+              { label: "Deficit", value: plan.tdee.deficit, op: "−", tip: "How much below maintenance you eat. Adapts to your weight trend." },
+            ].map(({ label, value, op, tip }) => (
+              <div key={label} className="flex items-center t-body">
+                <span className="w-5 text-text-faint text-center">{op}</span>
+                <span className="text-text-secondary flex-1 flex items-center">
+                  {label}
+                  <InfoTip text={tip} />
+                </span>
+                <span className="text-text font-semibold tnum">
+                  {Math.round(value).toLocaleString()}
+                </span>
+                <span className="text-text-faint ml-1 t-caption">kcal</span>
+              </div>
+            ))}
+            <div className="flex items-center pt-2 border-t border-border t-body">
+              <span className="w-5 text-text-faint text-center">=</span>
+              <span className="text-text flex-1 font-semibold">Daily target</span>
+              <span className="text-text font-bold tnum">
+                {plan.tdee.targetCalories.toLocaleString()}
+              </span>
+              <span className="text-text-faint ml-1 t-caption">kcal</span>
+            </div>
+            {plan.drinkCalories > 0 && (
+              <div className="flex items-center pt-2 border-t border-border t-body">
+                <span className="w-5" />
+                <span className="text-warning flex-1">Alcohol offset</span>
+                <span className="text-warning font-semibold tnum">
+                  −{plan.drinkCalories}
+                </span>
+                <span className="text-text-faint ml-1 t-caption">kcal</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
-
-      {/* Suggestion Banner */}
-      {!isClosed && (
-        <SuggestionBanner remaining={plan.remaining} nextSlot={nextSlot ?? null} />
-      )}
 
       {/* Activity Selector */}
+      <div data-tour="activity">
       <ActivitySelector
         date={plan.date}
         trainingDayType={plan.trainingDayType}
@@ -277,10 +454,17 @@ function DashboardInner() {
         expectedSteps={plan.expectedSteps ?? undefined}
         disabled={isClosed}
         onChanged={fetchPlan}
+        autoDetected={plan.autoDetected}
       />
+      </div>
+
+      {/* Suggestion Banner (only when not closed) */}
+      {!isClosed && (
+        <SuggestionBanner remaining={plan.remaining} nextSlot={nextSlot ?? null} />
+      )}
 
       {/* Meal Slots */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div data-tour="meal-cards" className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {DEFAULT_SLOTS.map((slot) => {
           const budget = plan.slotBudgets.find((b) => b.slot === slot) ?? {
             slot,
@@ -288,6 +472,7 @@ function DashboardInner() {
             protein: 0,
             carbs: 0,
             fat: 0,
+            fiber: 0,
           };
           const meals = (plan.mealsBySlot[slot] ?? []) as Array<{
             id: number;
@@ -303,6 +488,9 @@ function DashboardInner() {
               grams?: number;
               calories?: number;
               protein?: number;
+              carbs?: number;
+              fat?: number;
+              fiber?: number;
             }>;
           }>;
 
@@ -316,7 +504,12 @@ function DashboardInner() {
               date={plan.date}
               ingredients={ingredients}
               presets={presets}
-              onMealLogged={() => fetchPlan()}
+              recentIds={recentIds}
+              recentMeals={recentMeals[slot] ?? []}
+              onMealLogged={() => {
+                setPreviewTotals((prev) => { const n = { ...prev }; delete n[slot]; return n; });
+                fetchPlan();
+              }}
               onRebalanced={(changes) => {
                 const msg = changes.map((c) => `${c.ingredient} ${c.from}g -> ${c.to}g`).join(", ");
                 setToast(`Rebalanced: ${msg}`);
@@ -334,7 +527,7 @@ function DashboardInner() {
                 fetchPlan();
               }}
               onTotalsPreview={(totals) => {
-                setPreviewTotals((prev) => ({ ...prev, [slot]: totals }));
+                setPreviewTotals((prev) => ({ ...prev, [slot]: { ...totals, fiber: totals.fiber ?? 0 } }));
               }}
               onDeleteItem={async (id) => {
                 await fetch(`/api/nutrition/log-meal?id=${id}`, { method: "DELETE" });
@@ -345,6 +538,16 @@ function DashboardInner() {
         })}
       </div>
 
+      {/* Quick Estimate for past empty days */}
+      {showQuickEstimate && (
+        <QuickEstimate
+          date={plan.date}
+          currentEstimate={plan.eaten.calories > 0 ? plan.eaten.calories : undefined}
+          targetCalories={plan.tdee.targetCalories}
+          onSaved={fetchPlan}
+        />
+      )}
+
       {/* Drink Logger */}
       <DrinkLogger
         date={plan.date}
@@ -354,61 +557,26 @@ function DashboardInner() {
         onChanged={fetchPlan}
       />
 
-      {/* TDEE Breakdown -- equation style */}
-      <div className="bg-slate-900 rounded-xl border border-slate-800 p-5">
-        <h2 className="text-sm font-semibold text-slate-300 mb-4">Energy Balance</h2>
-
-        {/* Equation rows */}
-        <div className="space-y-2.5">
-          {[
-            { label: "BMR", value: plan.tdee.bmr, color: "#94A3B8", op: "" },
-            ...(plan.tdee.stepCalories > 0
-              ? [{ label: "Steps", value: plan.tdee.stepCalories, color: "#10B981", op: "+" }]
-              : []),
-            ...(plan.tdee.runCalories + plan.tdee.gymCalories > 0
-              ? [{ label: "Exercise", value: plan.tdee.runCalories + plan.tdee.gymCalories, color: "#F59E0B", op: "+" }]
-              : []),
-            { label: "Deficit", value: plan.tdee.deficit, color: "#EF4444", op: "−" },
-          ].map(({ label, value, color, op }) => (
-            <div key={label} className="flex items-center">
-              <span className="w-6 text-sm text-slate-500 text-center font-mono">{op}</span>
-              <span className="text-sm text-slate-300 flex-1">{label}</span>
-              <span className="text-sm font-semibold tabular-nums" style={{ color }}>
-                {Math.round(value).toLocaleString()}
-              </span>
-              <span className="text-xs text-slate-500 ml-1 w-8">kcal</span>
-            </div>
-          ))}
-
-          {/* Divider + total */}
-          <div className="border-t border-slate-700 pt-2 flex items-center">
-            <span className="w-6 text-sm text-slate-500 text-center font-mono">=</span>
-            <span className="text-sm font-semibold text-slate-200 flex-1">Daily Target</span>
-            <span className="text-lg font-bold text-blue-400 tabular-nums">
-              {plan.tdee.targetCalories.toLocaleString()}
-            </span>
-            <span className="text-xs text-slate-500 ml-1 w-8">kcal</span>
-          </div>
-        </div>
+      {/* Weight Trend Chart */}
+      <div data-tour="weight-chart">
+        <WeightChart />
       </div>
+
+      {/* Weekly summary */}
+      <WeeklySummary />
 
       {/* 7-Day Trend */}
       <TrendTable days={plan.trend ?? []} currentDate={plan.date} />
 
-      {/* Status bar */}
-      <div className="flex justify-between text-[11px] text-slate-500 px-1">
-        <span>TDEE: {Math.round(plan.tdee.total)} kcal</span>
-        {plan.drinkCalories > 0 && (
-          <span className="text-amber-600">Alcohol offset: -{plan.drinkCalories} kcal</span>
-        )}
-        <span>{plan.date}</span>
-      </div>
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 bg-emerald-900/90 border border-emerald-700 text-emerald-200 px-4 py-2.5 rounded-xl text-sm shadow-lg z-50">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 glass-elevated text-success px-4 py-2.5 rounded-xl text-sm shadow-lg z-50 border-glow">
           {toast}
         </div>
       )}
+
+      {/* First-visit onboarding tour */}
+      <OnboardingTour />
     </main>
   );
 }
