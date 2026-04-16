@@ -21,6 +21,7 @@ export function NLInput({ onItems }: Props) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [aiDisabled, setAiDisabled] = useState(false);
 
   const parse = async () => {
     const trimmed = text.trim();
@@ -29,6 +30,7 @@ export function NLInput({ onItems }: Props) {
       return;
     }
     setError(null);
+    setAiDisabled(false);
     setLoading(true);
     try {
       const resp = await fetch("/api/nutrition/parse-nl", {
@@ -36,6 +38,11 @@ export function NLInput({ onItems }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: trimmed }),
       });
+      if (resp.status === 503) {
+        setAiDisabled(true);
+        setLoading(false);
+        return;
+      }
       const body = await resp.json();
       if (!resp.ok) {
         setError(body.error ?? "Parse failed");
@@ -83,6 +90,11 @@ export function NLInput({ onItems }: Props) {
       />
       {error && (
         <p className="t-caption text-danger">{error}</p>
+      )}
+      {aiDisabled && (
+        <p className="t-caption text-text-muted">
+          AI parsing disabled — set AI_GATEWAY_API_KEY to enable.
+        </p>
       )}
       <div className="flex items-center justify-between gap-2">
         <span className="t-micro text-text-muted">⌘/Ctrl+Enter to parse</span>
