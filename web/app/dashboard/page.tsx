@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { DashboardClient } from "./dashboard-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const sql = getDb();
   const rows = await sql`SELECT id FROM nutrition_profile WHERE id = 1 LIMIT 1`;
