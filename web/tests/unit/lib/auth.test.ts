@@ -31,6 +31,19 @@ describe("signSession + verifySession", () => {
     expect(await verifySession(parts.join("."))).toBe(false);
   });
 
+  it("rejects when signature bytes are tampered", async () => {
+    const cookie = await signSession();
+    const parts = cookie.split(".");
+    const sig = parts[2];
+    // Flip one character in the signature. Pick a different char in the same
+    // allowed alphabet so the regex still matches and we exercise the
+    // constant-time compare branch rather than the format-check early exit.
+    const first = sig[0];
+    const replacement = first === "A" ? "B" : "A";
+    parts[2] = replacement + sig.slice(1);
+    expect(await verifySession(parts.join("."))).toBe(false);
+  });
+
   it("rejects expired cookie (older than 30 days)", async () => {
     const ts = Math.floor(Date.now() / 1000) - 31 * 86400;
     const cookie = await signSession(ts);
@@ -40,5 +53,10 @@ describe("signSession + verifySession", () => {
   it("rejects when SECRET is unset", async () => {
     vi.stubEnv("MACROENGINE_SECRET", "");
     await expect(signSession()).rejects.toThrow(/MACROENGINE_SECRET/);
+  });
+
+  it("rejects when SECRET is too short", async () => {
+    vi.stubEnv("MACROENGINE_SECRET", "shortkey10");
+    await expect(signSession()).rejects.toThrow(/at least 32/);
   });
 });

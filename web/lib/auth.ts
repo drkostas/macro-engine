@@ -1,4 +1,5 @@
 const SESSION_TTL_SECONDS = 30 * 24 * 60 * 60;
+const CLOCK_SKEW_SECONDS = 300;
 
 function b64url(buf: ArrayBuffer | Uint8Array): string {
   const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
@@ -7,16 +8,22 @@ function b64url(buf: ArrayBuffer | Uint8Array): string {
   return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
+let cachedKey: { secret: string; key: CryptoKey } | null = null;
+
 async function getKey(): Promise<CryptoKey> {
   const secret = process.env.MACROENGINE_SECRET;
   if (!secret) throw new Error("MACROENGINE_SECRET not set");
-  return crypto.subtle.importKey(
+  if (secret.length < 32) throw new Error("MACROENGINE_SECRET must be at least 32 chars");
+  if (cachedKey && cachedKey.secret === secret) return cachedKey.key;
+  const key = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign", "verify"],
   );
+  cachedKey = { secret, key };
+  return key;
 }
 
 async function hmac(data: string): Promise<string> {
@@ -40,6 +47,7 @@ export async function verifySession(cookie: string | null): Promise<boolean> {
   const sig = m[2];
   const now = Math.floor(Date.now() / 1000);
   if (now - ts > SESSION_TTL_SECONDS) return false;
+  if (ts > now + CLOCK_SKEW_SECONDS) return false;
   try {
     const expected = await hmac(`v1.${ts}`);
     // Constant-time compare

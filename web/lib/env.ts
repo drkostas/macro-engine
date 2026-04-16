@@ -8,7 +8,7 @@ export function assertProdEnv(): void {
     missing.push("MACROENGINE_PASSWORD (required, min 12 chars)");
   }
   if (!process.env.MACROENGINE_SECRET || process.env.MACROENGINE_SECRET.length < 32) {
-    missing.push("MACROENGINE_SECRET (required, min 32 chars — use `openssl rand -base64 32`)");
+    missing.push("MACROENGINE_SECRET (required, min 32 chars; generate with: openssl rand -base64 32)");
   }
   if (missing.length > 0) {
     throw new Error(`Missing required env vars: ${missing.join(", ")}`);
