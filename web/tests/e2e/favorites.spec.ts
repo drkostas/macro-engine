@@ -35,7 +35,7 @@ test.describe("Favorites pinning", () => {
 
   test("starring an ingredient pins it under Favorites", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
     await resetFavorite(page, FAV_INGREDIENT_NAME);
 
     // Open the composer for any empty slot (Log <Slot> button). If none are
@@ -43,19 +43,19 @@ test.describe("Favorites pinning", () => {
     const openBtn = page.getByRole("button", { name: /^(Log [A-Z]|\+ Add more)/ }).first();
     await expect(openBtn).toBeVisible();
     await openBtn.click();
-    await page.waitForTimeout(500);
 
     const mineTab = page.getByRole("button", { name: "My Ingredients" });
+    await expect(mineTab).toBeVisible();
     await mineTab.click();
     await page.waitForTimeout(300);
 
     const starBtn = page.getByRole("button", { name: `Favorite ${FAV_INGREDIENT_NAME}` }).first();
     await expect(starBtn).toBeVisible();
     await starBtn.click();
-    await page.waitForTimeout(500);
 
+    // Wait for the Favorites band to appear after the star toggle
     const favBand = page.locator("text=★ Favorites").first();
-    await expect(favBand).toBeVisible();
+    await expect(favBand).toBeVisible({ timeout: 5000 });
 
     const favRow = page.locator("text=★ Favorites")
       .locator("xpath=following-sibling::div[1]")
