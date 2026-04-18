@@ -6,3 +6,9 @@ build/
 .pytest_cache/
 .env
 *.db
+.DS_Store
+test-results/
+tsconfig.tsbuildinfo
+.playwright-mcp/
+web/.next/
+node_modules/

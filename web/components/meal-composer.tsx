@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import type { Ingredient } from "@/lib/portion-solver";
 import { solvePortions, computeItemMacros } from "@/lib/portion-solver";
 import { autoCategorizeFood } from "@/lib/auto-categorize";
@@ -40,12 +40,15 @@ export function MealComposer({
 
   const active = variations.find((v) => v.id === activeId) ?? variations[0];
 
-  // Helper to update the currently active variation.
+  // Ref tracks latest activeId so updateActive never reads a stale closure.
+  const activeIdRef = useRef(activeId);
+  activeIdRef.current = activeId;
+
   const updateActive = useCallback(
     (updater: (v: Variation) => Variation) => {
-      setVariations((prev) => prev.map((v) => (v.id === activeId ? updater(v) : v)));
+      setVariations((prev) => prev.map((v) => (v.id === activeIdRef.current ? updater(v) : v)));
     },
-    [activeId],
+    [],
   );
 
   // Filter presets for this slot

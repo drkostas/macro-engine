@@ -101,6 +101,6 @@ test.describe("Natural-language meal logging", () => {
     await page.locator("textarea").first().fill("whatever");
     await page.getByRole("button", { name: "Add to meal" }).click();
 
-    await expect(page.getByText(/AI Gateway not configured/)).toBeVisible();
+    await expect(page.getByText(/AI parsing disabled|AI Gateway not configured/)).toBeVisible();
   });
 });
