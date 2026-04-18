@@ -13,7 +13,7 @@ test.describe("Weigh-in widget", () => {
 
   test("opens inline editor and saves a new weight", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
 
     // Capture the current weight from the button
     const editBtn = page.getByRole("button", { name: "Update weight" });
@@ -49,7 +49,7 @@ test.describe("Weigh-in widget", () => {
 
   test("Cancel aborts without saving", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
 
     const editBtn = page.getByRole("button", { name: "Update weight" });
     const beforeText = await editBtn.textContent();

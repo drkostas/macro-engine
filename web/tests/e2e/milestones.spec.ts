@@ -11,11 +11,10 @@ test.describe("Milestones", () => {
 
   test("settings page lists achieved milestones with counts", async ({ page }) => {
     await page.goto("/settings");
-    await page.waitForTimeout(600);
+    await page.waitForLoadState("networkidle");
 
     const milestonesTab = page.getByRole("button", { name: "Milestones" }).first();
     await milestonesTab.click();
-    await page.waitForTimeout(600);
 
     const resp = await page.evaluate(() =>
       fetch("/api/nutrition/milestones").then((r) => r.json()),

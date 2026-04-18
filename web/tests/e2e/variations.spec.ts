@@ -47,7 +47,7 @@ test.describe("Meal variations", () => {
 
   test("draft two variations, switch active, log V2 via per-row button", async ({ page }) => {
     await page.goto(`/dashboard?date=${TEST_DATE}`);
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
 
     // Dismiss any Next.js dev error overlay that may have auto-opened
     // (pre-existing hydration warnings in dev — not part of this feature).
@@ -94,13 +94,15 @@ test.describe("Meal variations", () => {
       .first();
     await expect(ingredientBtn).toBeVisible();
     await ingredientBtn.click();
-    await page.waitForTimeout(400);
+    await page.waitForTimeout(200); // UI state update
 
     // 5) Click "Compose meal" to move V2 into the compose phase.
     const composeBtn = page.getByRole("button", { name: /compose meal/i });
     await expect(composeBtn).toBeVisible();
     await composeBtn.click();
-    await page.waitForTimeout(500);
+
+    // Wait for compose phase to render
+    await expect(page.getByRole("button", { name: /^Log V2$/ })).toBeVisible({ timeout: 5000 });
 
     // Dismiss any dev overlay that may have popped up after state changes.
     await page.keyboard.press("Escape").catch(() => { /* ignore */ });
@@ -119,7 +121,9 @@ test.describe("Meal variations", () => {
         resp.status() === 201,
       { timeout: 10_000 },
     );
-    await page.waitForTimeout(1000);
+
+    // Allow the UI to refresh after the API call
+    await page.waitForLoadState("networkidle");
 
     // 8) Verify a meal was logged for lunch on TEST_DATE via the plan endpoint.
     const plan = await page.evaluate(async ({ date }) => {

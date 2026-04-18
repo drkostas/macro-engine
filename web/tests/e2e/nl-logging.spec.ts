@@ -14,7 +14,7 @@ test.describe("Natural-language meal logging", () => {
 
   test("'Describe a meal' button visible in composer", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     // Open any empty meal slot. Pre-Sleep is most likely empty.
     const preSleepLog = page.getByRole("button", { name: /Log Pre-Sleep/ }).first();
@@ -23,8 +23,6 @@ test.describe("Natural-language meal logging", () => {
       return;
     }
     await preSleepLog.click();
-    await page.waitForTimeout(500);
-
     await expect(page.getByRole("button", { name: /Describe a meal/ })).toBeVisible();
   });
 
@@ -45,12 +43,12 @@ test.describe("Natural-language meal logging", () => {
     });
 
     await page.goto("/dashboard");
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     // Use a future date for a consistently empty slot (no test data)
     const tomorrow = new Date(Date.now() + 2 * 86_400_000).toISOString().split("T")[0];
     await page.goto(`/dashboard?date=${tomorrow}`);
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     const logBtn = page.getByRole("button", { name: /Plan Breakfast|Log Breakfast/ }).first();
     if (!(await logBtn.isVisible().catch(() => false))) {
@@ -58,7 +56,7 @@ test.describe("Natural-language meal logging", () => {
       return;
     }
     await logBtn.click();
-    await page.waitForTimeout(500);
+    await expect(page.getByRole("button", { name: /Describe a meal/ })).toBeVisible();
 
     await page.getByRole("button", { name: /Describe a meal/ }).click();
     await page.locator("textarea").first().fill("200g chicken and rice");
@@ -87,7 +85,7 @@ test.describe("Natural-language meal logging", () => {
     });
 
     await page.goto("/dashboard");
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     const preSleepLog = page.getByRole("button", { name: /Log Pre-Sleep/ }).first();
     if (!(await preSleepLog.isVisible().catch(() => false))) {
@@ -95,7 +93,7 @@ test.describe("Natural-language meal logging", () => {
       return;
     }
     await preSleepLog.click();
-    await page.waitForTimeout(500);
+    await expect(page.getByRole("button", { name: /Describe a meal/ })).toBeVisible();
 
     await page.getByRole("button", { name: /Describe a meal/ }).click();
     await page.locator("textarea").first().fill("whatever");

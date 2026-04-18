@@ -13,7 +13,7 @@ test.describe("Plan tomorrow", () => {
 
   test("shows Plan button instead of Log on future dates", async ({ page }) => {
     await page.goto(`/dashboard?date=${tomorrowISO()}`);
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     // Scope to the Breakfast card. Its compose trigger is either "Log Breakfast"
     // (empty) or "+ Add more" (has items).
@@ -22,7 +22,6 @@ test.describe("Plan tomorrow", () => {
     const triggerAdd = breakfastCard.getByRole("button", { name: /\+ Add more/ });
     const trigger = (await triggerLog.isVisible().catch(() => false)) ? triggerLog : triggerAdd;
     await trigger.click();
-    await page.waitForTimeout(500);
 
     const firstIng = breakfastCard.locator('button:has-text("Oats")').first();
     const hasIng = await firstIng.isVisible().catch(() => false);
@@ -31,7 +30,11 @@ test.describe("Plan tomorrow", () => {
     await page.waitForTimeout(200);
 
     await breakfastCard.getByRole("button", { name: /Compose meal/ }).click();
-    await page.waitForTimeout(1500);
+    // Wait for the compose action to complete via API response
+    await page.waitForResponse(
+      (r) => r.url().includes("/api/nutrition/") && r.status() < 500,
+      { timeout: 5000 },
+    ).catch(() => {});
 
     await expect(breakfastCard.getByRole("button", { name: /Plan Breakfast/ })).toBeVisible();
   });
@@ -41,7 +44,7 @@ test.describe("Plan tomorrow", () => {
 
     // Create a planned meal directly via API
     await page.goto(`/dashboard?date=${date}`);
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
     await page.evaluate(async (d) => {
       await fetch("/api/nutrition/log-meal", {
         method: "POST",
@@ -56,7 +59,7 @@ test.describe("Plan tomorrow", () => {
     }, date);
 
     await page.reload();
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     // Ghost section should appear under Dinner with "Planned" label
     await expect(page.getByText("📅 Planned").first()).toBeVisible();
@@ -66,7 +69,7 @@ test.describe("Plan tomorrow", () => {
   test("Mark as eaten converts planned meal to actual", async ({ page }) => {
     const date = tomorrowISO();
     await page.goto(`/dashboard?date=${date}`);
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
 
     // Seed a planned meal in pre-sleep (a slot unlikely to have other planned meals)
     await page.evaluate(async (d) => {
@@ -80,17 +83,21 @@ test.describe("Plan tomorrow", () => {
       });
     }, date);
     await page.reload();
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     // Find the Pre-Sleep card
     const preSleepCard = page.locator("text=Pre-Sleep").locator("xpath=ancestor::div[contains(@class, 'rounded-2xl')][1]");
     await expect(preSleepCard.getByText("📅 Planned")).toBeVisible();
 
     // Click "Mark as eaten" inside this card
+    const markEatenResponse = page.waitForResponse(
+      (r) => r.url().includes("/api/nutrition/") && r.request().method() !== "GET",
+      { timeout: 10_000 },
+    );
     await preSleepCard.getByRole("button", { name: /Mark as eaten/ }).click();
-    await page.waitForTimeout(2500);
+    await markEatenResponse;
 
     // Planned ghost inside pre-sleep card should be gone
-    await expect(preSleepCard.getByText("📅 Planned")).not.toBeVisible();
+    await expect(preSleepCard.getByText("📅 Planned")).not.toBeVisible({ timeout: 5000 });
   });
 });
