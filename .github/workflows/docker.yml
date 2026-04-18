@@ -1,0 +1,38 @@
+name: docker
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'web/Dockerfile'
+      - 'web/package*.json'
+      - 'web/db/*.sql'
+      - 'docker-compose.yml'
+      - '.env.example'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create .env from example
+        run: |
+          cp .env.example .env
+          sed -i 's/please-change-me/test-password-12345/g' .env
+          sed -i 's/please-change-me-with-openssl-rand/test-secret-that-is-at-least-32-bytes-long-for-hmac/g' .env
+      - name: docker compose up
+        run: |
+          docker compose up -d --build
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3457/api/health 2>/dev/null; then
+              echo "Stack healthy"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "Stack never became healthy"
+          docker compose logs
+          exit 1
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

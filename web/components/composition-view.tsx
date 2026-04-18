@@ -91,18 +91,20 @@ export function CompositionView({
 
       {/* Mode toggle row */}
       <div className="flex items-center justify-between gap-2 px-1">
-        <button
-          onClick={() => setLinked(!linked)}
-          className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-full font-medium transition-colors ${
-            linked
-              ? "bg-warm-bg border border-warm-dim text-warm"
-              : "bg-transparent border border-border-glow text-text-muted"
-          }`}
-          title={linked ? "Portions scale together" : "Adjust each independently"}
-        >
-          {linked ? "🔗 Linked" : "⚡ Free"}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setLinked(!linked)}
+            className={`text-[10px] px-2 py-1 rounded-full font-medium transition-colors ${
+              linked
+                ? "bg-warm-bg border border-warm-dim text-warm"
+                : "bg-transparent border border-border-glow text-text-muted"
+            }`}
+            title={linked ? "Portions scale together" : "Adjust each independently"}
+          >
+            {linked ? "🔗 Linked" : "⚡ Free"}
+          </button>
           <InfoTip text="Linked: changing one portion scales all others proportionally (keeps composition). Free: adjust each ingredient independently." />
-        </button>
+        </div>
 
         {/* Weigh method selector */}
         <div className="flex items-center gap-1">
