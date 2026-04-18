@@ -27,7 +27,7 @@ test.describe("Onboarding tour", () => {
   test("does not show on subsequent visits", async ({ page }) => {
     await page.addInitScript(() => { localStorage.setItem("me_tour_done", "1"); });
     await page.goto("/dashboard");
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
     await expect(page.getByRole("dialog", { name: "Onboarding tour" })).not.toBeVisible();
   });
 

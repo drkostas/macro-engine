@@ -17,9 +17,9 @@ test.describe("Dashboard smoke", () => {
 
   test("compact floating bar appears after scrolling past hero", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForTimeout(500);
+    await page.waitForLoadState("networkidle");
     await page.evaluate(() => window.scrollTo(0, 600));
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(300); // animation settle
     const floatingBar = page.locator("text=/P$/").locator("..").locator("..");
     await expect(floatingBar.first()).toBeVisible();
   });

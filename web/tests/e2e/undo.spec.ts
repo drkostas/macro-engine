@@ -48,34 +48,43 @@ test.describe("Undo toast", () => {
 
   test("undo toast appears after deleting a meal and restores it", async ({ page }) => {
     await page.goto(`/dashboard?date=${TEST_DATE}`);
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
     await seedTestMeal(page, "lunch");
     await page.reload();
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     // Find the Remove button in the Lunch card specifically
     const lunchCard = page.locator("text=Lunch").locator("xpath=ancestor::div[contains(@class, 'rounded-2xl')][1]");
     const removeBtn = lunchCard.getByRole("button", { name: "Remove" }).first();
     await expect(removeBtn).toBeVisible();
 
+    // Listen for the delete API call
+    const deleteResponse = page.waitForResponse(
+      (r) => r.url().includes("/api/nutrition/log-meal") && r.request().method() === "DELETE",
+      { timeout: 5000 },
+    );
     await removeBtn.click();
-    await page.waitForTimeout(1000);
+    await deleteResponse;
 
     const toast = page.getByRole("status", { name: "Undo action" });
     await expect(toast).toBeVisible();
     await expect(toast.getByText("Meal removed")).toBeVisible();
 
     await toast.getByRole("button", { name: "Undo" }).click();
-    await page.waitForTimeout(2500);
-    await expect(toast).not.toBeVisible();
+    // Wait for undo API call to complete
+    await page.waitForResponse(
+      (r) => r.url().includes("/api/nutrition/") && r.request().method() === "POST",
+      { timeout: 5000 },
+    ).catch(() => {});
+    await expect(toast).not.toBeVisible({ timeout: 5000 });
   });
 
-  test("dismiss (×) closes toast without invoking undo", async ({ page }) => {
+  test("dismiss (x) closes toast without invoking undo", async ({ page }) => {
     await page.goto(`/dashboard?date=${TEST_DATE}`);
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
     await seedTestMeal(page, "dinner");
     await page.reload();
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     const dinnerCard = page.locator("text=Dinner").locator("xpath=ancestor::div[contains(@class, 'rounded-2xl')][1]");
     const removeBtn = dinnerCard.getByRole("button", { name: "Remove" }).first();

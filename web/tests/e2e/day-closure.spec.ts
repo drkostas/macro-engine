@@ -5,7 +5,7 @@ test.describe("Day closure celebration modal", () => {
     await page.addInitScript(() => { localStorage.setItem("me_tour_done", "1"); });
     // Reopen today if it was closed by a previous test run
     await page.goto("/dashboard");
-    await page.waitForTimeout(1500);
+    await page.waitForLoadState("networkidle");
     const today = new Date().toISOString().split("T")[0];
     await page.evaluate(async (d) => {
       await fetch("/api/nutrition/reopen-day", {
@@ -18,7 +18,7 @@ test.describe("Day closure celebration modal", () => {
 
   test("shows after clicking Close day on an active day with meals", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     const closeBtn = page.getByRole("button", { name: "Close day" });
     const hasCloseBtn = await closeBtn.isVisible().catch(() => false);
@@ -43,7 +43,7 @@ test.describe("Day closure celebration modal", () => {
 
   test("Done button closes the modal", async ({ page }) => {
     await page.goto("/dashboard");
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
 
     const closeBtn = page.getByRole("button", { name: "Close day" });
     const hasCloseBtn = await closeBtn.isVisible().catch(() => false);
@@ -64,7 +64,7 @@ test.describe("Day closure celebration modal", () => {
     // Force-show modal via local state by simulating API response — use direct interaction instead.
     // If we can't close the day (already closed), skip.
     await page.goto("/dashboard");
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
     const closeBtn = page.getByRole("button", { name: "Close day" });
     const hasCloseBtn = await closeBtn.isVisible().catch(() => false);
     if (!hasCloseBtn) {
