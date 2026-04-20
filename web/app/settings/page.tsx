@@ -19,6 +19,7 @@ interface Profile {
   target_date: string | null;
   step_goal: number;
   tdee_estimate: number | null;
+  activity_level: string | null;
 }
 
 const SECTIONS = [
@@ -235,7 +236,7 @@ export default function SettingsPage() {
             </FieldRow>
             <FieldRow label="Activity level" tip="Baseline activity descriptor. Affects BMR multipliers when no Garmin data is available.">
               <select
-                value={"active"}
+                value={profile.activity_level ?? "active"}
                 onChange={(e) => update("activity_level" as keyof Profile, e.target.value)}
                 className="bg-surface-elevated border border-border-glow rounded-lg px-3 py-1.5 text-sm text-text"
               >
