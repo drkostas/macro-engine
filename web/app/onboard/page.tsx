@@ -10,6 +10,9 @@ export default function OnboardPage() {
   const [goal, setGoal] = useState<"lose" | "maintain" | "gain">("lose");
   const [deficit, setDeficit] = useState("500");
   const [targetBf, setTargetBf] = useState("15");
+  const [targetDate, setTargetDate] = useState("");
+  const [activityLevel, setActivityLevel] = useState<"sedentary" | "light" | "active" | "very_active">("active");
+  const [stepGoal, setStepGoal] = useState("10000");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +29,10 @@ export default function OnboardPage() {
     const bmr = sex === "male"
       ? 10 * weightKg + 6.25 * heightCm - 5 * ageNum + 5
       : 10 * weightKg + 6.25 * heightCm - 5 * ageNum - 161;
-    const activityMultiplier = 1.55; // moderate activity
+    const activityMultipliers: Record<string, number> = {
+      sedentary: 1.2, light: 1.375, active: 1.55, very_active: 1.725,
+    };
+    const activityMultiplier = activityMultipliers[activityLevel] ?? 1.55;
     const tdee = Math.round(bmr * activityMultiplier);
 
     // BF% estimate (rough)
@@ -54,7 +60,9 @@ export default function OnboardPage() {
           estimated_ffm_kg: Math.round(ffm * 10) / 10,
           protein_g_per_kg: 2.2,
           fat_g_per_kg: 0.8,
-          step_goal: 10000,
+          step_goal: parseInt(stepGoal) || 10000,
+          activity_level: activityLevel,
+          target_date: targetDate || null,
         }),
       });
       if (!resp.ok) {
@@ -109,6 +117,25 @@ export default function OnboardPage() {
               </button>
             ))}
           </div>
+
+          <div>
+            <label className="text-xs text-text-muted block mb-1">Activity level</label>
+            <div className="grid grid-cols-4 gap-2">
+              {([
+                { key: "sedentary", label: "Sedentary" },
+                { key: "light", label: "Light" },
+                { key: "active", label: "Active" },
+                { key: "very_active", label: "Very Active" },
+              ] as const).map((a) => (
+                <button key={a.key} onClick={() => setActivityLevel(a.key)}
+                  className={`py-2 text-xs rounded-lg transition-colors ${
+                    activityLevel === a.key ? "bg-teal-dim text-white" : "bg-surface-elevated text-text-secondary"
+                  }`}>
+                  {a.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Goal */}
@@ -150,6 +177,18 @@ export default function OnboardPage() {
           <div>
             <label className="text-xs text-text-muted block mb-1">Target body fat %</label>
             <input type="number" value={targetBf} onChange={(e) => setTargetBf(e.target.value)}
+              className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2 text-sm" />
+          </div>
+
+          <div>
+            <label className="text-xs text-text-muted block mb-1">Target date (optional)</label>
+            <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)}
+              className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2 text-sm text-text" />
+          </div>
+
+          <div>
+            <label className="text-xs text-text-muted block mb-1">Daily step goal</label>
+            <input type="number" value={stepGoal} onChange={(e) => setStepGoal(e.target.value)}
               className="w-full bg-surface-elevated border border-border-glow rounded-lg px-3 py-2 text-sm" />
           </div>
         </div>
