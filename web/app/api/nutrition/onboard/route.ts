@@ -10,7 +10,8 @@ export async function POST(req: NextRequest) {
     tdee_estimate, daily_deficit, estimated_bf_pct,
     target_bf_pct, estimated_ffm_kg,
     protein_g_per_kg = 2.2, fat_g_per_kg = 0.8,
-    step_goal = 10000,
+    step_goal = 10000, activity_level = "active",
+    target_date = null,
   } = body;
 
   if (!weight_kg || !height_cm || !age || !sex) {
@@ -23,12 +24,14 @@ export async function POST(req: NextRequest) {
         id, weight_kg, height_cm, age, sex, goal,
         tdee_estimate, daily_deficit, estimated_bf_pct,
         target_bf_pct, estimated_ffm_kg,
-        protein_g_per_kg, fat_g_per_kg, step_goal, updated_at
+        protein_g_per_kg, fat_g_per_kg, step_goal,
+        activity_level, target_date, updated_at
       ) VALUES (
         1, ${weight_kg}, ${height_cm}, ${age}, ${sex}, ${goal},
         ${tdee_estimate}, ${daily_deficit}, ${estimated_bf_pct},
         ${target_bf_pct}, ${estimated_ffm_kg},
-        ${protein_g_per_kg}, ${fat_g_per_kg}, ${step_goal}, NOW()
+        ${protein_g_per_kg}, ${fat_g_per_kg}, ${step_goal},
+        ${activity_level}, ${target_date}, NOW()
       )
       ON CONFLICT (id) DO UPDATE SET
         weight_kg = EXCLUDED.weight_kg,
@@ -44,6 +47,8 @@ export async function POST(req: NextRequest) {
         protein_g_per_kg = EXCLUDED.protein_g_per_kg,
         fat_g_per_kg = EXCLUDED.fat_g_per_kg,
         step_goal = EXCLUDED.step_goal,
+        activity_level = EXCLUDED.activity_level,
+        target_date = EXCLUDED.target_date,
         updated_at = NOW()
     `;
 
