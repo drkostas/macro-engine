@@ -84,6 +84,7 @@ function DashboardInner() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [presets, setPresets] = useState<PresetMeal[]>([]);
   const [currentDate, setCurrentDate] = useState(
@@ -162,6 +163,28 @@ function DashboardInner() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDate]);
+
+  const syncGarmin = useCallback(async () => {
+    setSyncing(true);
+    try {
+      const resp = await fetch("/api/garmin/sync");
+      if (resp.ok) {
+        const data = await resp.json();
+        setToast(`Garmin synced: ${data.synced.days} days, ${data.synced.latestWeight?.toFixed(1) ?? "—"} kg`);
+        setTimeout(() => setToast(null), 4000);
+        fetchPlan();
+      } else {
+        const data = await resp.json().catch(() => ({}));
+        setToast(data.error ?? "Garmin sync failed");
+        setTimeout(() => setToast(null), 4000);
+      }
+    } catch {
+      setToast("Garmin sync failed");
+      setTimeout(() => setToast(null), 4000);
+    } finally {
+      setSyncing(false);
+    }
+  }, [fetchPlan]);
 
   useEffect(() => {
     setLoading(true);
@@ -376,6 +399,18 @@ function DashboardInner() {
                   <span className="t-eyebrow">Today</span>
                   <WeighInWidget currentWeight={plan.weightKg} onSaved={() => fetchPlan()} />
                   <StreakBadge />
+                  <button
+                    onClick={syncGarmin}
+                    disabled={syncing}
+                    className="t-caption text-text-muted hover:text-teal transition-colors inline-flex items-center gap-1 disabled:opacity-50"
+                    aria-label="Sync Garmin data"
+                    title="Sync weight & steps from Garmin"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`}>
+                      <path fillRule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H4.598a.75.75 0 0 0-.75.75v3.634a.75.75 0 0 0 1.5 0v-2.033l.312.311a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm-10.625-2.848a5.5 5.5 0 0 1 9.201-2.466l.312.311H11.767a.75.75 0 0 0 0 1.5h3.634a.75.75 0 0 0 .75-.75V3.537a.75.75 0 0 0-1.5 0v2.033l-.312-.311A7 7 0 0 0 2.627 8.397a.75.75 0 0 0 1.449.39Z" clipRule="evenodd" />
+                    </svg>
+                    {syncing ? "Syncing..." : "Sync"}
+                  </button>
                 </div>
                 <InfoTip text="Your daily macro targets adapt based on weight, training day type, and activity selection. Carbs adjust by training intensity." />
               </div>
