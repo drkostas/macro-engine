@@ -1,45 +1,48 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, request } from "@playwright/test";
 
 // Favorites are a DB-backed toggle on the ingredients table. We pick a stable
-// seeded ingredient, star it, expect it to appear in the "★ Favorites" band,
-// then unstar and expect the band to update. All changes are reverted in
-// afterEach so we never leave a favorited row behind.
+// seeded ingredient by its exact name + id, unstar it to establish a known
+// baseline, then star it and assert the "★ Favorites" band appears.
+//
+// The seed (web/db/seed.sql) contains exactly one pre-favorited ingredient:
+//   id=chicken_breast_raw, name="Chicken Breast (raw)"
+// So we use that as the fixture and normalize to `is_favorite=false` before
+// the test body so the starring action is always a false→true transition.
 
-const FAV_INGREDIENT_NAME = "Chicken Breast";
+const FAV_INGREDIENT_NAME = "Chicken Breast (raw)";
+const FAV_INGREDIENT_ID = "chicken_breast_raw";
+const BASE_URL = process.env.BASE_URL ?? "http://localhost:3457";
 
-async function resetFavorite(page: import("@playwright/test").Page, name: string) {
-  await page.evaluate(async (name) => {
-    const r = await fetch(`/api/food/search?q=${encodeURIComponent(name)}&limit=5`);
-    const data = await r.json();
-    const match = (data.results ?? []).find((f: { name: string }) =>
-      f.name.toLowerCase() === name.toLowerCase(),
-    );
-    if (!match) return;
-    await fetch(`/api/nutrition/ingredient/${match.id}`, {
-      method: "PATCH",
+async function setFavorite(isFavorite: boolean) {
+  const ctx = await request.newContext({ baseURL: BASE_URL });
+  try {
+    await ctx.patch(`/api/nutrition/ingredient/${FAV_INGREDIENT_ID}`, {
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ is_favorite: false }),
+      data: { is_favorite: isFavorite },
     });
-  }, name);
+  } finally {
+    await ctx.dispose();
+  }
 }
 
 test.describe("Favorites pinning", () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => { localStorage.setItem("me_tour_done", "1"); });
+    // Normalize: the seed ships this ingredient pre-favorited, so explicitly
+    // unstar before the test body. This makes the starring action under test
+    // an unambiguous false→true transition regardless of prior test fallout.
+    await setFavorite(false);
   });
 
-  test.afterEach(async ({ page }) => {
-    // Navigation happens inside the test; page has a document origin here.
-    await resetFavorite(page, FAV_INGREDIENT_NAME);
+  test.afterEach(async () => {
+    await setFavorite(false);
   });
 
   test("starring an ingredient pins it under Favorites", async ({ page }) => {
     await page.goto("/dashboard");
     await page.waitForLoadState("networkidle");
-    await resetFavorite(page, FAV_INGREDIENT_NAME);
 
-    // Open the composer for any empty slot (Log <Slot> button). If none are
-    // empty, "+ Add more" on the first slot with items works too.
+    // Open the composer for any empty slot.
     const openBtn = page.getByRole("button", { name: /^(Log [A-Z]|\+ Add more)/ }).first();
     await expect(openBtn).toBeVisible();
     await openBtn.click();
@@ -48,19 +51,20 @@ test.describe("Favorites pinning", () => {
     await expect(mineTab).toBeVisible();
     await mineTab.click();
 
-    // Wait for the picker to populate — the unstarred chicken-breast row must
-    // render before we can click its star. Using the star-button accessible
-    // name replaces the old fixed 300ms sleep: once the locator is visible,
-    // React has rendered the My Ingredients tab.
-    const starBtn = page
-      .getByRole("button", { name: `Favorite ${FAV_INGREDIENT_NAME}` })
-      .first();
+    // Locate the star button with `exact: true` so we don't match the
+    // "Unfavorite …" label by substring if the ingredient happens to already
+    // be favorited from prior test fallout.
+    const starBtn = page.getByRole("button", {
+      name: `Favorite ${FAV_INGREDIENT_NAME}`,
+      exact: true,
+    });
     await expect(starBtn).toBeVisible({ timeout: 10_000 });
 
-    // Race the PATCH against the click so we never miss the response event.
+    // Race the PATCH response against the click. The id is a string slug
+    // (`chicken_breast_raw`), not a number — match anything after the segment.
     const patchPromise = page.waitForResponse(
       (resp) =>
-        /\/api\/nutrition\/ingredient\/\d+/.test(resp.url()) &&
+        resp.url().includes(`/api/nutrition/ingredient/${FAV_INGREDIENT_ID}`) &&
         resp.request().method() === "PATCH" &&
         resp.ok(),
       { timeout: 15_000 },
@@ -68,14 +72,15 @@ test.describe("Favorites pinning", () => {
     await starBtn.click();
     await patchPromise;
 
-    // The component flips aria-label optimistically — waiting on this confirms
-    // favOverrides propagated before we assert on the Favorites band.
+    // Component flips aria-label optimistically — waiting on this confirms
+    // favOverrides propagated before asserting on the Favorites band.
     await expect(
-      page.getByRole("button", { name: `Unfavorite ${FAV_INGREDIENT_NAME}` }).first(),
+      page.getByRole("button", {
+        name: `Unfavorite ${FAV_INGREDIENT_NAME}`,
+        exact: true,
+      }),
     ).toBeVisible({ timeout: 10_000 });
 
-    // Band appears when at least one favorite exists; scoped to the picker so
-    // we don't accidentally match an unrelated "★" glyph elsewhere on the page.
     const favBand = page.locator("text=★ Favorites").first();
     await expect(favBand).toBeVisible({ timeout: 15_000 });
 
