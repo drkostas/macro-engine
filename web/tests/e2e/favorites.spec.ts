@@ -47,15 +47,37 @@ test.describe("Favorites pinning", () => {
     const mineTab = page.getByRole("button", { name: "My Ingredients" });
     await expect(mineTab).toBeVisible();
     await mineTab.click();
-    await page.waitForTimeout(300);
 
-    const starBtn = page.getByRole("button", { name: `Favorite ${FAV_INGREDIENT_NAME}` }).first();
-    await expect(starBtn).toBeVisible();
+    // Wait for the picker to populate — the unstarred chicken-breast row must
+    // render before we can click its star. Using the star-button accessible
+    // name replaces the old fixed 300ms sleep: once the locator is visible,
+    // React has rendered the My Ingredients tab.
+    const starBtn = page
+      .getByRole("button", { name: `Favorite ${FAV_INGREDIENT_NAME}` })
+      .first();
+    await expect(starBtn).toBeVisible({ timeout: 10_000 });
+
+    // Race the PATCH against the click so we never miss the response event.
+    const patchPromise = page.waitForResponse(
+      (resp) =>
+        /\/api\/nutrition\/ingredient\/\d+/.test(resp.url()) &&
+        resp.request().method() === "PATCH" &&
+        resp.ok(),
+      { timeout: 15_000 },
+    );
     await starBtn.click();
+    await patchPromise;
 
-    // Wait for the Favorites band to appear after the star toggle
+    // The component flips aria-label optimistically — waiting on this confirms
+    // favOverrides propagated before we assert on the Favorites band.
+    await expect(
+      page.getByRole("button", { name: `Unfavorite ${FAV_INGREDIENT_NAME}` }).first(),
+    ).toBeVisible({ timeout: 10_000 });
+
+    // Band appears when at least one favorite exists; scoped to the picker so
+    // we don't accidentally match an unrelated "★" glyph elsewhere on the page.
     const favBand = page.locator("text=★ Favorites").first();
-    await expect(favBand).toBeVisible({ timeout: 5000 });
+    await expect(favBand).toBeVisible({ timeout: 15_000 });
 
     const favRow = page.locator("text=★ Favorites")
       .locator("xpath=following-sibling::div[1]")
