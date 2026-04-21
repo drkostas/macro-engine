@@ -74,11 +74,13 @@ test.describe("Favorites pinning", () => {
 
     // Component flips aria-label optimistically — waiting on this confirms
     // favOverrides propagated before asserting on the Favorites band.
+    // Once favorited, the row renders in two places (Favorites band + its
+    // category group), so take the first match rather than assume uniqueness.
     await expect(
       page.getByRole("button", {
         name: `Unfavorite ${FAV_INGREDIENT_NAME}`,
         exact: true,
-      }),
+      }).first(),
     ).toBeVisible({ timeout: 10_000 });
 
     const favBand = page.locator("text=★ Favorites").first();
