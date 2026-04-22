@@ -18,6 +18,7 @@ import { InjuryCard, type ActiveInjury } from "@/components/injury-card";
 import { TaperCard, type TaperContext } from "@/components/taper-card";
 import { ClimateCard, type ClimateContext } from "@/components/climate-card";
 import { WeeklyWrapupCard } from "@/components/weekly-wrapup-card";
+import { ProgressionCard } from "@/components/progression-card";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -509,6 +510,10 @@ function DashboardInner() {
 
               <div className="mb-4">
                 <WeeklyWrapupCard />
+              </div>
+
+              <div className="mb-4">
+                <ProgressionCard />
               </div>
 
               {/* Hero metric */}
