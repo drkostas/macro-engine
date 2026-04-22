@@ -31,6 +31,12 @@ INSERT INTO nutrition_day (date, status, training_day_type, target_calories, tar
 VALUES (CURRENT_DATE, 'active', 'rest', 1800, 165, 180, 50, 28, 2600, 800, 10000)
 ON CONFLICT (date) DO NOTHING;
 
+-- Baseline subjective log row so GET /api/nutrition/subjective has data.
+INSERT INTO subjective_log (date, morning_hooper)
+VALUES (CURRENT_DATE - INTERVAL '1 day',
+        '{"fatigue":3,"sleep":3,"stress":2,"soreness":3}'::jsonb)
+ON CONFLICT (date) DO NOTHING;
+
 -- Baseline FFM anchor so GET /api/nutrition/ffm-anchor has something to return.
 -- NHANES-grade estimate (sigma 3.0) — matches the onboarding default path.
 INSERT INTO ffm_anchor (date, method, ffm_kg, sigma_kg, notes)
