@@ -10,6 +10,8 @@ import { BandPill } from "@/components/band-pill";
 import { TierPill } from "@/components/tier-pill";
 import { AdaptiveBanner } from "@/components/adaptive-banner";
 import { RefeedCard } from "@/components/refeed-card";
+import { WellnessCard } from "@/components/wellness-card";
+import { WellnessBanner } from "@/components/wellness-banner";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -440,11 +442,19 @@ function DashboardInner() {
                 <InfoTip text="Your daily macro targets adapt based on weight, training day type, and activity selection. Carbs adjust by training intensity." />
               </div>
 
+              <div className="mb-4">
+                <WellnessBanner />
+              </div>
+
               {plan.context?.adaptive && (
                 <div className="mb-4">
                   <AdaptiveBanner adaptive={plan.context.adaptive} />
                 </div>
               )}
+
+              <div className="mb-4">
+                <WellnessCard />
+              </div>
 
               {plan.context?.refeed && (
                 <div className="mb-4">
