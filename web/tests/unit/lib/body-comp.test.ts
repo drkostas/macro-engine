@@ -11,10 +11,14 @@ import {
   biaCreatineCorrection,
   creatineWaterAdjustment,
   effectiveSigmaKg,
+  forbesEnergyDensityKcalPerKg,
+  glycogenWaterOverlay,
   methodSigmaKg,
   navyTapeBfPct,
   navyTapeFfmKg,
   partitionWeightChange,
+  personalKcalPerKg,
+  type DayPoint,
   type Method,
 } from "@/lib/body-comp";
 
@@ -261,5 +265,111 @@ describe("Navy tape (M3.6)", () => {
       neckCm: 50, waistCm: 51, heightCm: 200, sex: "male",
     });
     expect(lo).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("Weight prediction 3-layer (M3 Phase D)", () => {
+  describe("Layer B Forbes density", () => {
+    it("fm=20 → ~6800 kcal/kg", () => {
+      const rho = forbesEnergyDensityKcalPerKg(20);
+      expect(rho).toBeGreaterThanOrEqual(6700);
+      expect(rho).toBeLessThanOrEqual(7000);
+    });
+
+    it("monotone in fm", () => {
+      expect(forbesEnergyDensityKcalPerKg(10))
+        .toBeLessThan(forbesEnergyDensityKcalPerKg(40));
+    });
+
+    it("fm=0 is pure lean", () => {
+      expect(forbesEnergyDensityKcalPerKg(0)).toBeCloseTo(1816, 6);
+    });
+
+    it("negative fm throws", () => {
+      expect(() => forbesEnergyDensityKcalPerKg(-1)).toThrow(RangeError);
+    });
+  });
+
+  describe("Layer A personal kcal/kg", () => {
+    const buildHistory = (
+      days: number, intake: number, tdee: number, startKg: number, trueRho: number,
+    ): DayPoint[] => {
+      const dailyLoss = (tdee - intake) / trueRho;
+      return Array.from({ length: days }, (_, i) => ({
+        day: i,
+        intakeKcal: intake,
+        tdeeKcal: tdee,
+        weightKg: startKg - dailyLoss * i,
+      }));
+    };
+
+    it("short history → null", () => {
+      expect(personalKcalPerKg(buildHistory(20, 2000, 2800, 74, 7000))).toBeNull();
+    });
+
+    it("steady-state recovers true rho", () => {
+      const r = personalKcalPerKg(buildHistory(60, 2000, 2800, 74, 7000));
+      expect(r).not.toBeNull();
+      expect(r!).toBeGreaterThanOrEqual(6800);
+      expect(r!).toBeLessThanOrEqual(7200);
+    });
+
+    it("clamps above 9500", () => {
+      const r = personalKcalPerKg(buildHistory(60, 2000, 2800, 74, 15000));
+      expect(r!).toBeLessThanOrEqual(9500);
+    });
+
+    it("clamps below 5500", () => {
+      const r = personalKcalPerKg(buildHistory(60, 2000, 2800, 74, 3500));
+      expect(r!).toBeGreaterThanOrEqual(5500);
+    });
+
+    it("empty history → null", () => {
+      expect(personalKcalPerKg([])).toBeNull();
+    });
+
+    it("zero weight delta → null", () => {
+      const hist: DayPoint[] = Array.from({ length: 40 }, (_, i) => ({
+        day: i, intakeKcal: 2500, tdeeKcal: 2500, weightKg: 74,
+      }));
+      expect(personalKcalPerKg(hist)).toBeNull();
+    });
+  });
+
+  describe("Layer C overlays", () => {
+    it("quiet state → near-zero overlay + tight CI", () => {
+      const r = glycogenWaterOverlay(74, { daysSinceRefeed: 30, carbDeltaG: 0 });
+      expect(Math.abs(r.glycogenSwingKg)).toBeLessThan(0.05);
+      expect(r.ciHighKg - r.ciLowKg).toBeLessThan(0.2);
+    });
+
+    it("carb load raises glycogen swing", () => {
+      const r = glycogenWaterOverlay(74, { daysSinceRefeed: 30, carbDeltaG: 500 });
+      expect(r.glycogenSwingKg).toBeGreaterThan(0.5);
+    });
+
+    it("fresh refeed has large offset", () => {
+      const r0 = glycogenWaterOverlay(74, { daysSinceRefeed: 0, carbDeltaG: 0 });
+      expect(r0.refeedOffsetKg).toBeGreaterThan(0.5);
+    });
+
+    it("refeed decays over time", () => {
+      const r0 = glycogenWaterOverlay(74, { daysSinceRefeed: 0, carbDeltaG: 0 });
+      const r5 = glycogenWaterOverlay(74, { daysSinceRefeed: 5, carbDeltaG: 0 });
+      expect(r5.refeedOffsetKg).toBeLessThan(r0.refeedOffsetKg);
+    });
+
+    it("CI invariant: low ≤ central ≤ high", () => {
+      for (const [days, carb] of [[0, 0], [0, 500], [10, -200], [30, 100]] as const) {
+        const r = glycogenWaterOverlay(74, { daysSinceRefeed: days, carbDeltaG: carb });
+        expect(r.ciLowKg).toBeLessThanOrEqual(74);
+        expect(r.ciHighKg).toBeGreaterThanOrEqual(74);
+      }
+    });
+
+    it("negative days throws", () => {
+      expect(() => glycogenWaterOverlay(74, { daysSinceRefeed: -1, carbDeltaG: 0 }))
+        .toThrow(RangeError);
+    });
   });
 });
