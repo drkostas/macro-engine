@@ -132,3 +132,71 @@ export function creatineWaterAdjustment(opts: CreatineWaterOpts): number {
 export function biaCreatineCorrection(offsetKg: number): number {
   return offsetKg / BIA_BODY_WATER_FRACTION;
 }
+
+// ============================================================================
+// NAVY TAPE BF% + FFM (M3.6) — V2 §8.2
+// ============================================================================
+
+const BF_MIN = 3.0;
+const BF_MAX = 60.0;
+const CM_PER_INCH = 2.54;
+
+export type Sex = "male" | "female";
+
+export interface NavyTapeInputs {
+  weightKg: number;
+  neckCm: number;
+  waistCm: number;
+  heightCm: number;
+  sex: Sex;
+  hipCm?: number | null;
+}
+
+function toInches(cm: number): number {
+  return cm / CM_PER_INCH;
+}
+
+function validatePositive(label: string, v: number): void {
+  if (!(v > 0)) throw new RangeError(`${label} must be positive, got ${v}`);
+}
+
+export function navyTapeBfPct(inputs: Omit<NavyTapeInputs, "weightKg">): number {
+  const { neckCm, waistCm, heightCm, sex, hipCm } = inputs;
+  validatePositive("neckCm", neckCm);
+  validatePositive("waistCm", waistCm);
+  validatePositive("heightCm", heightCm);
+
+  const neckIn = toInches(neckCm);
+  const waistIn = toInches(waistCm);
+  const heightIn = toInches(heightCm);
+
+  let bf: number;
+  if (sex === "male") {
+    const diffIn = waistIn - neckIn;
+    if (diffIn <= 0) {
+      throw new RangeError(`waist (${waistCm}) must exceed neck (${neckCm}) for male formula`);
+    }
+    bf = 86.010 * Math.log10(diffIn) - 70.041 * Math.log10(heightIn) + 36.76;
+  } else if (sex === "female") {
+    if (hipCm == null) {
+      throw new RangeError("hipCm is required for female Navy tape calculation");
+    }
+    validatePositive("hipCm", hipCm);
+    const hipIn = toInches(hipCm);
+    const diffIn = waistIn + hipIn - neckIn;
+    if (diffIn <= 0) {
+      throw new RangeError("waist + hip must exceed neck for female formula");
+    }
+    bf = 163.205 * Math.log10(diffIn) - 97.684 * Math.log10(heightIn) - 78.387;
+  } else {
+    throw new RangeError(`sex must be 'male' or 'female', got ${sex}`);
+  }
+
+  return Math.max(BF_MIN, Math.min(BF_MAX, bf));
+}
+
+export function navyTapeFfmKg(inputs: NavyTapeInputs): number {
+  validatePositive("weightKg", inputs.weightKg);
+  const bf = navyTapeBfPct(inputs);
+  return inputs.weightKg * (1 - bf / 100);
+}

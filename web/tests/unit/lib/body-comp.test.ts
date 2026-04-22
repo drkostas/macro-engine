@@ -12,6 +12,8 @@ import {
   creatineWaterAdjustment,
   effectiveSigmaKg,
   methodSigmaKg,
+  navyTapeBfPct,
+  navyTapeFfmKg,
   partitionWeightChange,
   type Method,
 } from "@/lib/body-comp";
@@ -188,5 +190,76 @@ describe("Creatine water correction (M3.3)", () => {
         ffmKg: 60, doseGPerDay: 5, startDate: future, today,
       }),
     ).toBeCloseTo(0);
+  });
+});
+
+describe("Navy tape (M3.6)", () => {
+  it("male 177cm/36neck/82waist → 13-18% BF", () => {
+    const bf = navyTapeBfPct({
+      neckCm: 36, waistCm: 82, heightCm: 177, sex: "male",
+    });
+    expect(bf).toBeGreaterThanOrEqual(13);
+    expect(bf).toBeLessThanOrEqual(18);
+  });
+
+  it("male leaner user < 12%", () => {
+    const bf = navyTapeBfPct({
+      neckCm: 36, waistCm: 74, heightCm: 177, sex: "male",
+    });
+    expect(bf).toBeLessThan(12);
+  });
+
+  it("male heavier user > 24%", () => {
+    const bf = navyTapeBfPct({
+      neckCm: 40, waistCm: 100, heightCm: 177, sex: "male",
+    });
+    expect(bf).toBeGreaterThan(24);
+  });
+
+  it("female requires hip", () => {
+    expect(() =>
+      navyTapeBfPct({ neckCm: 32, waistCm: 72, heightCm: 165, sex: "female" }),
+    ).toThrow(/hipCm/);
+  });
+
+  it("female example in range", () => {
+    const bf = navyTapeBfPct({
+      neckCm: 32, waistCm: 72, hipCm: 95, heightCm: 165, sex: "female",
+    });
+    expect(bf).toBeGreaterThanOrEqual(20);
+    expect(bf).toBeLessThanOrEqual(32);
+  });
+
+  it("FFM from Navy tape scales with weight", () => {
+    const lo = navyTapeFfmKg({
+      weightKg: 60, neckCm: 36, waistCm: 82, heightCm: 177, sex: "male",
+    });
+    const hi = navyTapeFfmKg({
+      weightKg: 90, neckCm: 36, waistCm: 82, heightCm: 177, sex: "male",
+    });
+    expect(hi).toBeGreaterThan(lo);
+  });
+
+  it("waist = neck (male) throws", () => {
+    expect(() =>
+      navyTapeBfPct({ neckCm: 40, waistCm: 40, heightCm: 177, sex: "male" }),
+    ).toThrow(RangeError);
+  });
+
+  it("negative dimension throws", () => {
+    expect(() =>
+      navyTapeBfPct({ neckCm: -1, waistCm: 82, heightCm: 177, sex: "male" }),
+    ).toThrow(RangeError);
+  });
+
+  it("clamps to [3, 60]", () => {
+    const hi = navyTapeBfPct({
+      neckCm: 30, waistCm: 200, heightCm: 150, sex: "male",
+    });
+    expect(hi).toBeLessThanOrEqual(60);
+    const lo = navyTapeBfPct({
+      neckCm: 50, waistCm: 51, heightCm: 200, sex: "male",
+    });
+    expect(lo).toBeGreaterThanOrEqual(3);
   });
 });
