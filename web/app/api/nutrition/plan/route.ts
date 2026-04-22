@@ -46,6 +46,11 @@ import {
   taperProteinGPerKg,
   type TaperPhase,
 } from "@/lib/taper";
+import {
+  climateAdjust,
+  type Environment as ClimateEnv,
+  type ClimateAdjustment,
+} from "@/lib/climate";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -596,6 +601,29 @@ export async function GET(req: NextRequest) {
       };
     }
 
+    // ---- M9 Phase E: climate adjustments ----
+    const climateEnv: ClimateEnv = (profile.climate_env ?? "normal") as ClimateEnv;
+    let climatePayload: {
+      env: ClimateEnv;
+      adjustment: ClimateAdjustment;
+    } | null = null;
+    if (climateEnv !== "normal") {
+      const sexForClimate = (String(profile.sex ?? "M").toUpperCase() === "F")
+        ? ("F" as const) : ("M" as const);
+      climatePayload = {
+        env: climateEnv,
+        adjustment: climateAdjust(climateEnv, {
+          weightKg,
+          sex: sexForClimate,
+          sweatLPerHour: profile.climate_sweat_l_per_hour != null
+            ? Number(profile.climate_sweat_l_per_hour) : undefined,
+          hours: profile.climate_hours != null
+            ? Number(profile.climate_hours) : undefined,
+          bmrKcal: bmr,
+        }),
+      };
+    }
+
     return NextResponse.json({
       date,
       weightKg,
@@ -606,6 +634,7 @@ export async function GET(req: NextRequest) {
         tier: contextTier,
         mode,
         taper: taperPayload,
+        climate: climatePayload,
         adaptive: {
           tdee: adaptiveTdee,
           refeedPressureScore,

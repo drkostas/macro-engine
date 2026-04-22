@@ -85,6 +85,8 @@ describe("GET /api/nutrition/plan", () => {
     expect(body.context.injury).toBeNull();
     // M9 Phase D: taper context (null when no race_date)
     expect(body.context.taper).toBeNull();
+    // M9 Phase E: climate context (null when env=normal)
+    expect(body.context.climate).toBeNull();
     expect(body.eaten).toBeDefined();
     expect(body.remaining).toBeDefined();
     expect(body.slotBudgets).toHaveLength(4);
@@ -217,6 +219,30 @@ describe("GET /api/nutrition/plan", () => {
     // 30 × 64 + 300 = 2220 (above Cunningham(64) ≈ 1940)
     expect(body.context.injury.eaFloorKcal).toBe(2220);
     expect(body.context.injury.module.supplements).toContain("omega-3");
+  });
+
+  it("surfaces climate context when env != normal", async () => {
+    queryHandler = (query: string) => {
+      if (query.includes("FROM nutrition_profile")) {
+        return [{
+          id: 1, weight_kg: 70, daily_deficit: 500,
+          protein_g_per_kg: 2.0, fat_g_per_kg: 0.8,
+          step_goal: 10000, tdee_estimate: 2400,
+          estimated_bf_pct: 20,
+          climate_env: "altitude", sex: "F",
+        }];
+      }
+      if (query.includes("FROM weight_log")) return [{ weight_grams: 70_000 }];
+      if (query.includes("bmr_kilocalories > 1500")) return [{ bmr_kilocalories: 1700 }];
+      return [];
+    };
+    const req = new NextRequest("http://localhost/api/nutrition/plan?date=2026-04-14");
+    const res = await GET(req);
+    const body = await res.json();
+    expect(body.context.climate).not.toBeNull();
+    expect(body.context.climate.env).toBe("altitude");
+    expect(body.context.climate.adjustment.ironTargetMg).toBe(18);
+    expect(body.context.climate.adjustment.extraFluidMl).toBe(500);
   });
 
   it("surfaces taper context when race_date is set", async () => {
