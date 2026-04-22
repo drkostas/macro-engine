@@ -619,6 +619,21 @@ CREATE TABLE public.nutrition_profile (
 
 
 --
+-- Name: subjective_log; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.subjective_log (
+    date date PRIMARY KEY,
+    morning_hooper jsonb,
+    hunger_by_slot jsonb,
+    workout_rpe jsonb,
+    phq2 jsonb,
+    scoff jsonb,
+    created_at timestamp with time zone DEFAULT now()
+);
+
+
+--
 -- Name: ffm_anchor; Type: TABLE; Schema: public; Owner: -
 --
 
