@@ -8,6 +8,7 @@ import { SuggestionBanner } from "@/components/suggestion-banner";
 import { DateNavigator } from "@/components/date-navigator";
 import { BandPill } from "@/components/band-pill";
 import { TierPill } from "@/components/tier-pill";
+import { AdaptiveBanner } from "@/components/adaptive-banner";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -48,6 +49,12 @@ interface PlanData {
     band: import("@/lib/macro-targets").Band;
     tier: import("@/lib/safety-rails").Tier;
     mode: import("@/lib/mode-engine").Mode;
+    adaptive?: {
+      tdee: import("@/lib/adaptive").AdaptiveTdeeResult | null;
+      refeedPressureScore: number;
+      dietBreakLevel: import("@/lib/adaptive").DietBreakLevel;
+      plateau: import("@/lib/adaptive").PlateauResult | null;
+    };
   };
   eaten: MacroTargets;
   remaining: MacroTargets;
@@ -427,6 +434,12 @@ function DashboardInner() {
                 </div>
                 <InfoTip text="Your daily macro targets adapt based on weight, training day type, and activity selection. Carbs adjust by training intensity." />
               </div>
+
+              {plan.context?.adaptive && (
+                <div className="mb-4">
+                  <AdaptiveBanner adaptive={plan.context.adaptive} />
+                </div>
+              )}
 
               {/* Hero metric */}
               <div className="flex items-baseline gap-2 md:gap-3 mb-1">
