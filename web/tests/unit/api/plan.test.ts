@@ -152,13 +152,15 @@ describe("GET /api/nutrition/plan", () => {
     expect(body.tdee.bmr).toBe(1950);
   });
 
-  it("computes targets dynamically with carb periodization enabled", async () => {
+  it("computes targets dynamically via the new 5-band engine", async () => {
     const req = new NextRequest("http://localhost/api/nutrition/plan?date=2026-04-14");
     const res = await GET(req);
     const body = await res.json();
-    // protein should equal round(2.2 * 80) = 176
-    expect(body.targets.protein).toBe(176);
-    // carbs + protein + fat should cover calories roughly
+    // Profile: 80 kg, estimated_bf_pct=20 → T2, mode defaults to standard.
+    // Standard T2 at REST band → 2.3 g/kg × 80 = 184g protein.
+    expect(body.targets.protein).toBe(184);
+    // Kcal is delivered total; with the new engine it may undershoot the
+    // target (tight rest-day budget), but still composes to itself.
     const kcal = body.targets.protein * 4 + body.targets.carbs * 4 + body.targets.fat * 9;
     expect(Math.abs(kcal - body.targets.calories)).toBeLessThan(50);
   });

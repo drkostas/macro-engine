@@ -10,6 +10,7 @@ import {
   carbTargetG,
   classifyBand,
   computeMacroTargets,
+  computeMacroTargetsFromContext,
   computeTrainingLoad,
   fiberTargetG,
   proteinGPerKg,
@@ -196,5 +197,75 @@ describe("M4.4 Composed macro engine", () => {
       kcalTarget: 3000, inDeficit: false,
     });
     expect(r.proteinG).toBeGreaterThanOrEqual(Math.round(1.6 * 74));
+  });
+});
+
+describe("M4.5 computeMacroTargetsFromContext adapter", () => {
+  it("returns legacy-shape field names", () => {
+    const r = computeMacroTargetsFromContext({
+      weightKg: 74, bfPct: 23.5, mode: "standard",
+      runKcal: 0, gymKcal: 0, kcalTarget: 2000, inDeficit: true,
+    });
+    expect(r.calories).toBeTypeOf("number");
+    expect(r.protein).toBeTypeOf("number");
+    expect(r.carbs).toBeTypeOf("number");
+    expect(r.fat).toBeTypeOf("number");
+    expect(r.fiber).toBeTypeOf("number");
+    // And meta fields for downstream UI
+    expect(r.band).toBe("rest");
+    expect(r.tier).toBe("T2");
+  });
+
+  it("derives band from run/gym kcals", () => {
+    const rest = computeMacroTargetsFromContext({
+      weightKg: 74, bfPct: 23.5, mode: "standard",
+      runKcal: 0, gymKcal: 0, kcalTarget: 2000, inDeficit: true,
+    });
+    const hard = computeMacroTargetsFromContext({
+      weightKg: 74, bfPct: 23.5, mode: "standard",
+      runKcal: 1500, gymKcal: 0, kcalTarget: 2500, inDeficit: true,
+    });
+    expect(rest.band).toBe("rest");
+    // 1500 kcal run / (74 × 10) ≈ 2.03 → HARD
+    expect(hard.band).toBe("hard");
+    // Different bands → different carb targets
+    expect(hard.carbs).toBeGreaterThan(rest.carbs);
+  });
+
+  it("derives tier from BF%; null → T2 fallback", () => {
+    const t1 = computeMacroTargetsFromContext({
+      weightKg: 74, bfPct: 32, mode: "standard",
+      runKcal: 0, gymKcal: 0, kcalTarget: 2000, inDeficit: true,
+    });
+    expect(t1.tier).toBe("T1");
+
+    const t3 = computeMacroTargetsFromContext({
+      weightKg: 74, bfPct: 17, mode: "standard",
+      runKcal: 0, gymKcal: 0, kcalTarget: 2000, inDeficit: true,
+    });
+    expect(t3.tier).toBe("T3");
+
+    const fallback = computeMacroTargetsFromContext({
+      weightKg: 74, bfPct: null, mode: "standard",
+      runKcal: 0, gymKcal: 0, kcalTarget: 2000, inDeficit: true,
+    });
+    expect(fallback.tier).toBe("T2");
+  });
+
+  it("respects mode: aggressive raises protein, maintenance raises fat", () => {
+    const agg = computeMacroTargetsFromContext({
+      weightKg: 74, bfPct: 23.5, mode: "aggressive",
+      runKcal: 800, gymKcal: 0, kcalTarget: 2100, inDeficit: true,
+    });
+    const main = computeMacroTargetsFromContext({
+      weightKg: 74, bfPct: 23.5, mode: "maintenance",
+      runKcal: 800, gymKcal: 0, kcalTarget: 2800, inDeficit: false,
+    });
+    // Aggressive T2 → 2.4 × 74 = 178g protein
+    expect(agg.protein).toBe(178);
+    // Maintenance T2 → 2.0 × 74 = 148g protein
+    expect(main.protein).toBe(148);
+    // Maintenance fat target 1.0 g/kg vs standard 0.8 g/kg
+    expect(main.fat).toBeGreaterThan(agg.fat);
   });
 });
