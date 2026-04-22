@@ -15,6 +15,16 @@ import {
 } from "@/lib/macro-targets";
 import type { Mode } from "@/lib/mode-engine";
 import { computeTierRaw, type Tier } from "@/lib/safety-rails";
+import {
+  computeAdaptiveTdee,
+  computeRefeedPressureScore,
+  detectPlateau,
+  recommendDietBreak,
+  type AdaptiveTdeeResult,
+  type DietBreakLevel,
+  type PlateauResult,
+} from "@/lib/adaptive";
+import type { DayPoint } from "@/lib/body-comp";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -336,6 +346,90 @@ export async function GET(req: NextRequest) {
     const dayStatus = day?.status ?? "active";
     const responseExpectedSteps = day?.expected_steps ?? null;
 
+    // ---- M5 Phase B: adaptive signals from last 14 days ----
+    // Pull a compact history (date, intake kcal, tdee, weight_kg) for the
+    // adaptive engine. Missing intake/tdee rows default to 0 so single-day
+    // gaps don't crash; adaptive engine gates on min_days internally.
+    const historyRows = (await sql`
+      SELECT
+        nd.date,
+        COALESCE(nd.actual_calories, 0) AS intake_kcal,
+        COALESCE(nd.tdee_used, 0) AS tdee_kcal,
+        wl.weight_grams
+      FROM nutrition_day nd
+      LEFT JOIN LATERAL (
+        SELECT weight_grams FROM weight_log
+        WHERE date <= nd.date
+        ORDER BY date DESC LIMIT 1
+      ) wl ON true
+      WHERE nd.date >= ${date}::date - interval '14 days'
+        AND nd.date <= ${date}::date
+      ORDER BY nd.date ASC
+    `) as Array<{
+      date: string | Date;
+      intake_kcal: number | string;
+      tdee_kcal: number | string;
+      weight_grams: number | null;
+    }>;
+
+    const history: DayPoint[] = historyRows
+      .filter((r) => r.weight_grams != null)
+      .map((r, i) => ({
+        day: i,
+        intakeKcal: Number(r.intake_kcal) || 0,
+        tdeeKcal: Number(r.tdee_kcal) || 0,
+        weightKg: (r.weight_grams as number) / 1000,
+      }));
+
+    const adaptiveTdee: AdaptiveTdeeResult | null = computeAdaptiveTdee(history);
+
+    // Deficit duration (from the M1.7 counter, stored on nutrition_profile
+    // via deficit_phase_start_date). Days since phase start, else 0.
+    const phaseStart = profile.deficit_phase_start_date;
+    const deficitDays = phaseStart
+      ? Math.max(0, Math.floor(
+          (new Date(date).getTime() - new Date(String(phaseStart)).getTime()) / 86400000,
+        ))
+      : 0;
+
+    const dietBreakLevel: DietBreakLevel = recommendDietBreak(deficitDays);
+
+    // Weight-stall = consecutive days where weight didn't drop ≥ 0.1 kg.
+    let weightStallDays = 0;
+    for (let i = history.length - 1; i > 0; i--) {
+      const drop = history[i - 1].weightKg - history[i].weightKg;
+      if (drop >= 0.1) break;
+      weightStallDays++;
+    }
+
+    // Weight-loss velocity (%/wk) from the last 7 days of history
+    let velocityPctPerWk = 0;
+    if (history.length >= 7 && weightKg > 0) {
+      const recent = history.slice(-7);
+      const dropKg = recent[0].weightKg - recent[recent.length - 1].weightKg;
+      velocityPctPerWk = (dropKg / weightKg) * 100;
+    }
+
+    // HRV + readiness — default to neutral when not available
+    const healthForAdaptive = healthRows[0] ?? {};
+    const hrvTrendPct: number = Number(healthForAdaptive.hrv_7d_trend_pct ?? 0);
+    const readinessAvg: number = Number(healthForAdaptive.readiness_score ?? 80);
+
+    const refeedPressureScore = computeRefeedPressureScore({
+      deficitDays,
+      weightStallDays,
+      hrv7dTrendPct: hrvTrendPct,
+      readinessAvg,
+      bfTier: contextTier,
+      weightLossVelocityPctPerWk: velocityPctPerWk,
+    });
+
+    const plateau: PlateauResult | null = history.length >= 21
+      ? detectPlateau(history, {
+          tdeeStable: adaptiveTdee != null && !adaptiveTdee.driftFlag,
+        })
+      : null;
+
     return NextResponse.json({
       date,
       weightKg,
@@ -345,6 +439,12 @@ export async function GET(req: NextRequest) {
         band: contextBand,
         tier: contextTier,
         mode,
+        adaptive: {
+          tdee: adaptiveTdee,
+          refeedPressureScore,
+          dietBreakLevel,
+          plateau,
+        },
       },
       eaten: totalEaten,
       remaining,
