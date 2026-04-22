@@ -17,6 +17,7 @@ import { HyponatremiaBanner } from "@/components/hyponatremia-banner";
 import { InjuryCard, type ActiveInjury } from "@/components/injury-card";
 import { TaperCard, type TaperContext } from "@/components/taper-card";
 import { ClimateCard, type ClimateContext } from "@/components/climate-card";
+import { WeeklyWrapupCard } from "@/components/weekly-wrapup-card";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -504,6 +505,10 @@ function DashboardInner() {
                   climate={plan.context?.climate ?? null}
                   onChange={() => fetchPlan()}
                 />
+              </div>
+
+              <div className="mb-4">
+                <WeeklyWrapupCard />
               </div>
 
               {/* Hero metric */}
