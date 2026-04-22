@@ -3,11 +3,12 @@ import { getDb } from "@/lib/db";
 import {
   computeStepCalories,
   computeTdee,
-  computeMacroTargets,
   applyAlcoholOffset,
   redistributeRemaining,
   type MacroTargets,
 } from "@/lib/macro-engine";
+import { computeMacroTargetsFromContext } from "@/lib/macro-targets";
+import type { Mode } from "@/lib/mode-engine";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -172,11 +173,17 @@ export async function GET(req: NextRequest) {
       targetCalories: Math.round(tdeeTotal - deficitUsed),
     };
 
-    // Macro targets: prefer nutrition_day pre-computed, fall back to engine
+    // Keep training_day_type on the response payload for UI badges; engine
+    // below now derives the real training "band" from run/gym kcal directly.
     const trainingDayType = day?.training_day_type ?? "rest";
 
-    // Always compute targets dynamically (activities change TDEE in real-time)
-    const targets = (day?.manual_override && day?.target_calories)
+    // Macro targets: prefer nutrition_day pre-computed, fall back to the
+    // 5-band × tier × mode engine (M4 Phase A). Activities change TDEE in
+    // real time so we always recompute unless the user manually overrode.
+    const mode = (profile.deficit_mode ?? "standard") as Mode;
+    const bfPct = profile.estimated_bf_pct != null ? Number(profile.estimated_bf_pct) : null;
+
+    const targets: MacroTargets = (day?.manual_override && day?.target_calories)
       ? {
           calories: Math.round(day.target_calories),
           protein: Math.round(day.target_protein ?? weightKg * 2.2),
@@ -184,13 +191,14 @@ export async function GET(req: NextRequest) {
           fat: Math.round(day.target_fat ?? weightKg * 0.8),
           fiber: Math.round(day.target_fiber ?? tdee.targetCalories * 14 / 1000),
         }
-      : computeMacroTargets({
-          targetCalories: tdee.targetCalories,
+      : computeMacroTargetsFromContext({
           weightKg,
-          proteinGPerKg: profile.protein_g_per_kg ?? 2.2,
-          fatGPerKg: profile.fat_g_per_kg ?? 0.8,
-          trainingDayType,
-          carbPeriodization: true,
+          bfPct,
+          mode,
+          runKcal: runCals,
+          gymKcal: gymCals,
+          kcalTarget: tdee.targetCalories,
+          inDeficit: deficitUsed > 0,
         });
 
     // Alcohol offset

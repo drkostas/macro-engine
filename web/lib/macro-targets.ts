@@ -8,7 +8,7 @@
  */
 
 import type { Mode } from "./mode-engine";
-import type { Tier } from "./safety-rails";
+import { computeTierRaw, type Tier } from "./safety-rails";
 
 // ============================================================================
 // M4.1 — Training load + band classifier
@@ -176,4 +176,61 @@ export function computeMacroTargets(opts: {
   const kcal = proteinG * KCAL_P + carbsG * KCAL_C + fatGInt * KCAL_F;
 
   return { kcal, proteinG, carbsG, fatG: fatGInt, fiberG };
+}
+
+// ============================================================================
+// Adapter — legacy API shape for existing callers (M4.5)
+// ============================================================================
+
+export interface MacroTargetsLegacyShape {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+}
+
+export interface MacroContextResult extends MacroTargetsLegacyShape {
+  band: Band;
+  tier: Tier;
+}
+
+/**
+ * Adapter for legacy callers that pass profile + training context and expect
+ * {calories, protein, carbs, fat, fiber} field names. Internally runs the new
+ * 5-band × tier × mode engine, then remaps field names so the HTTP response
+ * shape stays stable for the UI.
+ *
+ * When bfPct is null (common during onboarding before a body-comp anchor is
+ * logged), defaults tier to T2 — a sensible midpoint for the seeded user
+ * profile that won't mis-trigger the T3+ Aggressive block.
+ */
+export function computeMacroTargetsFromContext(opts: {
+  weightKg: number;
+  bfPct: number | null;
+  mode: Mode;
+  runKcal: number;
+  gymKcal: number;
+  kcalTarget: number;
+  inDeficit: boolean;
+}): MacroContextResult {
+  const { weightKg, bfPct, mode, runKcal, gymKcal, kcalTarget, inDeficit } = opts;
+
+  const tier: Tier = bfPct != null ? computeTierRaw(bfPct) : "T2";
+  const load = computeTrainingLoad(runKcal, gymKcal, { weightKg });
+  const band = classifyBand(load);
+
+  const core = computeMacroTargets({
+    weightKg, tier, mode, band, kcalTarget, inDeficit,
+  });
+
+  return {
+    calories: core.kcal,
+    protein: core.proteinG,
+    carbs: core.carbsG,
+    fat: core.fatG,
+    fiber: core.fiberG,
+    band,
+    tier,
+  };
 }
