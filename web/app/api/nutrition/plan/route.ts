@@ -26,6 +26,7 @@ import {
 } from "@/lib/adaptive";
 import type { DayPoint } from "@/lib/body-comp";
 import { computeRefeedTargets, isRefeedDay } from "@/lib/refeed";
+import { computeHooperAlert } from "@/lib/subjective";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -425,11 +426,38 @@ export async function GET(req: NextRequest) {
       weightLossVelocityPctPerWk: velocityPctPerWk,
     });
 
-    const plateau: PlateauResult | null = history.length >= 21
+    let plateau: PlateauResult | null = history.length >= 21
       ? detectPlateau(history, {
           tdeeStable: adaptiveTdee != null && !adaptiveTdee.driftFlag,
         })
       : null;
+
+    // ---- M7.7: Hooper alert overrides plateau type → adaptation ----
+    // Subjective wellness is the primary plateau classifier per V2 §4.4.
+    // An elevated/high Hooper Z-alert upgrades an existing plateau to
+    // ADAPTATION so the refeed banner nudges the user.
+    if (plateau?.isPlateau) {
+      const hooperRows = (await sql`
+        SELECT morning_hooper FROM subjective_log
+        WHERE date >= CURRENT_DATE - interval '28 days'
+          AND morning_hooper IS NOT NULL
+        ORDER BY date DESC
+      `) as Array<{ morning_hooper: { fatigue: number; sleep: number; stress: number; soreness: number } | null }>;
+      if (hooperRows.length > 0) {
+        const totals = hooperRows
+          .map((r) => r.morning_hooper)
+          .filter((h): h is NonNullable<typeof h> => h != null)
+          .map((h) => h.fatigue + h.sleep + h.stress + h.soreness);
+        const today = totals[0];
+        const historyTotals = totals.slice(1);
+        if (today != null) {
+          const alert = computeHooperAlert(today, historyTotals);
+          if (alert.alertLevel !== "normal") {
+            plateau = { ...plateau, type: "adaptation" };
+          }
+        }
+      }
+    }
 
     // ---- M6 Phase B: refeed detection + target macros ----
     const refeedDetected = tdee.total > 0 && weightKg > 0
