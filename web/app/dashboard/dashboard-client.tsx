@@ -14,6 +14,7 @@ import { WellnessCard } from "@/components/wellness-card";
 import { WellnessBanner } from "@/components/wellness-banner";
 import { HydrationCard } from "@/components/hydration-card";
 import { HyponatremiaBanner } from "@/components/hyponatremia-banner";
+import { InjuryCard, type ActiveInjury } from "@/components/injury-card";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -69,6 +70,7 @@ interface PlanData {
       sodium: { targetMg: number; currentMg: number };
       hyponatremiaRisk: boolean;
     };
+    injury?: ActiveInjury | null;
   };
   eaten: MacroTargets;
   remaining: MacroTargets;
@@ -477,6 +479,13 @@ function DashboardInner() {
 
               <div className="mb-4">
                 <HydrationCard />
+              </div>
+
+              <div className="mb-4">
+                <InjuryCard
+                  injury={plan.context?.injury ?? null}
+                  onChange={() => fetchPlan()}
+                />
               </div>
 
               {/* Hero metric */}
