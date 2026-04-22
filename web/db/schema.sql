@@ -633,6 +633,25 @@ CREATE TABLE public.nutrition_profile (
 
 
 --
+-- Name: injury_log; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.injury_log (
+    id serial PRIMARY KEY,
+    injury_date date NOT NULL,
+    recovered_date date,
+    type text NOT NULL,
+    notes text,
+    rehab_kcal integer DEFAULT 0,
+    pre_injury_protein_g_per_kg real DEFAULT 2.0,
+    created_at timestamp with time zone DEFAULT now(),
+    CONSTRAINT injury_log_type_check CHECK (
+        type IN ('default','immobilization','acl','severe','tendon','concussion','bone','strain')
+    )
+);
+
+
+--
 -- Name: subjective_log; Type: TABLE; Schema: public; Owner: -
 --
 

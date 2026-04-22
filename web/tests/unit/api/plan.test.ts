@@ -81,6 +81,8 @@ describe("GET /api/nutrition/plan", () => {
     expect(body.context.hydration.sodium.targetMg).toBeTypeOf("number");
     expect(body.context.hydration.sodium.currentMg).toBeTypeOf("number");
     expect(body.context.hydration.hyponatremiaRisk).toBeTypeOf("boolean");
+    // M9 Phase B: injury context (null when no active injury)
+    expect(body.context.injury).toBeNull();
     expect(body.eaten).toBeDefined();
     expect(body.remaining).toBeDefined();
     expect(body.slotBudgets).toHaveLength(4);
@@ -172,6 +174,47 @@ describe("GET /api/nutrition/plan", () => {
     const body = await res.json();
     // 2600 * 0.75 = 1950
     expect(body.tdee.bmr).toBe(1950);
+  });
+
+  it("surfaces active injury with derived phase + protein + EA floor + module", async () => {
+    queryHandler = (query: string) => {
+      if (query.includes("FROM nutrition_profile")) {
+        return [{
+          id: 1, weight_kg: 80, daily_deficit: 500,
+          protein_g_per_kg: 2.2, fat_g_per_kg: 0.8,
+          step_goal: 10000, tdee_estimate: 2600,
+          estimated_bf_pct: 20, estimated_ffm_kg: 64,
+        }];
+      }
+      if (query.includes("FROM injury_log")) {
+        // Active injury from 5 days ago (acute phase).
+        const d = new Date();
+        d.setUTCDate(d.getUTCDate() - 5);
+        return [{
+          id: 7,
+          injury_date: d.toISOString().split("T")[0],
+          type: "acl",
+          rehab_kcal: 300,
+          pre_injury_protein_g_per_kg: 2.0,
+          notes: null,
+        }];
+      }
+      if (query.includes("FROM weight_log")) return [{ weight_grams: 80_000 }];
+      if (query.includes("bmr_kilocalories > 1500")) return [{ bmr_kilocalories: 1800 }];
+      return [];
+    };
+    const req = new NextRequest("http://localhost/api/nutrition/plan?date=2026-04-14");
+    const res = await GET(req);
+    const body = await res.json();
+    expect(body.context.injury).not.toBeNull();
+    expect(body.context.injury.active).toBe(true);
+    expect(body.context.injury.type).toBe("acl");
+    expect(body.context.injury.phase).toBe("acute");
+    // ACL → 2.4 g/kg, floored at 2.0 pre-injury → 2.4
+    expect(body.context.injury.proteinGPerKg).toBe(2.4);
+    // 30 × 64 + 300 = 2220 (above Cunningham(64) ≈ 1940)
+    expect(body.context.injury.eaFloorKcal).toBe(2220);
+    expect(body.context.injury.module.supplements).toContain("omega-3");
   });
 
   it("computes targets dynamically via the new 5-band engine", async () => {

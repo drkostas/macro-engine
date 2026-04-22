@@ -33,6 +33,13 @@ import {
   effectiveHydration,
   isHyponatremiaRisk,
 } from "@/lib/hydration";
+import {
+  classifyInjuryPhase,
+  getInjuryModule,
+  injuredEaHardFloor,
+  injuryProteinGPerKg,
+  type InjuryType,
+} from "@/lib/injured";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -511,6 +518,47 @@ export async function GET(req: NextRequest) {
         })
       : false;
 
+    // ---- M9 Phase B: injury context ----
+    interface InjuryRow {
+      id: number;
+      injury_date: string | Date;
+      type: InjuryType;
+      rehab_kcal: number;
+      pre_injury_protein_g_per_kg: number | string;
+      notes: string | null;
+    }
+    const injuryRows = (await sql`
+      SELECT id, injury_date, type, rehab_kcal, pre_injury_protein_g_per_kg, notes
+      FROM injury_log
+      WHERE recovered_date IS NULL
+      ORDER BY injury_date DESC
+      LIMIT 1
+    `) as InjuryRow[];
+
+    const ffmKg = Number(profile.estimated_ffm_kg ?? 60);
+    const injuryPayload = injuryRows[0]
+      ? (() => {
+          const row = injuryRows[0];
+          const iDate = row.injury_date instanceof Date
+            ? row.injury_date
+            : new Date(String(row.injury_date) + "T00:00:00Z");
+          const phase = classifyInjuryPhase(iDate, new Date());
+          const pre = Number(row.pre_injury_protein_g_per_kg);
+          return {
+            active: true,
+            id: row.id,
+            injuryDate: iDate.toISOString().split("T")[0],
+            type: row.type,
+            phase,
+            proteinGPerKg: injuryProteinGPerKg(row.type, { preInjuryGPerKg: pre }),
+            eaFloorKcal: injuredEaHardFloor({
+              ffmKg, rehabKcal: row.rehab_kcal ?? 0,
+            }),
+            module: getInjuryModule(row.type),
+          };
+        })()
+      : null;
+
     return NextResponse.json({
       date,
       weightKg,
@@ -541,6 +589,7 @@ export async function GET(req: NextRequest) {
           },
           hyponatremiaRisk: hyponatremiaRiskFlag,
         },
+        injury: injuryPayload,
       },
       eaten: totalEaten,
       remaining,
