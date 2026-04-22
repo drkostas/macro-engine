@@ -25,6 +25,7 @@ import {
   type PlateauResult,
 } from "@/lib/adaptive";
 import type { DayPoint } from "@/lib/body-comp";
+import { computeRefeedTargets, isRefeedDay } from "@/lib/refeed";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -430,6 +431,23 @@ export async function GET(req: NextRequest) {
         })
       : null;
 
+    // ---- M6 Phase B: refeed detection + target macros ----
+    const refeedDetected = tdee.total > 0 && weightKg > 0
+      ? isRefeedDay({
+          kcal: totalEaten.calories,
+          tdee: tdee.total,
+          carbsG: totalEaten.carbs,
+          fatG: totalEaten.fat,
+          weightKg,
+        })
+      : false;
+
+    const refeedSuggested = weightKg > 0 && tdee.total > 0
+      ? computeRefeedTargets({
+          weightKg, tdee: tdee.total, intensity: "maintenance",
+        })
+      : null;
+
     return NextResponse.json({
       date,
       weightKg,
@@ -444,6 +462,10 @@ export async function GET(req: NextRequest) {
           refeedPressureScore,
           dietBreakLevel,
           plateau,
+        },
+        refeed: {
+          detected: refeedDetected,
+          suggestedTargets: refeedSuggested,
         },
       },
       eaten: totalEaten,
