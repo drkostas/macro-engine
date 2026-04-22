@@ -7,8 +7,14 @@ import {
   redistributeRemaining,
   type MacroTargets,
 } from "@/lib/macro-engine";
-import { computeMacroTargetsFromContext } from "@/lib/macro-targets";
+import {
+  classifyBand,
+  computeMacroTargetsFromContext,
+  computeTrainingLoad,
+  type Band,
+} from "@/lib/macro-targets";
 import type { Mode } from "@/lib/mode-engine";
+import { computeTierRaw, type Tier } from "@/lib/safety-rails";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -183,14 +189,16 @@ export async function GET(req: NextRequest) {
     const mode = (profile.deficit_mode ?? "standard") as Mode;
     const bfPct = profile.estimated_bf_pct != null ? Number(profile.estimated_bf_pct) : null;
 
-    const targets: MacroTargets = (day?.manual_override && day?.target_calories)
-      ? {
-          calories: Math.round(day.target_calories),
-          protein: Math.round(day.target_protein ?? weightKg * 2.2),
-          carbs: Math.round(day.target_carbs ?? 0),
-          fat: Math.round(day.target_fat ?? weightKg * 0.8),
-          fiber: Math.round(day.target_fiber ?? tdee.targetCalories * 14 / 1000),
-        }
+    // Derive tier + band up-front so we can surface them in the response even
+    // when the user has manually overridden macros (they still want to see
+    // their current context).
+    const contextTier: Tier = bfPct != null ? computeTierRaw(bfPct) : "T2";
+    const contextBand: Band = classifyBand(
+      computeTrainingLoad(runCals, gymCals, { weightKg }),
+    );
+
+    const engineResult = (day?.manual_override && day?.target_calories)
+      ? null
       : computeMacroTargetsFromContext({
           weightKg,
           bfPct,
@@ -200,6 +208,14 @@ export async function GET(req: NextRequest) {
           kcalTarget: tdee.targetCalories,
           inDeficit: deficitUsed > 0,
         });
+
+    const targets: MacroTargets = engineResult ?? {
+      calories: Math.round(day!.target_calories),
+      protein: Math.round(day!.target_protein ?? weightKg * 2.2),
+      carbs: Math.round(day!.target_carbs ?? 0),
+      fat: Math.round(day!.target_fat ?? weightKg * 0.8),
+      fiber: Math.round(day!.target_fiber ?? tdee.targetCalories * 14 / 1000),
+    };
 
     // Alcohol offset
     let drinkCalories = 0;
@@ -325,6 +341,11 @@ export async function GET(req: NextRequest) {
       weightKg,
       tdee,
       targets: adjustedTargets,
+      context: {
+        band: contextBand,
+        tier: contextTier,
+        mode,
+      },
       eaten: totalEaten,
       remaining,
       slotBudgets,
