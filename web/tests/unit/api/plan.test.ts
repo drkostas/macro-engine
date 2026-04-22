@@ -59,6 +59,10 @@ describe("GET /api/nutrition/plan", () => {
     const body = await res.json();
     expect(body.tdee).toBeDefined();
     expect(body.targets).toBeDefined();
+    expect(body.context).toBeDefined();
+    expect(body.context.band).toBeTypeOf("string");
+    expect(body.context.tier).toMatch(/^T[1-5]$/);
+    expect(body.context.mode).toBeTypeOf("string");
     expect(body.eaten).toBeDefined();
     expect(body.remaining).toBeDefined();
     expect(body.slotBudgets).toHaveLength(4);
