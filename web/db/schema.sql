@@ -570,7 +570,21 @@ CREATE TABLE public.nutrition_day (
     run_enabled boolean DEFAULT true,
     selected_workouts text[] DEFAULT '{}'::text[],
     expected_steps integer,
-    manual_override boolean DEFAULT false
+    manual_override boolean DEFAULT false,
+    water_target_ml integer,
+    sodium_target_mg integer
+);
+
+
+--
+-- Name: hydration_log; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.hydration_log (
+    date date PRIMARY KEY,
+    logs jsonb DEFAULT '[]'::jsonb NOT NULL,
+    sodium_mg integer DEFAULT 0 NOT NULL,
+    created_at timestamp with time zone DEFAULT now()
 );
 
 

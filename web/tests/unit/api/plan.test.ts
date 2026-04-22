@@ -74,6 +74,13 @@ describe("GET /api/nutrition/plan", () => {
     expect(body.context.refeed.suggestedTargets.proteinG).toBeTypeOf("number");
     expect(body.context.refeed.suggestedTargets.carbsG).toBeTypeOf("number");
     expect(body.context.refeed.suggestedTargets.fatG).toBeTypeOf("number");
+    // M8 Phase B: hydration
+    expect(body.context.hydration).toBeDefined();
+    expect(body.context.hydration.water.targetMl).toBeTypeOf("number");
+    expect(body.context.hydration.water.effectiveMl).toBeTypeOf("number");
+    expect(body.context.hydration.sodium.targetMg).toBeTypeOf("number");
+    expect(body.context.hydration.sodium.currentMg).toBeTypeOf("number");
+    expect(body.context.hydration.hyponatremiaRisk).toBeTypeOf("boolean");
     expect(body.eaten).toBeDefined();
     expect(body.remaining).toBeDefined();
     expect(body.slotBudgets).toHaveLength(4);
