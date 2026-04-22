@@ -30,3 +30,8 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO nutrition_day (date, status, training_day_type, target_calories, target_protein, target_carbs, target_fat, target_fiber, tdee_used, deficit_used, expected_steps)
 VALUES (CURRENT_DATE, 'active', 'rest', 1800, 165, 180, 50, 28, 2600, 800, 10000)
 ON CONFLICT (date) DO NOTHING;
+
+-- Baseline FFM anchor so GET /api/nutrition/ffm-anchor has something to return.
+-- NHANES-grade estimate (sigma 3.0) — matches the onboarding default path.
+INSERT INTO ffm_anchor (date, method, ffm_kg, sigma_kg, notes)
+VALUES (CURRENT_DATE - INTERVAL '30 days', 'nhanes', 63.0, 3.0, 'Test seed baseline');

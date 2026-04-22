@@ -619,6 +619,26 @@ CREATE TABLE public.nutrition_profile (
 
 
 --
+-- Name: ffm_anchor; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.ffm_anchor (
+    id serial PRIMARY KEY,
+    date date NOT NULL,
+    method text NOT NULL,
+    ffm_kg real NOT NULL,
+    sigma_kg real NOT NULL,
+    notes text,
+    created_at timestamp with time zone DEFAULT now(),
+    CONSTRAINT ffm_anchor_method_check CHECK (
+        method IN ('dexa','caliper','navy','bia','nhanes')
+    )
+);
+
+CREATE INDEX ffm_anchor_date_idx ON public.ffm_anchor (date DESC);
+
+
+--
 -- Name: platform_credentials; Type: TABLE; Schema: public; Owner: -
 --
 
