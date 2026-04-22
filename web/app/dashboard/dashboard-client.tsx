@@ -12,6 +12,8 @@ import { AdaptiveBanner } from "@/components/adaptive-banner";
 import { RefeedCard } from "@/components/refeed-card";
 import { WellnessCard } from "@/components/wellness-card";
 import { WellnessBanner } from "@/components/wellness-banner";
+import { HydrationCard } from "@/components/hydration-card";
+import { HyponatremiaBanner } from "@/components/hyponatremia-banner";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -61,6 +63,11 @@ interface PlanData {
     refeed?: {
       detected: boolean;
       suggestedTargets: import("@/lib/refeed").RefeedTargets | null;
+    };
+    hydration?: {
+      water: { targetMl: number; effectiveMl: number };
+      sodium: { targetMg: number; currentMg: number };
+      hyponatremiaRisk: boolean;
     };
   };
   eaten: MacroTargets;
@@ -446,6 +453,12 @@ function DashboardInner() {
                 <WellnessBanner />
               </div>
 
+              {plan.context?.hydration && (
+                <div className="mb-4">
+                  <HyponatremiaBanner active={plan.context.hydration.hyponatremiaRisk} />
+                </div>
+              )}
+
               {plan.context?.adaptive && (
                 <div className="mb-4">
                   <AdaptiveBanner adaptive={plan.context.adaptive} />
@@ -461,6 +474,10 @@ function DashboardInner() {
                   <RefeedCard refeed={plan.context.refeed} />
                 </div>
               )}
+
+              <div className="mb-4">
+                <HydrationCard />
+              </div>
 
               {/* Hero metric */}
               <div className="flex items-baseline gap-2 md:gap-3 mb-1">
