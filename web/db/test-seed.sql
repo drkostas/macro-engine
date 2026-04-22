@@ -31,6 +31,13 @@ INSERT INTO nutrition_day (date, status, training_day_type, target_calories, tar
 VALUES (CURRENT_DATE, 'active', 'rest', 1800, 165, 180, 50, 28, 2600, 800, 10000)
 ON CONFLICT (date) DO NOTHING;
 
+-- Baseline hydration log for today so GET /api/nutrition/hydration has data.
+INSERT INTO hydration_log (date, logs, sodium_mg)
+VALUES (CURRENT_DATE,
+        '[{"ts":"2026-04-22T08:00:00Z","volume_ml":500,"ethanol_g":0,"caffeine_mg":0}]'::jsonb,
+        0)
+ON CONFLICT (date) DO NOTHING;
+
 -- Baseline subjective log row so GET /api/nutrition/subjective has data.
 INSERT INTO subjective_log (date, morning_hooper)
 VALUES (CURRENT_DATE - INTERVAL '1 day',

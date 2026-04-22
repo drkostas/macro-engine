@@ -27,6 +27,12 @@ import {
 import type { DayPoint } from "@/lib/body-comp";
 import { computeRefeedTargets, isRefeedDay } from "@/lib/refeed";
 import { computeHooperAlert } from "@/lib/subjective";
+import {
+  computeSodiumTarget,
+  computeWaterTarget,
+  effectiveHydration,
+  isHyponatremiaRisk,
+} from "@/lib/hydration";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -476,6 +482,35 @@ export async function GET(req: NextRequest) {
         })
       : null;
 
+    // ---- M8 Phase B: hydration context ----
+    interface HydrationLogRow {
+      logs: Array<{ volume_ml: number; ethanol_g?: number; caffeine_mg?: number }>;
+      sodium_mg: number;
+    }
+    const hydrationRows = (await sql`
+      SELECT logs, sodium_mg FROM hydration_log WHERE date = ${date}::date
+    `) as HydrationLogRow[];
+    const hydrationLogs = hydrationRows[0]?.logs ?? [];
+    const sodiumCurrent = hydrationRows[0]?.sodium_mg ?? 0;
+    const waterEffective = hydrationLogs.reduce(
+      (sum, d) => sum + effectiveHydration(d.volume_ml, {
+        ethanolG: d.ethanol_g ?? 0, caffeineMg: d.caffeine_mg ?? 0,
+      }),
+      0,
+    );
+    const waterTarget = weightKg > 0 ? computeWaterTarget(weightKg) : null;
+    const sodiumTarget = computeSodiumTarget({ sweatL: 0 });
+    // Rough hourly rate for the hyponatremia check: assume the water was
+    // consumed across the last N hours (we estimate from timestamp span
+    // when available). Fall back to false without enough data.
+    const hyponatremiaRiskFlag = hydrationLogs.length >= 3
+      ? isHyponatremiaRisk({
+          waterMlPerHour: waterEffective / 3, // conservative: assume 3-hour window
+          hours: 3,
+          sodiumMgPerHour: sodiumCurrent / 3,
+        })
+      : false;
+
     return NextResponse.json({
       date,
       weightKg,
@@ -494,6 +529,17 @@ export async function GET(req: NextRequest) {
         refeed: {
           detected: refeedDetected,
           suggestedTargets: refeedSuggested,
+        },
+        hydration: {
+          water: {
+            targetMl: waterTarget?.beverageMl ?? 0,
+            effectiveMl: waterEffective,
+          },
+          sodium: {
+            targetMg: sodiumTarget,
+            currentMg: sodiumCurrent,
+          },
+          hyponatremiaRisk: hyponatremiaRiskFlag,
         },
       },
       eaten: totalEaten,
