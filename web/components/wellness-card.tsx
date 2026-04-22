@@ -106,7 +106,7 @@ export function WellnessCard() {
           Log morning check-in
           {savedToday && (
             <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-success/15 text-success">
-              Saved
+              Logged
             </span>
           )}
         </span>

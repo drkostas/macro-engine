@@ -60,7 +60,7 @@ describe("WellnessCard", () => {
       }),
     }));
     render(<WellnessCard />);
-    await waitFor(() => screen.getByText(/Saved/i));
+    await waitFor(() => screen.getByText(/Logged/i));
     await userEvent.click(screen.getByRole("button", { name: /log morning check-in/i }));
     const fatigue = screen.getByLabelText(/Fatigue/i) as HTMLInputElement;
     expect(fatigue.value).toBe("2");
