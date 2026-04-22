@@ -16,6 +16,7 @@ import { HydrationCard } from "@/components/hydration-card";
 import { HyponatremiaBanner } from "@/components/hyponatremia-banner";
 import { InjuryCard, type ActiveInjury } from "@/components/injury-card";
 import { TaperCard, type TaperContext } from "@/components/taper-card";
+import { ClimateCard, type ClimateContext } from "@/components/climate-card";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -73,6 +74,7 @@ interface PlanData {
     };
     injury?: ActiveInjury | null;
     taper?: TaperContext | null;
+    climate?: ClimateContext | null;
   };
   eaten: MacroTargets;
   remaining: MacroTargets;
@@ -493,6 +495,13 @@ function DashboardInner() {
               <div className="mb-4">
                 <TaperCard
                   taper={plan.context?.taper ?? null}
+                  onChange={() => fetchPlan()}
+                />
+              </div>
+
+              <div className="mb-4">
+                <ClimateCard
+                  climate={plan.context?.climate ?? null}
                   onChange={() => fetchPlan()}
                 />
               </div>

@@ -625,10 +625,16 @@ CREATE TABLE public.nutrition_profile (
     aggressive_phase_start date,
     reverse_diet_start date,
     race_date date,
+    climate_env text DEFAULT 'normal' NOT NULL,
+    climate_sweat_l_per_hour real,
+    climate_hours real,
     updated_at timestamp with time zone DEFAULT now(),
     CONSTRAINT nutrition_profile_id_check CHECK ((id = 1)),
     CONSTRAINT nutrition_profile_deficit_mode_check CHECK (
         deficit_mode IN ('standard','aggressive','reverse','maintenance','bulk','injured')
+    ),
+    CONSTRAINT nutrition_profile_climate_env_check CHECK (
+        climate_env IN ('normal','altitude','heat','cold')
     )
 );
 
