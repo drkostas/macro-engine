@@ -6,6 +6,8 @@ import { MacroRing } from "@/components/macro-ring";
 import { MealSlotCard } from "@/components/meal-slot-card";
 import { SuggestionBanner } from "@/components/suggestion-banner";
 import { DateNavigator } from "@/components/date-navigator";
+import { BandPill } from "@/components/band-pill";
+import { TierPill } from "@/components/tier-pill";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -42,6 +44,11 @@ interface PlanData {
     targetCalories: number;
   };
   targets: MacroTargets;
+  context?: {
+    band: import("@/lib/macro-targets").Band;
+    tier: import("@/lib/safety-rails").Tier;
+    mode: import("@/lib/mode-engine").Mode;
+  };
   eaten: MacroTargets;
   remaining: MacroTargets;
   slotBudgets: SlotBudget[];
@@ -399,6 +406,12 @@ function DashboardInner() {
                   <span className="t-eyebrow">Today</span>
                   <WeighInWidget currentWeight={plan.weightKg} onSaved={() => fetchPlan()} />
                   <StreakBadge />
+                  {plan.context && (
+                    <>
+                      <BandPill band={plan.context.band} weightKg={plan.weightKg} />
+                      <TierPill tier={plan.context.tier} mode={plan.context.mode} />
+                    </>
+                  )}
                   <button
                     onClick={syncGarmin}
                     disabled={syncing}
