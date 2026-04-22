@@ -200,3 +200,116 @@ export function navyTapeFfmKg(inputs: NavyTapeInputs): number {
   const bf = navyTapeBfPct(inputs);
   return inputs.weightKg * (1 - bf / 100);
 }
+
+// ============================================================================
+// WEIGHT PREDICTION 3-LAYER (M3 Phase D) — V2 §8.3
+// ============================================================================
+
+const LEAN_KCAL_PER_KG = 1816;
+const FAT_KCAL_PER_KG = 9441;
+
+export function forbesEnergyDensityKcalPerKg(fmKg: number): number {
+  if (fmKg < 0) throw new RangeError(`fmKg must be non-negative, got ${fmKg}`);
+  const leanFraction = FORBES_K / (FORBES_K + fmKg);
+  return leanFraction * LEAN_KCAL_PER_KG + (1 - leanFraction) * FAT_KCAL_PER_KG;
+}
+
+const LAYER_A_MIN = 5500;
+const LAYER_A_MAX = 9500;
+const LAYER_A_WEIGHT_EMA_DAYS = 7;
+const LAYER_A_WINDOW_DAYS = 14;
+
+export interface DayPoint {
+  day: number;
+  intakeKcal: number;
+  tdeeKcal: number;
+  weightKg: number;
+}
+
+function trailingMean(values: number[], window: number): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < values.length; i++) {
+    const start = Math.max(0, i - window + 1);
+    const seg = values.slice(start, i + 1);
+    out.push(seg.reduce((a, b) => a + b, 0) / seg.length);
+  }
+  return out;
+}
+
+function ewma(values: number[], halfLife: number): number[] {
+  if (values.length === 0) return [];
+  const alpha = 1 - Math.exp(-Math.log(2) / halfLife);
+  const out = [values[0]];
+  for (let i = 1; i < values.length; i++) {
+    out.push(out[out.length - 1] + alpha * (values[i] - out[out.length - 1]));
+  }
+  return out;
+}
+
+export function personalKcalPerKg(
+  history: DayPoint[],
+  opts: { minDays?: number; windowDays?: number; halfLifeDays?: number } = {},
+): number | null {
+  const minDays = opts.minDays ?? 28;
+  const windowDays = opts.windowDays ?? LAYER_A_WINDOW_DAYS;
+  const halfLifeDays = opts.halfLifeDays ?? 28;
+  if (history.length < minDays) return null;
+
+  const smoothed = trailingMean(history.map((d) => d.weightKg), LAYER_A_WEIGHT_EMA_DAYS);
+
+  const perWindow: number[] = [];
+  const firstEnd = windowDays + LAYER_A_WEIGHT_EMA_DAYS - 1;
+  for (let end = firstEnd; end < history.length; end++) {
+    const start = end - windowDays;
+    const window = history.slice(start, end);
+    const cumDeficit = window.reduce((sum, d) => sum + (d.tdeeKcal - d.intakeKcal), 0);
+    const delta = smoothed[start] - smoothed[end];
+    if (Math.abs(delta) < 0.05) continue;
+    if (cumDeficit * delta <= 0) continue;
+    perWindow.push(cumDeficit / delta);
+  }
+
+  if (perWindow.length === 0) return null;
+
+  const smoothedRho = ewma(perWindow, halfLifeDays);
+  const raw = smoothedRho[smoothedRho.length - 1];
+  return Math.max(LAYER_A_MIN, Math.min(LAYER_A_MAX, raw));
+}
+
+const GLYCOGEN_MAX_SWING_KG = 1.2;
+const GLYCOGEN_CARB_SATURATION_G = 500;
+const REFEED_MAX_OFFSET_KG = 0.8;
+const REFEED_TAU_DAYS = 2;
+const CI_BAND_SCALAR = 0.6;
+
+export interface OverlayResult {
+  glycogenSwingKg: number;
+  refeedOffsetKg: number;
+  ciLowKg: number;
+  ciHighKg: number;
+}
+
+export function glycogenWaterOverlay(
+  centralKg: number,
+  opts: { daysSinceRefeed: number; carbDeltaG: number },
+): OverlayResult {
+  const { daysSinceRefeed, carbDeltaG } = opts;
+  if (daysSinceRefeed < 0) {
+    throw new RangeError(`daysSinceRefeed must be >= 0, got ${daysSinceRefeed}`);
+  }
+  const saturation = Math.max(-1, Math.min(1, carbDeltaG / GLYCOGEN_CARB_SATURATION_G));
+  const glycogenSwingKg = saturation * GLYCOGEN_MAX_SWING_KG;
+  const refeedOffsetKg = REFEED_MAX_OFFSET_KG * Math.exp(-daysSinceRefeed / REFEED_TAU_DAYS);
+
+  const band = Math.max(
+    (Math.abs(glycogenSwingKg) + Math.abs(refeedOffsetKg)) * CI_BAND_SCALAR,
+    0.05,
+  );
+
+  return {
+    glycogenSwingKg,
+    refeedOffsetKg,
+    ciLowKg: centralKg - band,
+    ciHighKg: centralKg + band,
+  };
+}
