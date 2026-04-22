@@ -624,6 +624,7 @@ CREATE TABLE public.nutrition_profile (
     deficit_phase_start_date date,
     aggressive_phase_start date,
     reverse_diet_start date,
+    race_date date,
     updated_at timestamp with time zone DEFAULT now(),
     CONSTRAINT nutrition_profile_id_check CHECK ((id = 1)),
     CONSTRAINT nutrition_profile_deficit_mode_check CHECK (
