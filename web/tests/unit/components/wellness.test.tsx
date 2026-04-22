@@ -74,7 +74,7 @@ describe("WellnessCard", () => {
     }));
     render(<WellnessCard />);
     await userEvent.click(screen.getByRole("button", { name: /log morning check-in/i }));
-    await userEvent.click(screen.getByRole("button", { name: /save check-in/i }));
+    await userEvent.click(screen.getByRole("button", { name: /submit check-in/i }));
     await waitFor(() => expect(posted.length).toBeGreaterThan(0));
     const first = posted[0] as { morning_hooper: unknown };
     expect(first.morning_hooper).toBeDefined();

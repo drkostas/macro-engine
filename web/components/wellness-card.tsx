@@ -149,7 +149,7 @@ export function WellnessCard() {
             disabled={loading}
             className="bg-teal text-base rounded-lg px-4 py-1.5 text-sm font-semibold disabled:opacity-50"
           >
-            {loading ? "Saving…" : savedToday ? "Update check-in" : "Save check-in"}
+            {loading ? "Submitting…" : savedToday ? "Update check-in" : "Submit check-in"}
           </button>
           {toast && (
             <div
