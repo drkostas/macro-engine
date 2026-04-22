@@ -63,6 +63,9 @@ describe("GET /api/nutrition/plan", () => {
     expect(body.context.band).toBeTypeOf("string");
     expect(body.context.tier).toMatch(/^T[1-5]$/);
     expect(body.context.mode).toBeTypeOf("string");
+    expect(body.context.adaptive).toBeDefined();
+    expect(body.context.adaptive.refeedPressureScore).toBeTypeOf("number");
+    expect(body.context.adaptive.dietBreakLevel).toBeTypeOf("string");
     expect(body.eaten).toBeDefined();
     expect(body.remaining).toBeDefined();
     expect(body.slotBudgets).toHaveLength(4);
