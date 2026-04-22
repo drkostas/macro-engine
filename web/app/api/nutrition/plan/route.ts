@@ -40,6 +40,12 @@ import {
   injuryProteinGPerKg,
   type InjuryType,
 } from "@/lib/injured";
+import {
+  classifyTaperPhase,
+  taperCarbGPerKg,
+  taperProteinGPerKg,
+  type TaperPhase,
+} from "@/lib/taper";
 
 /**
  * GET /api/nutrition/plan?date=2026-04-13
@@ -559,6 +565,37 @@ export async function GET(req: NextRequest) {
         })()
       : null;
 
+    // ---- M9 Phase D: race taper context ----
+    const raceDateRaw = profile.race_date;
+    let taperPayload: {
+      raceDate: string;
+      daysUntil: number;
+      phase: TaperPhase;
+      carbGPerKg: number;
+      proteinGPerKg: number;
+    } | null = null;
+    if (raceDateRaw) {
+      const raceDate = raceDateRaw instanceof Date
+        ? raceDateRaw
+        : new Date(String(raceDateRaw) + "T00:00:00Z");
+      const now = new Date();
+      const nowUtc = Date.UTC(
+        now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+      );
+      const raceUtc = Date.UTC(
+        raceDate.getUTCFullYear(), raceDate.getUTCMonth(), raceDate.getUTCDate(),
+      );
+      const phase = classifyTaperPhase(raceDate, now);
+      const baselineProtein = Number(profile.protein_g_per_kg ?? 2.0);
+      taperPayload = {
+        raceDate: raceDate.toISOString().split("T")[0],
+        daysUntil: Math.round((raceUtc - nowUtc) / 86400000),
+        phase,
+        carbGPerKg: taperCarbGPerKg(phase, { baselineGPerKg: 5.0 }),
+        proteinGPerKg: taperProteinGPerKg(phase, { baselineGPerKg: baselineProtein }),
+      };
+    }
+
     return NextResponse.json({
       date,
       weightKg,
@@ -568,6 +605,7 @@ export async function GET(req: NextRequest) {
         band: contextBand,
         tier: contextTier,
         mode,
+        taper: taperPayload,
         adaptive: {
           tdee: adaptiveTdee,
           refeedPressureScore,

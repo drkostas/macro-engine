@@ -83,6 +83,8 @@ describe("GET /api/nutrition/plan", () => {
     expect(body.context.hydration.hyponatremiaRisk).toBeTypeOf("boolean");
     // M9 Phase B: injury context (null when no active injury)
     expect(body.context.injury).toBeNull();
+    // M9 Phase D: taper context (null when no race_date)
+    expect(body.context.taper).toBeNull();
     expect(body.eaten).toBeDefined();
     expect(body.remaining).toBeDefined();
     expect(body.slotBudgets).toHaveLength(4);
@@ -215,6 +217,36 @@ describe("GET /api/nutrition/plan", () => {
     // 30 × 64 + 300 = 2220 (above Cunningham(64) ≈ 1940)
     expect(body.context.injury.eaFloorKcal).toBe(2220);
     expect(body.context.injury.module.supplements).toContain("omega-3");
+  });
+
+  it("surfaces taper context when race_date is set", async () => {
+    const race = new Date();
+    race.setUTCDate(race.getUTCDate() + 5);
+    const raceIso = race.toISOString().split("T")[0];
+    queryHandler = (query: string) => {
+      if (query.includes("FROM nutrition_profile")) {
+        return [{
+          id: 1, weight_kg: 70, daily_deficit: 0,
+          protein_g_per_kg: 2.0, fat_g_per_kg: 0.8,
+          step_goal: 10000, tdee_estimate: 2800,
+          estimated_bf_pct: 15,
+          race_date: raceIso,
+        }];
+      }
+      if (query.includes("FROM weight_log")) return [{ weight_grams: 70_000 }];
+      if (query.includes("bmr_kilocalories > 1500")) return [{ bmr_kilocalories: 1700 }];
+      return [];
+    };
+    const req = new NextRequest("http://localhost/api/nutrition/plan?date=2026-04-14");
+    const res = await GET(req);
+    const body = await res.json();
+    expect(body.context.taper).not.toBeNull();
+    expect(body.context.taper.raceDate).toBe(raceIso);
+    // 5 days out → intensity_taper
+    expect(body.context.taper.phase).toBe("intensity_taper");
+    expect(body.context.taper.carbGPerKg).toBe(7);
+    // baseline protein 2.0 > floor 1.8 → 2.0
+    expect(body.context.taper.proteinGPerKg).toBe(2.0);
   });
 
   it("computes targets dynamically via the new 5-band engine", async () => {
