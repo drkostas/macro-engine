@@ -8,12 +8,12 @@ INSERT INTO nutrition_profile (
   id, weight_kg, height_cm, age, sex, activity_level, goal,
   target_calories, target_protein, target_carbs, target_fat, target_fiber,
   estimated_bf_pct, estimated_ffm_kg, target_bf_pct, tdee_estimate, tdee_confidence,
-  daily_deficit, protein_g_per_kg, fat_g_per_kg, step_goal
+  daily_deficit, protein_g_per_kg, fat_g_per_kg, step_goal, deficit_mode
 ) VALUES (
   1, 75.0, 180, 30, 'male', 'moderate', 'lose',
   1800, 165, 180, 50, 28,
   15, 63, 12, 2600, 'medium',
-  800, 2.2, 0.8, 10000
+  800, 2.2, 0.8, 10000, 'standard'
 ) ON CONFLICT (id) DO NOTHING;
 
 -- One weigh-in so weight trends + hero have data.
