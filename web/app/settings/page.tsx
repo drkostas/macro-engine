@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { InfoTip } from "@/components/info-tip";
 import { NotificationsSettings } from "@/components/notifications-settings";
+import { DeficitModeSelector } from "@/components/deficit-mode-selector";
 
 interface Profile {
   weight_kg: number;
@@ -24,6 +25,7 @@ interface Profile {
 
 const SECTIONS = [
   { id: "profile", label: "Profile" },
+  { id: "mode", label: "Deficit mode" },
   { id: "macros", label: "Macros & Deficit" },
   { id: "goals", label: "Goals" },
   { id: "activity", label: "Activity" },
@@ -181,6 +183,8 @@ export default function SettingsPage() {
             </FieldRow>
           </div>
         )}
+
+        {section === "mode" && <DeficitModeSelector />}
 
         {section === "macros" && (
           <div>
