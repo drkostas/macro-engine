@@ -5,6 +5,7 @@ import Link from "next/link";
 import { InfoTip } from "@/components/info-tip";
 import { NotificationsSettings } from "@/components/notifications-settings";
 import { DeficitModeSelector } from "@/components/deficit-mode-selector";
+import { BodyCompEntry } from "@/components/body-comp-entry";
 
 interface Profile {
   weight_kg: number;
@@ -26,6 +27,7 @@ interface Profile {
 const SECTIONS = [
   { id: "profile", label: "Profile" },
   { id: "mode", label: "Deficit mode" },
+  { id: "body-comp", label: "Body comp" },
   { id: "macros", label: "Macros & Deficit" },
   { id: "goals", label: "Goals" },
   { id: "activity", label: "Activity" },
@@ -185,6 +187,8 @@ export default function SettingsPage() {
         )}
 
         {section === "mode" && <DeficitModeSelector />}
+
+        {section === "body-comp" && <BodyCompEntry />}
 
         {section === "macros" && (
           <div>
