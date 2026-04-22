@@ -66,6 +66,14 @@ describe("GET /api/nutrition/plan", () => {
     expect(body.context.adaptive).toBeDefined();
     expect(body.context.adaptive.refeedPressureScore).toBeTypeOf("number");
     expect(body.context.adaptive.dietBreakLevel).toBeTypeOf("string");
+    // M6 Phase B: refeed detection + suggested targets
+    expect(body.context.refeed).toBeDefined();
+    expect(body.context.refeed.detected).toBeTypeOf("boolean");
+    expect(body.context.refeed.suggestedTargets).toBeDefined();
+    expect(body.context.refeed.suggestedTargets.kcal).toBeTypeOf("number");
+    expect(body.context.refeed.suggestedTargets.proteinG).toBeTypeOf("number");
+    expect(body.context.refeed.suggestedTargets.carbsG).toBeTypeOf("number");
+    expect(body.context.refeed.suggestedTargets.fatG).toBeTypeOf("number");
     expect(body.eaten).toBeDefined();
     expect(body.remaining).toBeDefined();
     expect(body.slotBudgets).toHaveLength(4);
