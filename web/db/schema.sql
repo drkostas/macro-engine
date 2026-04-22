@@ -606,8 +606,15 @@ CREATE TABLE public.nutrition_profile (
     creatine_dose_change_date date,
     vo2max real,
     sentinel_exercises jsonb,
+    deficit_mode text DEFAULT 'standard' NOT NULL,
+    deficit_phase_start_date date,
+    aggressive_phase_start date,
+    reverse_diet_start date,
     updated_at timestamp with time zone DEFAULT now(),
-    CONSTRAINT nutrition_profile_id_check CHECK ((id = 1))
+    CONSTRAINT nutrition_profile_id_check CHECK ((id = 1)),
+    CONSTRAINT nutrition_profile_deficit_mode_check CHECK (
+        deficit_mode IN ('standard','aggressive','reverse','maintenance','bulk','injured')
+    )
 );
 
 
