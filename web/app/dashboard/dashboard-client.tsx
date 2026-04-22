@@ -9,6 +9,7 @@ import { DateNavigator } from "@/components/date-navigator";
 import { BandPill } from "@/components/band-pill";
 import { TierPill } from "@/components/tier-pill";
 import { AdaptiveBanner } from "@/components/adaptive-banner";
+import { RefeedCard } from "@/components/refeed-card";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -54,6 +55,10 @@ interface PlanData {
       refeedPressureScore: number;
       dietBreakLevel: import("@/lib/adaptive").DietBreakLevel;
       plateau: import("@/lib/adaptive").PlateauResult | null;
+    };
+    refeed?: {
+      detected: boolean;
+      suggestedTargets: import("@/lib/refeed").RefeedTargets | null;
     };
   };
   eaten: MacroTargets;
@@ -438,6 +443,12 @@ function DashboardInner() {
               {plan.context?.adaptive && (
                 <div className="mb-4">
                   <AdaptiveBanner adaptive={plan.context.adaptive} />
+                </div>
+              )}
+
+              {plan.context?.refeed && (
+                <div className="mb-4">
+                  <RefeedCard refeed={plan.context.refeed} />
                 </div>
               )}
 
