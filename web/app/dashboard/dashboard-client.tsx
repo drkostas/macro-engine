@@ -17,9 +17,8 @@ import { HyponatremiaBanner } from "@/components/hyponatremia-banner";
 import { InjuryCard, type ActiveInjury } from "@/components/injury-card";
 import { TaperCard, type TaperContext } from "@/components/taper-card";
 import { ClimateCard, type ClimateContext } from "@/components/climate-card";
-import { WeeklyWrapupCard } from "@/components/weekly-wrapup-card";
-import { ProgressionCard } from "@/components/progression-card";
-import { YearReviewCard } from "@/components/year-review-card";
+import { StatusRow, type StatusKey } from "@/components/status-row";
+import { TrackingTabs } from "@/components/tracking-tabs";
 import { ActivitySelector } from "@/components/activity-selector";
 import { DrinkLogger } from "@/components/drink-logger";
 import { TrendTable } from "@/components/trend-table";
@@ -129,6 +128,7 @@ function DashboardInner() {
   );
   const [previewTotals, setPreviewTotals] = useState<Record<string, MacroTargets>>({});
   const [tdeeExpanded, setTdeeExpanded] = useState(false);
+  const [statusExpanded, setStatusExpanded] = useState<StatusKey | null>(null);
   const [recentIds, setRecentIds] = useState<string[]>([]);
   const [recentMeals, setRecentMeals] = useState<Record<string, Array<Record<string, unknown>>>>({});
   const [dayComplete, setDayComplete] = useState<DayCompleteData | null>(null);
@@ -488,37 +488,46 @@ function DashboardInner() {
                 <HydrationCard />
               </div>
 
-              <div className="mb-4">
-                <InjuryCard
+              <div className="mb-2">
+                <StatusRow
                   injury={plan.context?.injury ?? null}
-                  onChange={() => fetchPlan()}
-                />
-              </div>
-
-              <div className="mb-4">
-                <TaperCard
                   taper={plan.context?.taper ?? null}
-                  onChange={() => fetchPlan()}
-                />
-              </div>
-
-              <div className="mb-4">
-                <ClimateCard
                   climate={plan.context?.climate ?? null}
-                  onChange={() => fetchPlan()}
+                  expanded={statusExpanded}
+                  onToggleExpanded={(k) =>
+                    setStatusExpanded((cur) => (cur === k ? null : k))
+                  }
+                  onRefresh={() => fetchPlan()}
                 />
               </div>
 
-              <div className="mb-4">
-                <WeeklyWrapupCard />
-              </div>
+              {statusExpanded === "injury" && (
+                <div className="mb-4">
+                  <InjuryCard
+                    injury={plan.context?.injury ?? null}
+                    onChange={() => fetchPlan()}
+                  />
+                </div>
+              )}
+              {statusExpanded === "taper" && (
+                <div className="mb-4">
+                  <TaperCard
+                    taper={plan.context?.taper ?? null}
+                    onChange={() => fetchPlan()}
+                  />
+                </div>
+              )}
+              {statusExpanded === "climate" && (
+                <div className="mb-4">
+                  <ClimateCard
+                    climate={plan.context?.climate ?? null}
+                    onChange={() => fetchPlan()}
+                  />
+                </div>
+              )}
 
               <div className="mb-4">
-                <ProgressionCard />
-              </div>
-
-              <div className="mb-4">
-                <YearReviewCard />
+                <TrackingTabs />
               </div>
 
               {/* Hero metric */}
