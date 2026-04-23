@@ -17,10 +17,7 @@ export function TrackingTabs() {
   const [active, setActive] = useState<TabKey>("week");
 
   return (
-    <div
-      data-testid="tracking-tabs"
-      className="border border-border-glow rounded-lg bg-surface-elevated p-2 space-y-2"
-    >
+    <div data-testid="tracking-tabs" className="space-y-2">
       <div className="flex gap-1">
         {TABS.map((t) => {
           const isActive = t.key === active;
