@@ -1,21 +1,17 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Onboarding tour", () => {
-  test("shows on first visit and walks through all 4 steps", async ({ page }) => {
+  test("shows on first visit and walks through all 6 steps", async ({ page }) => {
     await page.addInitScript(() => { localStorage.removeItem("me_tour_done"); });
     await page.goto("/dashboard");
     // Tour auto-opens after 500ms
     await expect(page.getByRole("dialog", { name: "Onboarding tour" })).toBeVisible({ timeout: 3000 });
-    await expect(page.getByText("Step 1 of 4")).toBeVisible();
+    await expect(page.getByText("Step 1 of 6")).toBeVisible();
 
-    await page.getByRole("button", { name: "Next →" }).click();
-    await expect(page.getByText("Step 2 of 4")).toBeVisible();
-
-    await page.getByRole("button", { name: "Next →" }).click();
-    await expect(page.getByText("Step 3 of 4")).toBeVisible();
-
-    await page.getByRole("button", { name: "Next →" }).click();
-    await expect(page.getByText("Step 4 of 4")).toBeVisible();
+    for (let i = 2; i <= 6; i++) {
+      await page.getByRole("button", { name: "Next →" }).click();
+      await expect(page.getByText(`Step ${i} of 6`)).toBeVisible();
+    }
 
     await page.getByRole("button", { name: "Finish" }).click();
     await expect(page.getByRole("dialog", { name: "Onboarding tour" })).not.toBeVisible();

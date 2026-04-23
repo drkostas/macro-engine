@@ -41,13 +41,24 @@ describe("OnboardingTour", () => {
     const user = userEvent.setup();
     render(<OnboardingTour />);
     await act(() => new Promise((r) => setTimeout(r, 700)));
-    // Click Next 3 times then Finish
-    for (let i = 0; i < 3; i++) {
+    // 6 steps total: 5 Nexts land on the last step, then Finish.
+    for (let i = 0; i < 5; i++) {
       await user.click(screen.getByText(/Next/));
     }
     await user.click(screen.getByText("Finish"));
     expect(localStorage.getItem(STORAGE_KEY)).toBe("1");
     expect(screen.queryByRole("dialog", { name: "Onboarding tour" })).not.toBeInTheDocument();
+  });
+
+  it("advances through all 6 steps", async () => {
+    const user = userEvent.setup();
+    render(<OnboardingTour />);
+    await act(() => new Promise((r) => setTimeout(r, 700)));
+    expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
+    for (let i = 1; i <= 5; i++) {
+      await user.click(screen.getByText(/Next/));
+      expect(screen.getByText(`Step ${i + 1} of 6`)).toBeInTheDocument();
+    }
   });
 
   it("Back button is disabled on first step", async () => {

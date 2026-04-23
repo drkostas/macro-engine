@@ -29,10 +29,22 @@ const STEPS: Step[] = [
     placement: "above",
   },
   {
+    target: "tracking-tabs",
+    title: "Track the arc, not just today",
+    body: "Week gives you a Monday-morning wrap-up with a letter grade. Progress shows 30 / 60 / 90-day trends. Year rolls up the whole year with a JSON download.",
+    placement: "above",
+  },
+  {
     target: "weight-chart",
     title: "Track progress",
     body: "Daily weigh-ins vs 7-day average plus a forward projection toward your goal weight.",
     placement: "above",
+  },
+  {
+    target: "settings-link",
+    title: "Injury, race, climate",
+    body: "Got a hurt knee, a race on the calendar, or heading to altitude? Flag it in Settings → Injury & Race and your targets adapt automatically.",
+    placement: "below",
   },
 ];
 
