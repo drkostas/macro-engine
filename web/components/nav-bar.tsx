@@ -24,6 +24,7 @@ export function NavBar() {
             <Link
               key={href}
               href={href}
+              data-tour={href === "/settings" ? "settings-link" : undefined}
               className={`px-4 py-2 text-sm rounded-lg transition-colors ${
                 pathname === href || pathname.startsWith(href + "/")
                   ? "bg-warm/20 text-warm font-medium"
@@ -42,6 +43,7 @@ export function NavBar() {
           <Link
             key={href}
             href={href}
+            data-tour={href === "/settings" ? "settings-link" : undefined}
             className={`flex flex-col items-center gap-0.5 px-4 py-1 min-w-[64px] ${
               pathname === href || pathname.startsWith(href + "/")
                 ? "text-teal"

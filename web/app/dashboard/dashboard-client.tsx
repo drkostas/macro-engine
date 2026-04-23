@@ -526,7 +526,7 @@ function DashboardInner() {
                 </div>
               )}
 
-              <div className="mb-4">
+              <div data-tour="tracking-tabs" className="mb-4">
                 <TrackingTabs />
               </div>
 
