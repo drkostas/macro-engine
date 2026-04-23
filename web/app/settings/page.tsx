@@ -6,6 +6,9 @@ import { InfoTip } from "@/components/info-tip";
 import { NotificationsSettings } from "@/components/notifications-settings";
 import { DeficitModeSelector } from "@/components/deficit-mode-selector";
 import { BodyCompEntry } from "@/components/body-comp-entry";
+import { InjuryCard, type ActiveInjury } from "@/components/injury-card";
+import { TaperCard, type TaperContext } from "@/components/taper-card";
+import { ClimateCard, type ClimateContext } from "@/components/climate-card";
 
 interface Profile {
   weight_kg: number;
@@ -31,6 +34,7 @@ const SECTIONS = [
   { id: "macros", label: "Macros & Deficit" },
   { id: "goals", label: "Goals" },
   { id: "activity", label: "Activity" },
+  { id: "context", label: "Injury & Race" },
   { id: "reminders", label: "Reminders" },
   { id: "milestones", label: "Milestones" },
   { id: "integrations", label: "Integrations" },
@@ -257,6 +261,8 @@ export default function SettingsPage() {
           </div>
         )}
 
+        {section === "context" && <NutritionContextSection />}
+
         {section === "reminders" && <NotificationsSettings />}
 
         {section === "milestones" && <MilestonesSection />}
@@ -314,6 +320,66 @@ export default function SettingsPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+interface PlanContextPayload {
+  context?: {
+    injury?: ActiveInjury | null;
+    taper?: TaperContext | null;
+    climate?: ClimateContext | null;
+  };
+}
+
+function NutritionContextSection() {
+  const [injury, setInjury] = useState<ActiveInjury | null>(null);
+  const [taper, setTaper] = useState<TaperContext | null>(null);
+  const [climate, setClimate] = useState<ClimateContext | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = () => {
+    setLoading(true);
+    fetch("/api/nutrition/plan", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d: PlanContextPayload) => {
+        setInjury(d.context?.injury ?? null);
+        setTaper(d.context?.taper ?? null);
+        setClimate(d.context?.climate ?? null);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { refresh(); }, []);
+
+  if (loading) {
+    return <p className="text-xs text-text-muted">Loading…</p>;
+  }
+
+  return (
+    <div data-testid="nutrition-context-section" className="space-y-4">
+      <div>
+        <h2 className="text-sm font-semibold text-text mb-2">
+          Injury
+          <InfoTip text="Protein target and EA floor adjust while active. Mark recovered when you return to normal training." />
+        </h2>
+        <InjuryCard injury={injury} onChange={refresh} />
+      </div>
+      <div>
+        <h2 className="text-sm font-semibold text-text mb-2">
+          Race taper
+          <InfoTip text="Set a race date to shift carb targets through volume taper → glycogen loading → recovery." />
+        </h2>
+        <TaperCard taper={taper} onChange={refresh} />
+      </div>
+      <div>
+        <h2 className="text-sm font-semibold text-text mb-2">
+          Climate
+          <InfoTip text="Altitude adds iron + fluid + carbs. Heat drives sweat-rate fluid + sodium. Cold bumps calories." />
+        </h2>
+        <ClimateCard climate={climate} onChange={refresh} />
+      </div>
+    </div>
   );
 }
 
