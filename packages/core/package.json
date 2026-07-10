@@ -1,12 +1,27 @@
 {
   "name": "@macro-engine/core",
   "version": "0.1.0",
-  "description": "Nutrition engine core — TDEE, macro targets, safety rails, meal solver. Pure logic, zero runtime deps.",
+  "description": "Nutrition engine core \u2014 TDEE, macro targets, safety rails, meal solver. Pure logic, zero runtime deps.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist"],
-  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit" },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepare": "tsc -p tsconfig.json"
+  },
   "license": "MIT"
 }
