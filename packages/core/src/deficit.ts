@@ -22,14 +22,17 @@ export interface DeficitFromGoal {
 /** Python's round(): round half to even ("banker's rounding") — but only on an
  *  EXACT half; any float excess past .5 rounds normally, matching CPython. */
 export function pyRound(x: number, ndigits = 0): number {
-  const m = 10 ** ndigits;
-  const scaled = x * m;
-  const floor = Math.floor(scaled);
-  const diff = scaled - floor;
-  let r: number;
-  if (diff === 0.5) r = floor % 2 === 0 ? floor : floor + 1; // exact half → even
-  else r = Math.round(scaled); // non-half: Math.round agrees with Python
-  return r / m;
+  if (ndigits === 0) {
+    // True ties occur at integer precision → round half to even.
+    const floor = Math.floor(x);
+    const diff = x - floor;
+    if (diff === 0.5) return floor % 2 === 0 ? floor : floor + 1;
+    return Math.round(x);
+  }
+  // ndigits >= 1: round the TRUE decimal value (toFixed), not x*m — the multiply
+  // corrupts near-boundary values (1.95→19.5→2.0, but CPython sees 1.9499…→1.9).
+  // Genuine decimal ties are unrepresentable at n>=1, so half-up == CPython here.
+  return Number(x.toFixed(ndigits));
 }
 
 function daysBetween(fromISO: string, toISO: string): number {
