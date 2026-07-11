@@ -5,6 +5,7 @@ export { AlcoholDisplacement, DrinkEntry, ETHANOL_DENSITY, computeAlcoholDisplac
 export { FoodCategory, SHRINK_PRIORITY, autoCategorizeFood } from "./auto-categorize";
 export { ALL_METHODS, CreatineWaterOpts, DayPoint, ForbesResult, Method, NavyTapeInputs, OverlayResult, biaCreatineCorrection, creatineWaterAdjustment, effectiveSigmaKg, forbesEnergyDensityKcalPerKg, glycogenWaterOverlay, methodSigmaKg, navyTapeBfPct, navyTapeFfmKg, partitionWeightChange, personalKcalPerKg } from "./body-comp";
 export { ClimateAdjustment, Environment, Sex as ClimateSex, climateAdjust } from "./climate";
+export { KCAL_PER_STEP_PER_KG, computeActualTarget } from "./day-close";
 export { DeficitFromGoal, KCAL_PER_KG_FAT, MAX_DEFICIT, Safety, computeDeficitFromGoal, pyRound } from "./deficit";
 export { DRINK_DATABASE, Drink } from "./drink-db";
 export { WaterTargets, computeSodiumTarget, computeWaterTarget, effectiveHydration, isHyponatremiaRisk } from "./hydration";
