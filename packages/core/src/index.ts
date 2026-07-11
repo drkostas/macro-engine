@@ -1,14 +1,16 @@
 // Auto-generated barrel.
 
 export { AdaptiveTdeeResult, DietBreakLevel, PlateauResult, PlateauType, computeAdaptiveTdee, computeRefeedPressureScore, detectPlateau, recommendDietBreak } from "./adaptive";
+export { AlcoholDisplacement, DrinkEntry, ETHANOL_DENSITY, computeAlcoholDisplacement, computeDrinkEntry, fatOxidationPauseHours } from "./alcohol";
 export { FoodCategory, SHRINK_PRIORITY, autoCategorizeFood } from "./auto-categorize";
 export { ALL_METHODS, CreatineWaterOpts, DayPoint, ForbesResult, Method, NavyTapeInputs, OverlayResult, biaCreatineCorrection, creatineWaterAdjustment, effectiveSigmaKg, forbesEnergyDensityKcalPerKg, glycogenWaterOverlay, methodSigmaKg, navyTapeBfPct, navyTapeFfmKg, partitionWeightChange, personalKcalPerKg } from "./body-comp";
 export { ClimateAdjustment, Environment, Sex as ClimateSex, climateAdjust } from "./climate";
 export { DeficitFromGoal, KCAL_PER_KG_FAT, MAX_DEFICIT, Safety, computeDeficitFromGoal, pyRound } from "./deficit";
+export { DRINK_DATABASE, Drink } from "./drink-db";
 export { WaterTargets, computeSodiumTarget, computeWaterTarget, effectiveHydration, isHyponatremiaRisk } from "./hydration";
 export { ALL_INJURY_TYPES, InjuryNutritionModule, InjuryPhase, InjuryType, classifyInjuryPhase, getInjuryModule, injuredEaHardFloor, injuryProteinGPerKg } from "./injured";
 export { MACRO_COLORS, deficitColor, progressColor } from "./macro-colors";
-export { CARB_TARGETS_G_PER_KG, DEFAULT_SLOTS, MacroTargetOptions, MacroTargets as MacroTargetsGPerKg, SLOT_DISTRIBUTION, SlotBudget as SlotBudgetProportional, TdeeComponents, applyAlcoholOffset, computeMacroTargets as computeMacroTargetsGPerKg, computeRunCalories, computeSlotTargets, computeStepCalories, computeTdee, fatOxidationPauseHours, redistributeRemaining } from "./macro-engine";
+export { CARB_TARGETS_G_PER_KG, DEFAULT_SLOTS, MacroTargetOptions, MacroTargets as MacroTargetsGPerKg, SLOT_DISTRIBUTION, SlotBudget as SlotBudgetProportional, TdeeComponents, applyAlcoholOffset, computeMacroTargets as computeMacroTargetsGPerKg, computeRunCalories, computeSlotTargets, computeStepCalories, computeTdee, fatOxidationPauseHours as fatOxidationPauseHoursSimple, redistributeRemaining } from "./macro-engine";
 export { ALL_BANDS, Band, MacroContextResult, MacroTargets, MacroTargetsLegacyShape, carbGPerKg, carbTargetG, classifyBand, computeMacroTargets, computeMacroTargetsFromContext, computeTrainingLoad, fiberTargetG, proteinGPerKg } from "./macro-targets";
 export { MILESTONES, Milestone, Stats, evaluateMilestones } from "./milestones";
 export { MODE_COPY, ModeCopy, gateReasonCopy, transitionReasonCopy } from "./mode-copy";
