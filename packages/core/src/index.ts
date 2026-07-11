@@ -18,6 +18,7 @@ export { Ingredient, PerMealSolverTarget, PortionResult, computeItemMacros, cook
 export { ALLOWED_WINDOWS, DayRecord, ProgressionWindow, computeProgressionWindow } from "./progression";
 export { RefeedIntensity, RefeedTargets, applyRefeedToCounter, computeRefeedTargets, isRefeedDay } from "./refeed";
 export { BiomarkerCadence, CounterStatus, DEFICIT_RATIO_THRESHOLD, DayEntry, DurationThresholds, FAT_FLOOR_HARD, FAT_FLOOR_SOFT_DEFAULT, FAT_TARGET_MAINTENANCE, FatBreachType, FatFloorResult, FatMode, FloorBreachType, FloorMode, FloorResult, HYSTERESIS_PCT, PROTEIN_FLOOR_G_PER_KG, PerMealProteinLevel, ProteinFloorResult, ProteinFloorStatus, REDS_EA_COEFFICIENT, RateCap, RateCheckResult, RateStatus, Sex, Tier, TierPolicy, applyFatFloor, applyFloor, checkPerMealProtein, checkProteinFloor, checkRateCap, classifyCounter, computeBmr, computeCounter, computeFatFloor, computeFloor, computeProteinFloor, computeTier, computeTierRaw, computeWeeklyRatePct, cunningham, getRateCap, getThresholds, getTierPolicy, mifflinStJeor, rollingMedianBf, tenHaafWeight } from "./safety-rails";
+export { classifySleepQuality } from "./sleep";
 export { AlertLevel, HooperAlert, HooperQuality, HooperScore, WeeklyStrain, computeHooperAlert, computeHooperScore, computeWeeklyStrain, phq2Score, scoffScore, sessionStrain } from "./subjective";
 export { TaperPhase, classifyTaperPhase, taperCarbGPerKg, taperProteinGPerKg } from "./taper";
 export { DayRecord as WrapupDayRecord, Grade, WeeklyWrapup, adherenceGrade, computeWeeklyWrapup, wrapupTakeaway } from "./weekly-wrapup";
