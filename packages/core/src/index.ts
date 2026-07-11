@@ -1,9 +1,10 @@
-// Auto-generated barrel — modules kept byte-identical; collisions aliased here.
+// Auto-generated barrel.
 
 export { AdaptiveTdeeResult, DietBreakLevel, PlateauResult, PlateauType, computeAdaptiveTdee, computeRefeedPressureScore, detectPlateau, recommendDietBreak } from "./adaptive";
 export { FoodCategory, SHRINK_PRIORITY, autoCategorizeFood } from "./auto-categorize";
 export { ALL_METHODS, CreatineWaterOpts, DayPoint, ForbesResult, Method, NavyTapeInputs, OverlayResult, biaCreatineCorrection, creatineWaterAdjustment, effectiveSigmaKg, forbesEnergyDensityKcalPerKg, glycogenWaterOverlay, methodSigmaKg, navyTapeBfPct, navyTapeFfmKg, partitionWeightChange, personalKcalPerKg } from "./body-comp";
 export { ClimateAdjustment, Environment, Sex as ClimateSex, climateAdjust } from "./climate";
+export { DeficitFromGoal, KCAL_PER_KG_FAT, MAX_DEFICIT, Safety, computeDeficitFromGoal, pyRound } from "./deficit";
 export { WaterTargets, computeSodiumTarget, computeWaterTarget, effectiveHydration, isHyponatremiaRisk } from "./hydration";
 export { ALL_INJURY_TYPES, InjuryNutritionModule, InjuryPhase, InjuryType, classifyInjuryPhase, getInjuryModule, injuredEaHardFloor, injuryProteinGPerKg } from "./injured";
 export { MACRO_COLORS, deficitColor, progressColor } from "./macro-colors";
