@@ -8,6 +8,7 @@ export { ClimateAdjustment, Environment, Sex as ClimateSex, climateAdjust } from
 export { KCAL_PER_STEP_PER_KG, computeActualTarget } from "./day-close";
 export { DeficitFromGoal, KCAL_PER_KG_FAT, MAX_DEFICIT, Safety, computeDeficitFromGoal, pyRound } from "./deficit";
 export { DRINK_DATABASE, Drink } from "./drink-db";
+export { DEFAULT_PACE_BY_ZONE, EPOC_BY_ZONE, GYM_EPOC_FRACTION, GYM_KCAL_PER_MIN, HR_ZONE_MIDPOINTS, WorkoutStep, computeExerciseCalories, estimateStepCalories, estimateStepDurationMin, keytelKcalPerMin } from "./exercise-calories";
 export { WaterTargets, computeSodiumTarget, computeWaterTarget, effectiveHydration, isHyponatremiaRisk } from "./hydration";
 export { ALL_INJURY_TYPES, InjuryNutritionModule, InjuryPhase, InjuryType, classifyInjuryPhase, getInjuryModule, injuredEaHardFloor, injuryProteinGPerKg } from "./injured";
 export { MACRO_COLORS, deficitColor, progressColor } from "./macro-colors";
