@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/year-review";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { type MonthSummary, type YearDayRecord, type YearReview, computeYearReview } from "macro-engine-core";

@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/mode-engine";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { ALL_MODES, type GateReason, type Mode, type ModeAvailability, type ModeConfig, type TransitionReason, type TransitionResult, checkModeAvailability, checkTransition, getModeConfig } from "macro-engine-core";

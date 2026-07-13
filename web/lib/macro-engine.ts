@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/macro-engine";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { CARB_TARGETS_G_PER_KG, DEFAULT_SLOTS, type MacroTargetOptions, type MacroTargetsGPerKg as MacroTargets, SLOT_DISTRIBUTION, type SlotBudgetProportional as SlotBudget, type TdeeComponents, applyAlcoholOffset, computeMacroTargetsGPerKg as computeMacroTargets, computeRunCalories, computeSlotTargets, computeStepCalories, computeTdee, fatOxidationPauseHoursSimple as fatOxidationPauseHours, redistributeRemaining } from "macro-engine-core";

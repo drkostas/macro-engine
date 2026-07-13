@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/progression";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { ALLOWED_WINDOWS, type DayRecord, type ProgressionWindow, computeProgressionWindow } from "macro-engine-core";

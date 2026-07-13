@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/body-comp";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { ALL_METHODS, type CreatineWaterOpts, type DayPoint, type ForbesResult, type Method, type NavyTapeInputs, type OverlayResult, type Sex, biaCreatineCorrection, creatineWaterAdjustment, effectiveSigmaKg, forbesEnergyDensityKcalPerKg, glycogenWaterOverlay, methodSigmaKg, navyTapeBfPct, navyTapeFfmKg, partitionWeightChange, personalKcalPerKg } from "macro-engine-core";
