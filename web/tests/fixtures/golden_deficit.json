@@ -1,0 +1,5122 @@
+[
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 1.3,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 15.56,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 540,
+"fat_to_lose_kg": 1.3,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.82,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 112,
+"fat_to_lose_kg": 1.3,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.17,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 56,
+"fat_to_lose_kg": 1.3,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.08,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 28,
+"fat_to_lose_kg": 1.3,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.04,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 4.7,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 54.44,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 4.7,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 2.87,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 391,
+"fat_to_lose_kg": 4.7,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.59,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 195,
+"fat_to_lose_kg": 4.7,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.3,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 98,
+"fat_to_lose_kg": 4.7,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.15,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 3.4,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 39.77,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 3.4,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 2.09,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 285,
+"fat_to_lose_kg": 3.4,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.43,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 143,
+"fat_to_lose_kg": 3.4,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.22,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 72,
+"fat_to_lose_kg": 3.4,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.11,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 1.4,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 16.47,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 572,
+"fat_to_lose_kg": 1.4,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.87,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 118,
+"fat_to_lose_kg": 1.4,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.18,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 59,
+"fat_to_lose_kg": 1.4,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.09,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 30,
+"fat_to_lose_kg": 1.4,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.05,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 93.33,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 4.91,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 670,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.01,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 335,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.51,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 169,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.26,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.8,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 79.55,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.8,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 4.19,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 571,
+"fat_to_lose_kg": 6.8,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.86,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 285,
+"fat_to_lose_kg": 6.8,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.43,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 144,
+"fat_to_lose_kg": 6.8,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.22,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 4.9,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 57.65,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 4.9,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 3.03,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 414,
+"fat_to_lose_kg": 4.9,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.63,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 207,
+"fat_to_lose_kg": 4.9,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.31,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 104,
+"fat_to_lose_kg": 4.9,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.16,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 1.5,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 17.5,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 608,
+"fat_to_lose_kg": 1.5,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.92,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 126,
+"fat_to_lose_kg": 1.5,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.19,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 63,
+"fat_to_lose_kg": 1.5,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.1,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 32,
+"fat_to_lose_kg": 1.5,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.05,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 12.0,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 140.0,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 12.0,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 7.37,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1004,
+"fat_to_lose_kg": 12.0,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.52,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 502,
+"fat_to_lose_kg": 12.0,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.76,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 253,
+"fat_to_lose_kg": 12.0,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.38,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 10.9,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 127.27,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 10.9,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 6.7,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 913,
+"fat_to_lose_kg": 10.9,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.38,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 457,
+"fat_to_lose_kg": 10.9,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.69,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 230,
+"fat_to_lose_kg": 10.9,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.35,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 9.2,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 107.06,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 9.2,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 5.63,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 768,
+"fat_to_lose_kg": 9.2,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.16,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 384,
+"fat_to_lose_kg": 9.2,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.58,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 194,
+"fat_to_lose_kg": 9.2,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.29,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 70.0,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 3.68,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 502,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.76,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 251,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.38,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 60,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 127,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.19,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 1.6,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 15.56,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 657,
+"fat_to_lose_kg": 1.6,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.82,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 136,
+"fat_to_lose_kg": 1.6,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.17,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 68,
+"fat_to_lose_kg": 1.6,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.08,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 34,
+"fat_to_lose_kg": 1.6,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.04,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 5.7,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 54.44,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 5.7,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 2.87,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 475,
+"fat_to_lose_kg": 5.7,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.59,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 238,
+"fat_to_lose_kg": 5.7,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.3,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 120,
+"fat_to_lose_kg": 5.7,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.15,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 4.1,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 39.77,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 4.1,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 2.09,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 347,
+"fat_to_lose_kg": 4.1,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.43,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 174,
+"fat_to_lose_kg": 4.1,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.22,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 88,
+"fat_to_lose_kg": 4.1,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.11,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 1.7,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 16.47,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 696,
+"fat_to_lose_kg": 1.7,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.87,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 144,
+"fat_to_lose_kg": 1.7,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.18,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 72,
+"fat_to_lose_kg": 1.7,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.09,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 36,
+"fat_to_lose_kg": 1.7,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.05,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 9.7,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 93.33,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 9.7,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 4.91,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 815,
+"fat_to_lose_kg": 9.7,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.01,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 407,
+"fat_to_lose_kg": 9.7,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.51,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 205,
+"fat_to_lose_kg": 9.7,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.26,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 8.3,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 79.55,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 8.3,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 4.19,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 694,
+"fat_to_lose_kg": 8.3,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.86,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 347,
+"fat_to_lose_kg": 8.3,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.43,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 175,
+"fat_to_lose_kg": 8.3,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.22,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 57.65,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 3.03,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 503,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.63,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 252,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.31,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 127,
+"fat_to_lose_kg": 6.0,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.16,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 17.5,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 740,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.92,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 153,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.19,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 76,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.1,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 39,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.05,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.6,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 140.0,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.6,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 7.37,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.6,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.52,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 611,
+"fat_to_lose_kg": 14.6,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.76,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 308,
+"fat_to_lose_kg": 14.6,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.38,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 13.3,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 127.27,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 13.3,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 6.7,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1111,
+"fat_to_lose_kg": 13.3,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.38,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 555,
+"fat_to_lose_kg": 13.3,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.69,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 280,
+"fat_to_lose_kg": 13.3,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.35,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 11.2,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 107.06,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 11.2,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 5.63,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 934,
+"fat_to_lose_kg": 11.2,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.16,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 467,
+"fat_to_lose_kg": 11.2,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.58,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 236,
+"fat_to_lose_kg": 11.2,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.29,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 7.3,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 70.0,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 7.3,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 3.68,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 611,
+"fat_to_lose_kg": 7.3,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.76,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 305,
+"fat_to_lose_kg": 7.3,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.38,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 73,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 154,
+"fat_to_lose_kg": 7.3,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.19,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 15.56,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 720,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.82,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 149,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.17,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 74,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.08,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 38,
+"fat_to_lose_kg": 1.8,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.04,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.2,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 54.44,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.2,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 2.87,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 521,
+"fat_to_lose_kg": 6.2,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.59,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 260,
+"fat_to_lose_kg": 6.2,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.3,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 131,
+"fat_to_lose_kg": 6.2,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.15,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 4.5,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 39.77,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 4.5,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 2.09,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 380,
+"fat_to_lose_kg": 4.5,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.43,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 190,
+"fat_to_lose_kg": 4.5,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.22,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 96,
+"fat_to_lose_kg": 4.5,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.11,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 1.9,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 16.47,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 763,
+"fat_to_lose_kg": 1.9,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.87,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 158,
+"fat_to_lose_kg": 1.9,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.18,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 79,
+"fat_to_lose_kg": 1.9,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.09,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 40,
+"fat_to_lose_kg": 1.9,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.05,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 10.7,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 93.33,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 10.7,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 4.91,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 893,
+"fat_to_lose_kg": 10.7,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.01,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 446,
+"fat_to_lose_kg": 10.7,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.51,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 225,
+"fat_to_lose_kg": 10.7,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.26,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 9.1,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 79.55,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 9.1,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 4.19,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 761,
+"fat_to_lose_kg": 9.1,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.86,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 380,
+"fat_to_lose_kg": 9.1,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.43,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 192,
+"fat_to_lose_kg": 9.1,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.22,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.6,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 57.65,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 6.6,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 3.03,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 551,
+"fat_to_lose_kg": 6.6,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.63,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 276,
+"fat_to_lose_kg": 6.6,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.31,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 139,
+"fat_to_lose_kg": 6.6,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.16,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 2.0,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 17.5,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 811,
+"fat_to_lose_kg": 2.0,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.92,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 167,
+"fat_to_lose_kg": 2.0,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.19,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 84,
+"fat_to_lose_kg": 2.0,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.1,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 42,
+"fat_to_lose_kg": 2.0,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.05,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 16.0,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 140.0,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 16.0,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 7.37,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 16.0,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.52,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 670,
+"fat_to_lose_kg": 16.0,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.76,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 338,
+"fat_to_lose_kg": 16.0,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.38,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 127.27,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 6.7,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.38,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 609,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.69,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 307,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.35,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 12.2,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 107.06,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 12.2,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 5.63,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1024,
+"fat_to_lose_kg": 12.2,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.16,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 512,
+"fat_to_lose_kg": 12.2,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.58,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 258,
+"fat_to_lose_kg": 12.2,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.29,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 70.0,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 3.68,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 670,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.76,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 335,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.38,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 80,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 169,
+"fat_to_lose_kg": 8.0,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.19,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 2.1,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 15.56,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 856,
+"fat_to_lose_kg": 2.1,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.82,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 177,
+"fat_to_lose_kg": 2.1,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.17,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 88,
+"fat_to_lose_kg": 2.1,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.08,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 45,
+"fat_to_lose_kg": 2.1,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.04,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 12,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 7.4,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 54.44,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 7.4,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 2.87,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 618,
+"fat_to_lose_kg": 7.4,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.59,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 309,
+"fat_to_lose_kg": 7.4,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.3,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 156,
+"fat_to_lose_kg": 7.4,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.15,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 5.4,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 39.77,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 5.4,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 2.09,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 452,
+"fat_to_lose_kg": 5.4,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.43,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 226,
+"fat_to_lose_kg": 5.4,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.22,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 114,
+"fat_to_lose_kg": 5.4,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.11,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 2.2,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 16.47,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 906,
+"fat_to_lose_kg": 2.2,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.87,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 187,
+"fat_to_lose_kg": 2.2,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.18,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 94,
+"fat_to_lose_kg": 2.2,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.09,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 47,
+"fat_to_lose_kg": 2.2,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.05,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 17,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 0,
+"fat_to_lose_kg": 0,
+"timeline_weeks": 0,
+"weekly_rate_pct": 0,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 12.7,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 93.33,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 12.7,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 4.91,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1060,
+"fat_to_lose_kg": 12.7,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.01,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 530,
+"fat_to_lose_kg": 12.7,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.51,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 267,
+"fat_to_lose_kg": 12.7,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.26,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 10.8,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 79.55,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 10.8,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 4.19,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 904,
+"fat_to_lose_kg": 10.8,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.86,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 452,
+"fat_to_lose_kg": 10.8,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.43,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 228,
+"fat_to_lose_kg": 10.8,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.22,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 7.8,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 57.65,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 7.8,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 3.03,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 655,
+"fat_to_lose_kg": 7.8,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.63,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 327,
+"fat_to_lose_kg": 7.8,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.31,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 165,
+"fat_to_lose_kg": 7.8,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.16,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 2.4,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 17.5,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 962,
+"fat_to_lose_kg": 2.4,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 0.92,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 199,
+"fat_to_lose_kg": 2.4,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.19,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 99,
+"fat_to_lose_kg": 2.4,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.1,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 22,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 50,
+"fat_to_lose_kg": 2.4,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.05,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 19.0,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 140.0,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 19.0,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 7.37,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 19.0,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.52,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 795,
+"fat_to_lose_kg": 19.0,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.76,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 10,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 401,
+"fat_to_lose_kg": 19.0,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.38,
+"safety": "yellow"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 17.3,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 127.27,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 17.3,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 6.7,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 17.3,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.38,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 723,
+"fat_to_lose_kg": 17.3,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.69,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 12,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 364,
+"fat_to_lose_kg": 17.3,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.35,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 107.06,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 5.63,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 1.16,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 608,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.58,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 15,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 307,
+"fat_to_lose_kg": 14.5,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.29,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-03-14",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 9.5,
+"timeline_weeks": 0.1,
+"weekly_rate_pct": 70.0,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-04-01",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 1200,
+"fat_to_lose_kg": 9.5,
+"timeline_weeks": 2.7,
+"weekly_rate_pct": 3.68,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-06-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 795,
+"fat_to_lose_kg": 9.5,
+"timeline_weeks": 13.1,
+"weekly_rate_pct": 0.76,
+"safety": "red"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2026-09-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 398,
+"fat_to_lose_kg": 9.5,
+"timeline_weeks": 26.3,
+"weekly_rate_pct": 0.38,
+"safety": "green"
+}
+},
+{
+"in": {
+"weightKg": 95,
+"currentBfPct": 28,
+"targetBfPct": 20,
+"targetDate": "2027-03-13",
+"today": "2026-03-13"
+},
+"out": {
+"daily_deficit": 200,
+"fat_to_lose_kg": 9.5,
+"timeline_weeks": 52.1,
+"weekly_rate_pct": 0.19,
+"safety": "green"
+}
+}
+]

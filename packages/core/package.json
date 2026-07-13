@@ -1,0 +1,132 @@
+{
+  "name": "macro-engine-core",
+  "version": "0.1.1",
+  "description": "Nutrition engine core \u2014 TDEE, macro targets, safety rails, meal solver. Pure logic, zero runtime deps.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./adaptive": {
+      "types": "./dist/adaptive.d.ts",
+      "default": "./dist/adaptive.js"
+    },
+    "./alcohol": {
+      "types": "./dist/alcohol.d.ts",
+      "default": "./dist/alcohol.js"
+    },
+    "./auto-categorize": {
+      "types": "./dist/auto-categorize.d.ts",
+      "default": "./dist/auto-categorize.js"
+    },
+    "./body-comp": {
+      "types": "./dist/body-comp.d.ts",
+      "default": "./dist/body-comp.js"
+    },
+    "./climate": {
+      "types": "./dist/climate.d.ts",
+      "default": "./dist/climate.js"
+    },
+    "./day-close": {
+      "types": "./dist/day-close.d.ts",
+      "default": "./dist/day-close.js"
+    },
+    "./deficit": {
+      "types": "./dist/deficit.d.ts",
+      "default": "./dist/deficit.js"
+    },
+    "./drink-db": {
+      "types": "./dist/drink-db.d.ts",
+      "default": "./dist/drink-db.js"
+    },
+    "./exercise-calories": {
+      "types": "./dist/exercise-calories.d.ts",
+      "default": "./dist/exercise-calories.js"
+    },
+    "./hydration": {
+      "types": "./dist/hydration.d.ts",
+      "default": "./dist/hydration.js"
+    },
+    "./injured": {
+      "types": "./dist/injured.d.ts",
+      "default": "./dist/injured.js"
+    },
+    "./macro-colors": {
+      "types": "./dist/macro-colors.d.ts",
+      "default": "./dist/macro-colors.js"
+    },
+    "./macro-engine": {
+      "types": "./dist/macro-engine.d.ts",
+      "default": "./dist/macro-engine.js"
+    },
+    "./macro-targets": {
+      "types": "./dist/macro-targets.d.ts",
+      "default": "./dist/macro-targets.js"
+    },
+    "./milestones": {
+      "types": "./dist/milestones.d.ts",
+      "default": "./dist/milestones.js"
+    },
+    "./mode-copy": {
+      "types": "./dist/mode-copy.d.ts",
+      "default": "./dist/mode-copy.js"
+    },
+    "./mode-engine": {
+      "types": "./dist/mode-engine.d.ts",
+      "default": "./dist/mode-engine.js"
+    },
+    "./nutrition-types": {
+      "types": "./dist/nutrition-types.d.ts",
+      "default": "./dist/nutrition-types.js"
+    },
+    "./portion-solver": {
+      "types": "./dist/portion-solver.d.ts",
+      "default": "./dist/portion-solver.js"
+    },
+    "./progression": {
+      "types": "./dist/progression.d.ts",
+      "default": "./dist/progression.js"
+    },
+    "./refeed": {
+      "types": "./dist/refeed.d.ts",
+      "default": "./dist/refeed.js"
+    },
+    "./safety-rails": {
+      "types": "./dist/safety-rails.d.ts",
+      "default": "./dist/safety-rails.js"
+    },
+    "./sleep": {
+      "types": "./dist/sleep.d.ts",
+      "default": "./dist/sleep.js"
+    },
+    "./subjective": {
+      "types": "./dist/subjective.d.ts",
+      "default": "./dist/subjective.js"
+    },
+    "./taper": {
+      "types": "./dist/taper.d.ts",
+      "default": "./dist/taper.js"
+    },
+    "./weekly-wrapup": {
+      "types": "./dist/weekly-wrapup.d.ts",
+      "default": "./dist/weekly-wrapup.js"
+    },
+    "./year-review": {
+      "types": "./dist/year-review.d.ts",
+      "default": "./dist/year-review.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "github:drkostas/macro-engine"
+  }
+}
