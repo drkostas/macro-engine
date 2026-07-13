@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeExerciseCalories } from "@macro-engine/core/exercise-calories";
+import { computeExerciseCalories } from "macro-engine-core/exercise-calories";
 import golden from "../../fixtures/golden_exercise.json";
 describe("computeExerciseCalories — Python parity", () => {
   it("matches all golden cases", () => {
