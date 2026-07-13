@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type APIRequestContext } from "@playwright/test";
 
 /**
  * M10-era dashboard integration — StatusRow + expand flow + TrackingTabs.
@@ -7,7 +7,7 @@ import { test, expect } from "@playwright/test";
 
 const BASE_URL = process.env.BASE_URL ?? "http://localhost:3457";
 
-async function clearInjury(req: { post: (url: string, init: unknown) => Promise<{ json: () => Promise<{ injury?: { id: number } }> }>; patch: (url: string, init: unknown) => Promise<unknown>; get: (url: string) => Promise<{ json: () => Promise<{ injury?: { id: number } | null }> }>; }) {
+async function clearInjury(req: APIRequestContext) {
   // Mark any active injury as recovered so the DB starts clean.
   const res = await req.get(`${BASE_URL}/api/nutrition/injury`);
   const body = await res.json();
@@ -18,13 +18,13 @@ async function clearInjury(req: { post: (url: string, init: unknown) => Promise<
   }
 }
 
-async function clearRace(req: { post: (url: string, init: unknown) => Promise<unknown>; }) {
+async function clearRace(req: APIRequestContext) {
   await req.post(`${BASE_URL}/api/nutrition/taper`, {
     data: { race_date: null },
   });
 }
 
-async function clearClimate(req: { post: (url: string, init: unknown) => Promise<unknown>; }) {
+async function clearClimate(req: APIRequestContext) {
   await req.post(`${BASE_URL}/api/nutrition/climate`, {
     data: { env: "normal" },
   });
