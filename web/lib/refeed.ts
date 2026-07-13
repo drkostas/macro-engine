@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/refeed";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { type RefeedIntensity, type RefeedTargets, applyRefeedToCounter, computeRefeedTargets, isRefeedDay } from "macro-engine-core";

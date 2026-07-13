@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/climate";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { type ClimateAdjustment, type Environment, type ClimateSex as Sex, climateAdjust } from "macro-engine-core";

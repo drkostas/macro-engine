@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/taper";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { type TaperPhase, classifyTaperPhase, taperCarbGPerKg, taperProteinGPerKg } from "macro-engine-core";

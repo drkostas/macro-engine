@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/weekly-wrapup";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { type WrapupDayRecord as DayRecord, type Grade, type WeeklyWrapup, adherenceGrade, computeWeeklyWrapup, wrapupTakeaway } from "macro-engine-core";

@@ -1,2 +1,2 @@
-// Re-export from macro-engine-core (single source of truth). See packages/core.
-export * from "macro-engine-core/adaptive";
+// Re-export from macro-engine-core barrel (Turbopack-safe; no subpath).
+export { type AdaptiveTdeeResult, type DietBreakLevel, type PlateauResult, type PlateauType, computeAdaptiveTdee, computeRefeedPressureScore, detectPlateau, recommendDietBreak } from "macro-engine-core";
