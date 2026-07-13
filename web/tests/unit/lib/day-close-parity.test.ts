@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeActualTarget } from "@macro-engine/core/day-close";
+import { computeActualTarget } from "macro-engine-core/day-close";
 import golden from "../../fixtures/golden_dayclose.json";
 describe("computeActualTarget — Python parity", () => {
   it("matches all golden cases", () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { classifySleepQuality } from "@macro-engine/core/sleep";
+import { classifySleepQuality } from "macro-engine-core/sleep";
 import golden from "../../fixtures/golden_sleep.json";
 
 describe("classifySleepQuality — Python parity", () => {

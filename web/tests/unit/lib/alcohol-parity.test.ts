@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { fatOxidationPauseHours, computeAlcoholDisplacement, computeDrinkEntry } from "@macro-engine/core/alcohol";
+import { fatOxidationPauseHours, computeAlcoholDisplacement, computeDrinkEntry } from "macro-engine-core/alcohol";
 import golden from "../../fixtures/golden_alcohol.json";
 
 describe("alcohol — Python parity", () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeDeficitFromGoal } from "@macro-engine/core/deficit";
+import { computeDeficitFromGoal } from "macro-engine-core/deficit";
 import golden from "../../fixtures/golden_deficit.json";
 
 describe("computeDeficitFromGoal — Python parity (golden fixtures)", () => {
