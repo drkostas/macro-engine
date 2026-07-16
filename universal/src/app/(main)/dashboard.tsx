@@ -4,52 +4,58 @@ import {
   Text, Card, Badge, SegmentedControl, Ring, ProgressBar, MacroBar,
   Button, Pill, PillGroup, Stepper, Modal,
 } from "soma-style";
+import { usePlan, type MacroSet } from "../../lib/api";
 
-const MACROS = [
-  { label: "Cal", color: "#77c8d1", target: 1888 },
-  { label: "Pro", color: "#b17850", target: 184 },
-  { label: "Carb", color: "#6366b0", target: 144 },
-  { label: "Fat", color: "#cbe896", target: 64 },
-  { label: "Fiber", color: "#82d0c8", target: 31 },
-];
+const DATE = "2026-07-16";
 
-const MEALS = [
-  { name: "Breakfast", kcal: 529, segs: [{ macro: "protein", value: 46 }, { macro: "carbs", value: 40 }, { macro: "fat", value: 18 }, { macro: "fiber", value: 6 }] },
-  { name: "Lunch", kcal: 472, segs: [{ macro: "protein", value: 46 }, { macro: "carbs", value: 36 }, { macro: "fat", value: 16 }, { macro: "fiber", value: 9 }] },
-  { name: "Dinner", kcal: 578, segs: [{ macro: "protein", value: 59 }, { macro: "carbs", value: 53 }, { macro: "fat", value: 24 }, { macro: "fiber", value: 11 }] },
-  { name: "Pre-Sleep", kcal: 156, segs: [{ macro: "protein", value: 33 }, { macro: "carbs", value: 14 }, { macro: "fat", value: 6 }, { macro: "fiber", value: 5 }] },
+const MACRO_KEYS = [
+  { key: "calories", label: "Cal", color: "#77c8d1" },
+  { key: "protein", label: "Pro", color: "#b17850" },
+  { key: "carbs", label: "Carb", color: "#6366b0" },
+  { key: "fat", label: "Fat", color: "#cbe896" },
+  { key: "fiber", label: "Fiber", color: "#82d0c8" },
 ] as const;
 
 export default function DashboardScreen() {
+  const { data, loading, error } = usePlan(DATE);
   const [tab, setTab] = useState<"Week" | "Progress" | "Year">("Week");
   const [band, setBand] = useState("Active");
   const [steps, setSteps] = useState(10000);
   const [refeed, setRefeed] = useState(false);
 
+  const targets = data?.targets;
+  const eaten = data?.eaten;
+  const remaining = data?.remaining;
+  const pct = (k: keyof MacroSet) =>
+    targets && targets[k] > 0 ? Math.min((eaten?.[k] ?? 0) / targets[k], 1) : 0;
+
   return (
     <ScrollView className="flex-1 bg-base" contentContainerClassName="items-center px-5 py-6">
       <View className="w-full max-w-2xl gap-4">
-        {/* Day header */}
         <View className="flex-row items-center gap-2">
           <Text variant="title">Thursday, Jul 16</Text>
-          <Badge label="Rest" tone="neutral" />
-          <Badge label="T2 · Standard Cut" tone="teal" />
+          {targets?.band ? <Badge label={targets.band} tone="neutral" /> : null}
+          {targets?.tier ? <Badge label={`${targets.tier} · Standard Cut`} tone="teal" /> : null}
         </View>
+
+        {error ? (
+          <Card><Text variant="body" className="text-danger">API: {error} — is macro-engine running on :3457?</Text></Card>
+        ) : null}
 
         {/* Hero */}
         <Card variant="glow" className="gap-4">
           <SegmentedControl options={["Week", "Progress", "Year"] as const} value={tab} onChange={setTab} />
-
           <View className="flex-row items-end gap-2">
-            <Text variant="display">0</Text>
-            <Text variant="title" className="text-text-muted">/ 1,888 kcal</Text>
+            <Text variant="display">{loading ? "…" : (eaten?.calories ?? 0).toLocaleString()}</Text>
+            <Text variant="title" className="text-text-muted">/ {(targets?.calories ?? 0).toLocaleString()} kcal</Text>
           </View>
-          <Text variant="caption" className="text-danger">1,888 remaining · 0% complete</Text>
-
+          <Text variant="caption" className="text-danger">
+            {(remaining?.calories ?? 0).toLocaleString()} remaining · {targets?.calories ? Math.round(((eaten?.calories ?? 0) / targets.calories) * 100) : 0}% complete
+          </Text>
           <View className="mt-1 flex-row justify-between">
-            {MACROS.map((m) => (
-              <View key={m.label} className="items-center gap-1">
-                <Ring pct={0} size={46} color={m.color} label="0%" />
+            {MACRO_KEYS.map((m) => (
+              <View key={m.key} className="items-center gap-1">
+                <Ring pct={pct(m.key as keyof MacroSet)} size={46} color={m.color} label={`${Math.round(pct(m.key as keyof MacroSet) * 100)}%`} />
                 <Text variant="micro">{m.label}</Text>
               </View>
             ))}
@@ -58,7 +64,7 @@ export default function DashboardScreen() {
 
         {/* Activity */}
         <Card className="gap-3">
-          <Text variant="eyebrow">Activity</Text>
+          <Text variant="eyebrow">Activity · BMR {data?.tdee?.bmr ?? "—"} − Deficit {data?.tdee?.deficit ?? "—"}</Text>
           <View className="flex-row items-center justify-between">
             <Button label="Run OFF" variant="secondary" size="sm" />
             <Stepper value={steps} onChange={setSteps} step={1000} min={0} />
@@ -70,29 +76,35 @@ export default function DashboardScreen() {
           </PillGroup>
         </Card>
 
-        {/* Meals */}
-        {MEALS.map((meal) => (
-          <Card key={meal.name} className="gap-2">
-            <View className="flex-row items-center justify-between">
-              <Text variant="title">{meal.name}</Text>
-              <Text variant="caption" className="tabular-nums text-text-secondary">{meal.kcal} kcal</Text>
-            </View>
-            <MacroBar segments={meal.segs as never} className="my-1" />
-            <View className="flex-row items-center gap-2">
-              <Button label={`Log ${meal.name}`} variant="secondary" size="sm" className="flex-1" />
-              <Button label="Skip" variant="ghost" size="sm" />
-            </View>
-          </Card>
-        ))}
+        {/* Meals from real slot budgets */}
+        {(data?.slotBudgets ?? [])
+          .filter((s) => s.calories > 0)
+          .map((slot) => (
+            <Card key={slot.slot} className="gap-2">
+              <View className="flex-row items-center justify-between">
+                <Text variant="title" className="capitalize">{slot.slot.replace("_", " ")}</Text>
+                <Text variant="caption" className="tabular-nums text-text-secondary">{Math.round(slot.calories)} kcal</Text>
+              </View>
+              <MacroBar
+                segments={[
+                  { macro: "protein", value: slot.protein },
+                  { macro: "carbs", value: slot.carbs },
+                  { macro: "fat", value: slot.fat },
+                  { macro: "fiber", value: slot.fiber },
+                ]}
+                className="my-1"
+              />
+              <View className="flex-row items-center gap-2">
+                <Button label={`Log ${slot.slot}`} variant="secondary" size="sm" className="flex-1" />
+                <Button label="Skip" variant="ghost" size="sm" />
+              </View>
+            </Card>
+          ))}
 
         {/* Weekly deficit */}
         <Card className="gap-3">
           <Text variant="eyebrow">Weekly deficit</Text>
           <ProgressBar pct={0.72} color="#6ad4a0" />
-          <View className="flex-row items-center justify-between">
-            <Text variant="caption" className="text-text-secondary">Adherence</Text>
-            <Text variant="caption" className="text-warning">over goal · 317%</Text>
-          </View>
           <Button label="Plan a refeed" variant="primary" onPress={() => setRefeed(true)} />
         </Card>
       </View>
