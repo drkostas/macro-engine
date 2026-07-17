@@ -71,6 +71,37 @@ export function useFoodSearch(query: string) {
   return { results, loading };
 }
 
+/** Log a food to a meal slot. Returns true on success. */
+export async function logMeal(
+  date: string,
+  slot: string,
+  food: FoodResult,
+  grams = 100,
+): Promise<boolean> {
+  const f = grams / 100;
+  const res = await fetch(`${API_BASE}/api/nutrition/log-meal`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      date,
+      meal_slot: slot,
+      source: "macro_engine",
+      items: [
+        {
+          name: food.name,
+          grams,
+          calories: food.calories * f,
+          protein: food.protein * f,
+          carbs: food.carbs * f,
+          fat: food.fat * f,
+          fiber: food.fiber * f,
+        },
+      ],
+    }),
+  });
+  return res.ok;
+}
+
 /** Fetch the day plan from the macro-engine API. */
 export function usePlan(date: string): PlanState {
   const [state, setState] = useState<PlanState>({ data: null, loading: true, error: null });
