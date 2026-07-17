@@ -150,8 +150,9 @@ export async function logMeal(
 }
 
 /** Fetch the day plan from the macro-engine API. */
-export function usePlan(date: string): PlanState {
+export function usePlan(date: string): PlanState & { refetch: () => void } {
   const [state, setState] = useState<PlanState>({ data: null, loading: true, error: null });
+  const [reload, setReload] = useState(0);
   useEffect(() => {
     let alive = true;
     setState((s) => ({ ...s, loading: true, error: null }));
@@ -162,6 +163,47 @@ export function usePlan(date: string): PlanState {
     return () => {
       alive = false;
     };
-  }, [date]);
-  return state;
+  }, [date, reload]);
+  return { ...state, refetch: () => setReload((n) => n + 1) };
+}
+
+export interface Wrapup {
+  weekStart: string;
+  weekEnd: string;
+  daysTotal: number;
+  daysClosed: number;
+  adherencePct: number;
+  avgKcal: number;
+  avgProteinG: number;
+  avgProteinGPerKg: number;
+  trainingDays: number;
+  weightDeltaKg: number | null;
+  grade: string;
+}
+
+/** Weekly wrap-up summary (adherence grade + averages) ending on `end`. */
+export function useWrapup(end: string) {
+  const [data, setData] = useState<{ wrapup: Wrapup; takeaway: string } | null>(null);
+  const [reload, setReload] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    fetch(`${API_BASE}/api/nutrition/wrapup?end=${end}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((d) => alive && setData(d))
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [end, reload]);
+  return { data, refetch: () => setReload((n) => n + 1) };
+}
+
+/** Close (finalize) a day. Returns the resulting status ("closed" | "already_closed"). */
+export async function closeDay(date: string): Promise<string | null> {
+  const res = await fetch(`${API_BASE}/api/nutrition/close-day`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ date }),
+  });
+  if (!res.ok) return null;
+  const d = (await res.json()) as { status?: string };
+  return d.status ?? null;
 }

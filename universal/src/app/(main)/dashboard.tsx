@@ -4,9 +4,13 @@ import {
   Text, Card, Badge, SegmentedControl, Ring, ProgressBar, MacroBar,
   Button, Pill, PillGroup, Stepper, Modal,
 } from "soma-style";
-import { usePlan, type MacroSet } from "../../lib/api";
+import { usePlan, useWrapup, closeDay, type MacroSet } from "../../lib/api";
 
 const DATE = "2026-07-16";
+
+const GRADE_TONE: Record<string, "success" | "teal" | "warm" | "danger"> = {
+  A: "success", B: "teal", C: "warm", D: "danger", F: "danger",
+};
 
 const MACRO_KEYS = [
   { key: "calories", label: "Cal", color: "#77c8d1" },
@@ -17,11 +21,27 @@ const MACRO_KEYS = [
 ] as const;
 
 export default function DashboardScreen() {
-  const { data, loading, error } = usePlan(DATE);
+  const { data, loading, error, refetch } = usePlan(DATE);
+  const { data: wrap, refetch: refetchWrap } = useWrapup(DATE);
   const [tab, setTab] = useState<"Week" | "Progress" | "Year">("Week");
   const [band, setBand] = useState("Active");
   const [steps, setSteps] = useState(10000);
   const [refeed, setRefeed] = useState(false);
+  const [closeOpen, setCloseOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [closeStatus, setCloseStatus] = useState<string | null>(null);
+
+  async function onCloseDay() {
+    setClosing(true);
+    const status = await closeDay(DATE);
+    setClosing(false);
+    setCloseStatus(status);
+    if (status) {
+      setCloseOpen(false);
+      refetch();
+      refetchWrap();
+    }
+  }
 
   const targets = data?.targets;
   const eaten = data?.eaten;
@@ -107,7 +127,46 @@ export default function DashboardScreen() {
           <ProgressBar pct={0.72} color="#6ad4a0" />
           <Button label="Plan a refeed" variant="primary" onPress={() => setRefeed(true)} />
         </Card>
+
+        {/* Week wrap-up */}
+        {wrap ? (
+          <Card className="gap-3">
+            <View className="flex-row items-center justify-between">
+              <Text variant="eyebrow">Week wrap-up</Text>
+              <Badge label={`Grade ${wrap.wrapup.grade}`} tone={GRADE_TONE[wrap.wrapup.grade] ?? "neutral"} />
+            </View>
+            <View className="flex-row justify-between">
+              {[
+                ["Adherence", `${Math.round(wrap.wrapup.adherencePct)}%`],
+                ["Avg kcal", `${Math.round(wrap.wrapup.avgKcal)}`],
+                ["Avg protein", `${Math.round(wrap.wrapup.avgProteinG)}g`],
+                ["Closed", `${wrap.wrapup.daysClosed}/${wrap.wrapup.daysTotal}`],
+              ].map(([label, val]) => (
+                <View key={label} className="items-center gap-0.5">
+                  <Text variant="micro" className="text-text-muted">{label}</Text>
+                  <Text variant="caption" className="tabular-nums text-text">{val}</Text>
+                </View>
+              ))}
+            </View>
+            <Text variant="micro">{wrap.takeaway}</Text>
+          </Card>
+        ) : null}
+
+        {closeStatus ? (
+          <View className="flex-row items-center justify-center">
+            <Badge label={closeStatus === "closed" ? "Day closed" : "Already closed"} tone="success" />
+          </View>
+        ) : null}
+        <Button label="Close day" variant="secondary" onPress={() => setCloseOpen(true)} />
       </View>
+
+      <Modal visible={closeOpen} onClose={() => setCloseOpen(false)} title="Close this day?">
+        <Text variant="body" className="text-text-secondary">Finalizing locks in today&apos;s totals and adds the day to your wrap-up. You can reopen it later.</Text>
+        <View className="mt-4 flex-row justify-end gap-2">
+          <Button label="Cancel" variant="ghost" onPress={() => setCloseOpen(false)} />
+          <Button label={closing ? "Closing…" : "Close day"} variant="primary" disabled={closing} onPress={onCloseDay} />
+        </View>
+      </Modal>
 
       <Modal visible={refeed} onClose={() => setRefeed(false)} title="Plan a refeed">
         <Text variant="body" className="text-text-secondary">
