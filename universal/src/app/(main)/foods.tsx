@@ -1,12 +1,22 @@
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Text, SegmentedControl, Input, Card, MacroBar } from "soma-style";
-import { useFoodSearch } from "../../lib/api";
+import { Text, SegmentedControl, Input, Card, MacroBar, Pill, PillGroup, Button, Badge } from "soma-style";
+import { useFoodSearch, logMeal, type FoodResult } from "../../lib/api";
+
+const DATE = "2026-07-16";
+const SLOTS = ["breakfast", "lunch", "dinner", "pre_sleep"];
 
 export default function FoodsScreen() {
   const [tab, setTab] = useState<"Search Foods" | "Create Custom">("Search Foods");
   const [q, setQ] = useState("");
+  const [slot, setSlot] = useState("lunch");
+  const [logged, setLogged] = useState<Record<number, boolean>>({});
   const { results, loading } = useFoodSearch(q);
+
+  async function onLog(f: FoodResult) {
+    const ok = await logMeal(DATE, slot, f);
+    if (ok) setLogged((s) => ({ ...s, [f.id]: true }));
+  }
 
   return (
     <ScrollView className="flex-1 bg-base" contentContainerClassName="items-center px-5 py-6">
@@ -22,6 +32,14 @@ export default function FoodsScreen() {
         {tab === "Search Foods" ? (
           <View className="gap-3">
             <Input placeholder="Search foods (e.g. chicken breast, banana, rice)…" value={q} onChangeText={setQ} />
+            <View className="gap-1.5">
+              <Text variant="eyebrow">Log to</Text>
+              <PillGroup>
+                {SLOTS.map((s) => (
+                  <Pill key={s} label={s.replace("_", " ")} active={slot === s} onPress={() => setSlot(s)} className="capitalize" />
+                ))}
+              </PillGroup>
+            </View>
             {q.trim().length >= 2 && loading ? (
               <Text variant="caption" className="text-text-muted">Searching…</Text>
             ) : null}
@@ -32,7 +50,7 @@ export default function FoodsScreen() {
                     <Text variant="body" className="text-text">{f.name}</Text>
                     <Text variant="micro">{f.serving_description} · {Math.round(f.calories)} kcal</Text>
                   </View>
-                  <View className="flex-row gap-3">
+                  <View className="flex-row items-center gap-3">
                     <Macro label="P" v={f.protein} cls="text-warm" />
                     <Macro label="C" v={f.carbs} cls="text-indigo" />
                     <Macro label="F" v={f.fat} cls="text-lime" />
@@ -46,6 +64,11 @@ export default function FoodsScreen() {
                     { macro: "fiber", value: f.fiber || 0.001 },
                   ]}
                 />
+                {logged[f.id] ? (
+                  <Badge label={`Logged to ${slot.replace("_", " ")}`} tone="success" />
+                ) : (
+                  <Button label={`Log to ${slot.replace("_", " ")}`} variant="primary" size="sm" className="self-start" onPress={() => onLog(f)} />
+                )}
               </Card>
             ))}
             {q.trim().length >= 2 && !loading && results.length === 0 ? (
