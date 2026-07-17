@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Text, Card, Input, Button, Pill, PillGroup } from "soma-style";
+import { saveOnboard } from "../lib/api";
+
+const GOAL_MAP: Record<string, string> = { "Lose Fat": "lose_fat", Maintain: "maintain", "Build Muscle": "build_muscle" };
 
 /**
  * "Set Up Your Profile" — the macro-engine onboarding / nutrition-profile screen,
  * rebuilt on the universal soma-style component library (web + native).
  */
 export default function OnboardScreen() {
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
   const [sex, setSex] = useState<"Male" | "Female">("Male");
   const [activity, setActivity] = useState("Active");
   const [goal, setGoal] = useState("Lose Fat");
@@ -16,6 +22,24 @@ export default function OnboardScreen() {
   const [age, setAge] = useState("30");
   const [bf, setBf] = useState("15");
   const [steps, setSteps] = useState("10000");
+
+  async function onSubmit() {
+    setSaving(true);
+    const ok = await saveOnboard({
+      weight_kg: Number(weight),
+      height_cm: Number(height),
+      age: Number(age),
+      sex: sex.toLowerCase(),
+      goal: GOAL_MAP[goal] ?? "lose_fat",
+      daily_deficit: Number(deficit),
+      estimated_bf_pct: Number(bf),
+      target_bf_pct: Number(bf),
+      step_goal: Number(steps),
+      activity_level: activity.toLowerCase().replace(" ", "_"),
+    });
+    setSaving(false);
+    if (ok) router.replace("/dashboard");
+  }
 
   return (
     <ScrollView className="flex-1 bg-base" contentContainerClassName="items-center px-5 py-10">
@@ -70,7 +94,7 @@ export default function OnboardScreen() {
           <Field label="Daily step goal" value={steps} onChangeText={setSteps} full />
         </Card>
 
-        <Button label="Calculate My Targets" variant="primary" size="lg" />
+        <Button label={saving ? "Saving…" : "Calculate My Targets"} variant="primary" size="lg" disabled={saving} onPress={onSubmit} />
       </View>
     </ScrollView>
   );

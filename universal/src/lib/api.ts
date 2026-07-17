@@ -71,6 +71,53 @@ export function useFoodSearch(query: string) {
   return { results, loading };
 }
 
+export interface OnboardProfile {
+  weight_kg: number;
+  height_cm: number;
+  age: number;
+  sex: string;
+  goal: string;
+  daily_deficit: number;
+  estimated_bf_pct?: number;
+  target_bf_pct?: number;
+  step_goal: number;
+  activity_level: string;
+}
+
+/** Create the nutrition profile from onboarding. */
+export async function saveOnboard(p: OnboardProfile): Promise<boolean> {
+  const res = await fetch(`${API_BASE}/api/nutrition/onboard`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(p),
+  });
+  return res.ok;
+}
+
+/** Update a single profile field (PATCH takes the field directly). */
+export async function updateProfile(key: string, value: string | number): Promise<boolean> {
+  const res = await fetch(`${API_BASE}/api/nutrition/profile`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ [key]: value }),
+  });
+  return res.ok;
+}
+
+/** Load the current profile (GET wraps it in { profile }). */
+export function useProfile() {
+  const [data, setData] = useState<Record<string, unknown> | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetch(`${API_BASE}/api/nutrition/profile`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => alive && setData(d?.profile ?? null))
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  return data;
+}
+
 /** Log a food to a meal slot. Returns true on success. */
 export async function logMeal(
   date: string,
