@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { Text, SegmentedControl, Input } from "soma-style";
+import { Text, SegmentedControl, Input, Card, MacroBar } from "soma-style";
+import { useFoodSearch } from "../../lib/api";
 
 export default function FoodsScreen() {
   const [tab, setTab] = useState<"Search Foods" | "Create Custom">("Search Foods");
+  const [q, setQ] = useState("");
+  const { results, loading } = useFoodSearch(q);
+
   return (
     <ScrollView className="flex-1 bg-base" contentContainerClassName="items-center px-5 py-6">
       <View className="w-full max-w-2xl gap-4">
@@ -14,8 +18,40 @@ export default function FoodsScreen() {
           </Text>
         </View>
         <SegmentedControl options={["Search Foods", "Create Custom"] as const} value={tab} onChange={setTab} className="self-start" />
+
         {tab === "Search Foods" ? (
-          <Input placeholder="Search foods (e.g. chicken breast, banana, rice)…" />
+          <View className="gap-3">
+            <Input placeholder="Search foods (e.g. chicken breast, banana, rice)…" value={q} onChangeText={setQ} />
+            {q.trim().length >= 2 && loading ? (
+              <Text variant="caption" className="text-text-muted">Searching…</Text>
+            ) : null}
+            {results.map((f) => (
+              <Card key={f.id} className="gap-2">
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-1 pr-2">
+                    <Text variant="body" className="text-text">{f.name}</Text>
+                    <Text variant="micro">{f.serving_description} · {Math.round(f.calories)} kcal</Text>
+                  </View>
+                  <View className="flex-row gap-3">
+                    <Macro label="P" v={f.protein} cls="text-warm" />
+                    <Macro label="C" v={f.carbs} cls="text-indigo" />
+                    <Macro label="F" v={f.fat} cls="text-lime" />
+                  </View>
+                </View>
+                <MacroBar
+                  segments={[
+                    { macro: "protein", value: f.protein },
+                    { macro: "carbs", value: f.carbs },
+                    { macro: "fat", value: f.fat },
+                    { macro: "fiber", value: f.fiber || 0.001 },
+                  ]}
+                />
+              </Card>
+            ))}
+            {q.trim().length >= 2 && !loading && results.length === 0 ? (
+              <Text variant="caption" className="text-text-muted">No matches.</Text>
+            ) : null}
+          </View>
         ) : (
           <View className="gap-3">
             <Input placeholder="Custom food name" />
@@ -27,5 +63,14 @@ export default function FoodsScreen() {
         )}
       </View>
     </ScrollView>
+  );
+}
+
+function Macro({ label, v, cls }: { label: string; v: number; cls: string }) {
+  return (
+    <View className="items-center">
+      <Text variant="caption" className={`font-semibold tabular-nums ${cls}`}>{Math.round(v)}</Text>
+      <Text variant="micro">{label}</Text>
+    </View>
   );
 }
