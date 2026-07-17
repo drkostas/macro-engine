@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 /** GET /api/food/custom - list user's custom foods */
 export async function GET(req: NextRequest) {

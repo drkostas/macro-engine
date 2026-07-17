@@ -31,6 +31,46 @@ export interface PlanState {
   error: string | null;
 }
 
+export interface FoodResult {
+  id: number;
+  name: string;
+  brand: string | null;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  serving_description: string;
+}
+
+/** Debounced food search against the macro-engine API. */
+export function useFoodSearch(query: string) {
+  const [results, setResults] = useState<FoodResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    let alive = true;
+    const t = setTimeout(() => {
+      fetch(`${API_BASE}/api/food/search?q=${encodeURIComponent(q)}`)
+        .then((r) => r.json())
+        .then((d) => alive && setResults(d.results ?? []))
+        .catch(() => alive && setResults([]))
+        .finally(() => alive && setLoading(false));
+    }, 250);
+    return () => {
+      alive = false;
+      clearTimeout(t);
+    };
+  }, [query]);
+  return { results, loading };
+}
+
 /** Fetch the day plan from the macro-engine API. */
 export function usePlan(date: string): PlanState {
   const [state, setState] = useState<PlanState>({ data: null, loading: true, error: null });
