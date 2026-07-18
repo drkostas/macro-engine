@@ -79,6 +79,20 @@ Run tests:
 npm test -- --run
 ```
 
+### Cross-platform app (`universal/`)
+
+Alongside the Next.js `web/` app, `universal/` is a cross-platform
+[Expo](https://expo.dev) app (React Native Web + NativeWind) built on the shared
+[`soma-style`](https://github.com/drkostas/soma-style) design system — one
+component codebase for web today, iOS/Android ready. It talks to the same API.
+
+```bash
+cd universal
+npm install
+npm run web        # → Expo web build
+npm test           # unit tests (api payload builders)
+```
+
 ---
 
 ## Configuration
