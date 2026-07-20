@@ -22,6 +22,23 @@ function withDevCors(res: NextResponse, isApi: boolean): NextResponse {
   return res;
 }
 
+/** Permissive CORS applied when a request authenticates via the personal API
+    token (the native app + iOS widgets). */
+function withTokenCors(res: NextResponse): NextResponse {
+  res.headers.set("Access-Control-Allow-Origin", "*");
+  res.headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  res.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  return res;
+}
+
+/** Does the request carry the valid personal API token? Lets native clients
+    (Expo app, widgets) reach /api/* without a browser session. */
+function hasApiToken(req: NextRequest): boolean {
+  const token = process.env.MACROENGINE_API_TOKEN?.trim();
+  if (!token) return false;
+  return req.headers.get("authorization") === `Bearer ${token}`;
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isApi = pathname.startsWith("/api/");
@@ -35,6 +52,9 @@ export async function middleware(req: NextRequest) {
   if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
     return withDevCors(NextResponse.next(), isApi);
   }
+
+  // Personal API token: native app + widgets reach /api/* without a session.
+  if (isApi && hasApiToken(req)) return withTokenCors(NextResponse.next());
 
   // Dev bypass: no password set + dev mode = unauthenticated access (localhost convenience)
   if (isDev && !process.env.MACROENGINE_PASSWORD) {
