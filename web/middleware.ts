@@ -133,5 +133,9 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
+  // Node.js runtime: Next 16 deprecated the Edge middleware runtime, and the
+  // Edge bundle injects a Node-only `__dirname` here (→ MIDDLEWARE_INVOCATION_FAILED).
+  // Node is the default/supported runtime and has `__dirname`, so this is stable.
+  runtime: "nodejs",
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
