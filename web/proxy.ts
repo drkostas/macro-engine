@@ -98,7 +98,7 @@ function hasApiToken(req: NextRequest): boolean {
   return req.headers.get("authorization") === `Bearer ${token}`;
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isApi = pathname.startsWith("/api/");
   if (STATIC_PREFIX.test(pathname)) return NextResponse.next();
@@ -132,10 +132,10 @@ export async function middleware(req: NextRequest) {
   return NextResponse.redirect(url);
 }
 
+/* Next 16: `proxy` (formerly `middleware`) always runs on the Node.js runtime —
+   which is exactly what we need, since the deprecated edge middleware runtime
+   injected a Node-only `__dirname` here and 500'd every request. `runtime` is not
+   configurable in a proxy file (it throws), so it's omitted. */
 export const config = {
-  // Node.js runtime: Next 16 deprecated the Edge middleware runtime, and the
-  // Edge bundle injects a Node-only `__dirname` here (→ MIDDLEWARE_INVOCATION_FAILED).
-  // Node is the default/supported runtime and has `__dirname`, so this is stable.
-  runtime: "nodejs",
   matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
