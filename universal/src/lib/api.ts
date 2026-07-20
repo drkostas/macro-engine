@@ -3,6 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 /** macro-engine API base. Override with EXPO_PUBLIC_API_URL for device/prod. */
 const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3457";
 
+/** Personal API token for prod (the deployed API gates /api/* behind a session;
+    the token bypasses that for this native client). Empty in local dev. */
+const API_TOKEN = process.env.EXPO_PUBLIC_API_TOKEN;
+const AUTH_HEADERS: Record<string, string> = API_TOKEN ? { Authorization: `Bearer ${API_TOKEN}` } : {};
+
 export interface MacroSet {
   calories: number;
   protein: number;
@@ -58,7 +63,7 @@ export function useFoodSearch(query: string) {
     setLoading(true);
     let alive = true;
     const t = setTimeout(() => {
-      fetch(`${API_BASE}/api/food/search?q=${encodeURIComponent(q)}`)
+      fetch(`${API_BASE}/api/food/search?q=${encodeURIComponent(q)}`, { headers: AUTH_HEADERS })
         .then((r) => r.json())
         .then((d) => alive && setResults(d.results ?? []))
         .catch(() => alive && setResults([]))
@@ -89,7 +94,7 @@ export interface OnboardProfile {
 export async function saveOnboard(p: OnboardProfile): Promise<boolean> {
   const res = await fetch(`${API_BASE}/api/nutrition/onboard`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...AUTH_HEADERS },
     body: JSON.stringify(p),
   });
   return res.ok;
@@ -99,7 +104,7 @@ export async function saveOnboard(p: OnboardProfile): Promise<boolean> {
 export async function updateProfile(key: string, value: string | number): Promise<boolean> {
   const res = await fetch(`${API_BASE}/api/nutrition/profile`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...AUTH_HEADERS },
     body: JSON.stringify({ [key]: value }),
   });
   return res.ok;
@@ -111,7 +116,7 @@ export function useProfile() {
   const [reload, setReload] = useState(0);
   useEffect(() => {
     let alive = true;
-    fetch(`${API_BASE}/api/nutrition/profile`)
+    fetch(`${API_BASE}/api/nutrition/profile`, { headers: AUTH_HEADERS })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => alive && setData(d?.profile ?? null))
       .catch(() => {});
@@ -130,7 +135,7 @@ export async function logMeal(
   const f = grams / 100;
   const res = await fetch(`${API_BASE}/api/nutrition/log-meal`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...AUTH_HEADERS },
     body: JSON.stringify({
       date,
       meal_slot: slot,
@@ -158,7 +163,7 @@ export function usePlan(date: string): PlanState & { refetch: () => void } {
   useEffect(() => {
     let alive = true;
     setState((s) => ({ ...s, loading: true, error: null }));
-    fetch(`${API_BASE}/api/nutrition/plan?date=${date}`)
+    fetch(`${API_BASE}/api/nutrition/plan?date=${date}`, { headers: AUTH_HEADERS })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((data: Plan) => alive && setState({ data, loading: false, error: null }))
       .catch((e) => alive && setState({ data: null, loading: false, error: String(e.message ?? e) }));
@@ -189,7 +194,7 @@ export function useWrapup(end: string) {
   const [reload, setReload] = useState(0);
   useEffect(() => {
     let alive = true;
-    fetch(`${API_BASE}/api/nutrition/wrapup?end=${end}`)
+    fetch(`${API_BASE}/api/nutrition/wrapup?end=${end}`, { headers: AUTH_HEADERS })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((d) => alive && setData(d))
       .catch(() => {});
@@ -202,7 +207,7 @@ export function useWrapup(end: string) {
 export async function closeDay(date: string): Promise<string | null> {
   const res = await fetch(`${API_BASE}/api/nutrition/close-day`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...AUTH_HEADERS },
     body: JSON.stringify({ date }),
   });
   if (!res.ok) return null;
@@ -239,7 +244,7 @@ export function useWeeklySummary(weeks = 12): { data: WeekSummary[]; refetch: ()
   const [reload, setReload] = useState(0);
   useEffect(() => {
     let alive = true;
-    fetch(`${API_BASE}/api/nutrition/weekly-summary?weeks=${weeks}`)
+    fetch(`${API_BASE}/api/nutrition/weekly-summary?weeks=${weeks}`, { headers: AUTH_HEADERS })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((d) => alive && setData([...(d.weeks ?? [])].reverse())) // API returns DESC
       .catch(() => {});
@@ -263,7 +268,7 @@ export function useWeightTrend(days = 30): { data: WeightPoint[]; refetch: () =>
   const [reload, setReload] = useState(0);
   useEffect(() => {
     let alive = true;
-    fetch(`${API_BASE}/api/nutrition/weight-trend?days=${days}`)
+    fetch(`${API_BASE}/api/nutrition/weight-trend?days=${days}`, { headers: AUTH_HEADERS })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((d) => {
         if (!alive) return;
