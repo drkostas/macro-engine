@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /** macro-engine API base. Override with EXPO_PUBLIC_API_URL for device/prod. */
 const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3457";
@@ -47,6 +47,7 @@ export interface FoodResult {
 export function useFoodSearch(query: string) {
   const [results, setResults] = useState<FoodResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [reload, setReload] = useState(0);
   useEffect(() => {
     const q = query.trim();
     if (q.length < 2) {
@@ -67,8 +68,8 @@ export function useFoodSearch(query: string) {
       alive = false;
       clearTimeout(t);
     };
-  }, [query]);
-  return { results, loading };
+  }, [query, reload]);
+  return { results, loading, refetch: () => setReload((n) => n + 1) };
 }
 
 export interface OnboardProfile {
@@ -107,6 +108,7 @@ export async function updateProfile(key: string, value: string | number): Promis
 /** Load the current profile (GET wraps it in { profile }). */
 export function useProfile() {
   const [data, setData] = useState<Record<string, unknown> | null>(null);
+  const [reload, setReload] = useState(0);
   useEffect(() => {
     let alive = true;
     fetch(`${API_BASE}/api/nutrition/profile`)
@@ -114,8 +116,8 @@ export function useProfile() {
       .then((d) => alive && setData(d?.profile ?? null))
       .catch(() => {});
     return () => { alive = false; };
-  }, []);
-  return data;
+  }, [reload]);
+  return { profile: data, refetch: () => setReload((n) => n + 1) };
 }
 
 /** Log a food to a meal slot. Returns true on success. */
@@ -206,4 +208,72 @@ export async function closeDay(date: string): Promise<string | null> {
   if (!res.ok) return null;
   const d = (await res.json()) as { status?: string };
   return d.status ?? null;
+}
+
+/**
+ * Pull-to-refresh helper: wraps one or more refetch callbacks in a spinner-
+ * friendly `refreshing` flag (drops after a short beat so the control settles).
+ */
+export function usePullRefresh(...refetchers: Array<() => void>) {
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    refetchers.forEach((r) => r());
+    setTimeout(() => setRefreshing(false), 900);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, refetchers);
+  return { refreshing, onRefresh };
+}
+
+export interface WeekSummary {
+  week: string;
+  avgCalories: number;
+  avgTarget: number;
+  adherencePct: number;
+  avgWeight: number | null;
+}
+
+/** Weekly rollups (avg calories / adherence per week), oldest→newest for charting. */
+export function useWeeklySummary(weeks = 12): { data: WeekSummary[]; refetch: () => void } {
+  const [data, setData] = useState<WeekSummary[]>([]);
+  const [reload, setReload] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    fetch(`${API_BASE}/api/nutrition/weekly-summary?weeks=${weeks}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((d) => alive && setData([...(d.weeks ?? [])].reverse())) // API returns DESC
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [weeks, reload]);
+  return { data, refetch: () => setReload((n) => n + 1) };
+}
+
+export interface WeightPoint {
+  date: string;
+  weight: number;
+  avg7d: number;
+  bfPct: number | null;
+}
+
+/** Daily weight + 7d-average trend, oldest→newest, for a sparkline. */
+export function useWeightTrend(days = 30): { data: WeightPoint[]; refetch: () => void } {
+  const [data, setData] = useState<WeightPoint[]>([]);
+  const [reload, setReload] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    fetch(`${API_BASE}/api/nutrition/weight-trend?days=${days}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((d) => {
+        if (!alive) return;
+        const t: WeightPoint[] = [...(d.trend ?? [])].sort((a, b) => a.date.localeCompare(b.date));
+        setData(t);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [days, reload]);
+  return { data, refetch: () => setReload((n) => n + 1) };
 }
