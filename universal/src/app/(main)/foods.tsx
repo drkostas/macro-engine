@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { Text, SegmentedControl, Input, Card, MacroBar, Pill, PillGroup, Button, Badge } from "soma-style";
-import { useFoodSearch, logMeal, type FoodResult } from "../../lib/api";
+import { useFoodSearch, logMeal, usePullRefresh, type FoodResult } from "../../lib/api";
 
 const DATE = "2026-07-16";
 const SLOTS = ["breakfast", "lunch", "dinner", "pre_sleep"];
@@ -11,7 +11,8 @@ export default function FoodsScreen() {
   const [q, setQ] = useState("");
   const [slot, setSlot] = useState("lunch");
   const [logged, setLogged] = useState<Record<number, boolean>>({});
-  const { results, loading } = useFoodSearch(q);
+  const { results, loading, refetch } = useFoodSearch(q);
+  const { refreshing, onRefresh } = usePullRefresh(refetch);
 
   async function onLog(f: FoodResult) {
     const ok = await logMeal(DATE, slot, f);
@@ -19,7 +20,11 @@ export default function FoodsScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-base" contentContainerClassName="items-center px-5 py-6">
+    <ScrollView
+      className="flex-1 bg-base"
+      contentContainerClassName="items-center px-5 py-6"
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#77c8d1" />}
+    >
       <View className="w-full max-w-2xl gap-4">
         <View className="gap-1">
           <Text variant="headline">Food Library</Text>
