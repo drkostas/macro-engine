@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
-import { Text, Card, Input, Button, Pill, PillGroup, Badge } from "soma-style";
-import { useProfile, updateProfile } from "../../lib/api";
+import { RefreshControl, ScrollView, View } from "react-native";
+import { Text, Card, Input, Button, Pill, PillGroup, Badge, Sparkline } from "soma-style";
+import { useProfile, updateProfile, useWeightTrend, usePullRefresh } from "../../lib/api";
 
 const TABS = ["Profile", "Deficit mode", "Body comp", "Goals", "Activity", "Reminders"];
 
@@ -15,7 +15,9 @@ const FIELDS: { key: string; label: string; unit?: string }[] = [
 
 export default function SettingsScreen() {
   const [tab, setTab] = useState("Profile");
-  const profile = useProfile();
+  const { profile, refetch: refetchProfile } = useProfile();
+  const { data: weight, refetch: refetchWeight } = useWeightTrend(30);
+  const { refreshing, onRefresh } = usePullRefresh(refetchProfile, refetchWeight);
   const [values, setValues] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -41,7 +43,11 @@ export default function SettingsScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-base" contentContainerClassName="items-center px-5 py-6">
+    <ScrollView
+      className="flex-1 bg-base"
+      contentContainerClassName="items-center px-5 py-6"
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#77c8d1" />}
+    >
       <View className="w-full max-w-2xl gap-4">
         <Text variant="headline">Settings</Text>
         <PillGroup>
@@ -49,6 +55,18 @@ export default function SettingsScreen() {
             <Pill key={t} label={t} active={tab === t} onPress={() => setTab(t)} />
           ))}
         </PillGroup>
+
+        {weight.length >= 2 ? (
+          <Card className="gap-2">
+            <View className="flex-row items-center justify-between">
+              <Text variant="eyebrow">Weight trend · last {weight.length}d</Text>
+              <Text variant="caption" className="tabular-nums text-text-secondary">
+                {weight[weight.length - 1].weight.toFixed(1)} kg
+              </Text>
+            </View>
+            <Sparkline data={weight.map((w) => w.avg7d || w.weight)} baseline color="#77c8d1" />
+          </Card>
+        ) : null}
 
         <Card className="gap-1">
           <Text variant="title" className="mb-2">Personal info</Text>

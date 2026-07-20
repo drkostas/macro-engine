@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import {
   Text, Card, Badge, SegmentedControl, Ring, ProgressBar, MacroBar,
-  Button, Pill, PillGroup, Stepper, Modal,
+  Button, Pill, PillGroup, Stepper, Modal, Sparkline,
 } from "soma-style";
-import { usePlan, useWrapup, closeDay, type MacroSet } from "../../lib/api";
+import { usePlan, useWrapup, closeDay, useWeeklySummary, usePullRefresh, type MacroSet } from "../../lib/api";
 
 const DATE = "2026-07-16";
 
@@ -23,6 +23,8 @@ const MACRO_KEYS = [
 export default function DashboardScreen() {
   const { data, loading, error, refetch } = usePlan(DATE);
   const { data: wrap, refetch: refetchWrap } = useWrapup(DATE);
+  const { data: weekly, refetch: refetchWeekly } = useWeeklySummary(12);
+  const { refreshing, onRefresh } = usePullRefresh(refetch, refetchWrap, refetchWeekly);
   const [tab, setTab] = useState<"Week" | "Progress" | "Year">("Week");
   const [band, setBand] = useState("Active");
   const [steps, setSteps] = useState(10000);
@@ -50,7 +52,11 @@ export default function DashboardScreen() {
     targets && targets[k] > 0 ? Math.min((eaten?.[k] ?? 0) / targets[k], 1) : 0;
 
   return (
-    <ScrollView className="flex-1 bg-base" contentContainerClassName="items-center px-5 py-6">
+    <ScrollView
+      className="flex-1 bg-base"
+      contentContainerClassName="items-center px-5 py-6"
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#77c8d1" />}
+    >
       <View className="w-full max-w-2xl gap-4">
         <View className="flex-row items-center gap-2">
           <Text variant="title">Thursday, Jul 16</Text>
@@ -81,6 +87,19 @@ export default function DashboardScreen() {
             ))}
           </View>
         </Card>
+
+        {/* Calorie trend */}
+        {weekly.length >= 2 ? (
+          <Card className="gap-2">
+            <View className="flex-row items-center justify-between">
+              <Text variant="eyebrow">Calorie trend · {weekly.length}-wk avg</Text>
+              <Text variant="caption" className="tabular-nums text-text-secondary">
+                {Math.round(weekly[weekly.length - 1].avgCalories).toLocaleString()} kcal/wk
+              </Text>
+            </View>
+            <Sparkline data={weekly.map((w) => w.avgCalories)} baseline color="#77c8d1" />
+          </Card>
+        ) : null}
 
         {/* Activity */}
         <Card className="gap-3">
