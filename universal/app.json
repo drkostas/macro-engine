@@ -8,9 +8,11 @@
     "scheme": "universal",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "dev.gkos.macroengine",
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "dev.gkos.macroengine",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
