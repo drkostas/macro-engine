@@ -3,7 +3,7 @@
  *
  * Extracted from soma web/app/api/nutrition/plan/route.ts.
  * No DB calls, no framework dependencies. Pure TypeScript.
- * Canonical spec: Python macro_engine library (../src/macro_engine/).
+ * Canonical spec: the Python macro_engine library this was ported from (removed 2026-09-11; see git history before that date).
  */
 
 // -- Constants ---------------------------------------------------------------
