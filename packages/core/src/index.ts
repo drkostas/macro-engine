@@ -27,3 +27,4 @@ export { AlertLevel, HooperAlert, HooperQuality, HooperScore, WeeklyStrain, comp
 export { TaperPhase, classifyTaperPhase, taperCarbGPerKg, taperProteinGPerKg } from "./taper";
 export { DayRecord as WrapupDayRecord, Grade, WeeklyWrapup, adherenceGrade, computeWeeklyWrapup, wrapupTakeaway } from "./weekly-wrapup";
 export { MonthSummary, YearDayRecord, YearReview, computeYearReview } from "./year-review";
+export * from "./ingredient-research";
