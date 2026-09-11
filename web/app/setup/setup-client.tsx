@@ -6,7 +6,7 @@ const GARMIN_SSO_URL =
   "https://sso.garmin.com/sso/signin?id=gauth-widget&embedWidget=true&gauthHost=https%3A%2F%2Fsso.garmin.com%2Fsso&service=https%3A%2F%2Fsso.garmin.com%2Fsso%2Fembed&source=https%3A%2F%2Fsso.garmin.com%2Fsso%2Fembed&redirectAfterAccountLoginUrl=https%3A%2F%2Fsso.garmin.com%2Fsso%2Fembed&redirectAfterAccountCreationUrl=https%3A%2F%2Fsso.garmin.com%2Fsso%2Fembed";
 
 // Reuse hevy2garmin's CF Worker for Garmin DI token exchange
-const GARMIN_WORKER_BASE = "https://hevy2garmin-exchange-di.gkos.workers.dev";
+const GARMIN_WORKER_BASE = "https://garmin-auth-sso.gkos.workers.dev";
 
 interface Props {
   garminEnabled: boolean;
