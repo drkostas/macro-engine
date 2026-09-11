@@ -55,7 +55,7 @@ Worker proxy should handle this. If SSO still fails:
 1. Check that `GARMIN_AUTH_PROXY_URL` is set in your `.env`.
 2. Try the default value: `https://garmin-auth.kostasgeorgiou.workers.dev`.
 3. If the default proxy is down, deploy your own -- see
-   [cloudflare/README.md](../cloudflare/README.md). It takes 5 minutes.
+   [garmin-auth's worker README](https://github.com/drkostas/garmin-auth/tree/main/worker). It takes 5 minutes.
 4. Check `docker compose logs web` for the actual error message.
 
 If you are running locally (not on a cloud VM), Garmin SSO should work without

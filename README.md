@@ -126,7 +126,7 @@ Cloudflare Worker. It works out of the box but routes your Garmin credentials
 through a third party during SSO.
 
 For real use, deploy your own worker. It takes 5 minutes and is free. See
-[cloudflare/README.md](cloudflare/README.md) for instructions.
+[garmin-auth's worker README](https://github.com/drkostas/garmin-auth/tree/main/worker) for instructions.
 
 To disable Garmin entirely, leave `GARMIN_AUTH_PROXY_URL` blank.
 
