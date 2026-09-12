@@ -17,9 +17,9 @@
     "e2e:mobile": "playwright test --project=mobile"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.69",
+    "@ai-sdk/anthropic": "^3.0.118",
     "@neondatabase/serverless": "^0.10.0",
-    "ai": "^6.0.161",
+    "ai": "^6.0.282",
     "macro-engine-core": "^0.1.1",
     "next": "^16.3.3",
     "postgres": "^3.4.9",
