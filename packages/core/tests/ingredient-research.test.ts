@@ -69,3 +69,70 @@ describe("categories", () => {
     for (const c of CATEGORIES) expect(SHRINK_BY_CATEGORY[c], c).toBeGreaterThan(0);
   });
 });
+
+import { slugify, guessCategory, canQuickAdd, quickAddDefaults, rankIngredients, recentlyUsed, isEstimated, ESTIMATE_SOURCE } from "../src/ingredient-research";
+
+describe("slugify + guessCategory", () => {
+  it("ascii lower-case ids, underscores, 60 chars", () => {
+    expect(slugify("Peppers, sweet, green, raw")).toBe("peppers_sweet_green_raw");
+    expect(slugify("  Σκορδαλιά  (Greek) ")).toBe("greek");
+    expect(slugify("x".repeat(80))).toHaveLength(60);
+  });
+  it("names a category from the food, snack when nothing matches", () => {
+    expect(guessCategory("Peppers, sweet, green, raw")).toBe("vegetable");
+    expect(guessCategory("Cottage cheese with peppers")).toBe("dairy");
+    expect(guessCategory("Halloumi (Aldi)")).toBe("dairy");
+    expect(guessCategory("Spanakopita")).toBe("snack"); expect(guessCategory("Eggplant, grilled")).toBe("vegetable"); expect(guessCategory("Pita bread")).toBe("carbs");
+    expect(guessCategory("Extra virgin olive oil")).toBe("fat");
+  });
+});
+
+describe("quick add", () => {
+  const full = { calories_per_100g: 20, protein_per_100g: 0.9, carbs_per_100g: 4.6, fat_per_100g: 0.2, fiber_per_100g: 1.7 };
+  it("only when all five macros are known: an unknown is not 0", () => {
+    expect(canQuickAdd(full)).toBe(true);
+    expect(canQuickAdd({ ...full, fiber_per_100g: null })).toBe(false);
+  });
+  it("defaults: source name (brand in parentheses), id from the name, guessed category, weighed as eaten, grams", () => {
+    expect(quickAddDefaults({ name: "Peppers, sweet, green, raw", brand: null })).toEqual({ id: "peppers_sweet_green_raw", name: "Peppers, sweet, green, raw", category: "vegetable", is_raw: false, unit: "g", grams_per_unit: null });
+    expect(quickAddDefaults({ name: " Halloumi ", brand: "Aldi" })).toMatchObject({ id: "halloumi", name: "Halloumi (Aldi)", category: "dairy" });
+    expect(quickAddDefaults({ name: "…" }).id).toBe("ingredient");
+  });
+  it("an estimated ingredient is the one whose source is the model", () => {
+    expect(isEstimated({ source: ESTIMATE_SOURCE })).toBe(true);
+    expect(isEstimated({ source: "usda" })).toBe(false);
+    expect(isEstimated({})).toBe(false);
+  });
+});
+
+describe("rankIngredients", () => {
+  const cat = [
+    { id: "cherry_tomatoes", name: "Cherry tomatoes", last_used: "2026-09-01", use_count: 3 },
+    { id: "eggs_whole", name: "Eggs, whole", last_used: "2026-09-01", use_count: 3 },
+    { id: "olive_oil", name: "Olive oil", last_used: "2026-08-20", use_count: 2 },
+    { id: "kefir", name: "Kefir", in_presets: 2 },
+    { id: "halloumi", name: "Halloumi (Aldi)", is_favorite: true },
+    { id: "peppers_green", name: "Peppers, sweet, green, raw" },
+    { id: "red_pepper_flakes", name: "Red pepper flakes" },
+    { id: "pepperoni", name: "Pepperoni" },
+  ];
+  it("empty query: used first by recency, then presets and favourites, then the rest by name", () => {
+    expect(rankIngredients(cat, "").map((i) => i.id)).toEqual(["cherry_tomatoes", "eggs_whole", "olive_oil", "kefir", "halloumi", "pepperoni", "peppers_green", "red_pepper_flakes"]);
+  });
+  it("a query filters by name and, inside a tier, a match at the start of the name wins", () => {
+    expect(rankIngredients(cat, "pepper").map((i) => i.id)).toEqual(["pepperoni", "peppers_green", "red_pepper_flakes"]);
+    expect(rankIngredients(cat, "EGG").map((i) => i.id)).toEqual(["eggs_whole"]);
+    expect(rankIngredients(cat, "zzz")).toEqual([]);
+  });
+  it("a used ingredient outranks a better textual match", () => {
+    const list = [{ id: "a", name: "Pepper, black" }, { id: "b", name: "Green pepper", last_used: "2026-09-10", use_count: 1 }];
+    expect(rankIngredients(list, "pepper").map((i) => i.id)).toEqual(["b", "a"]);
+  });
+  it("recentlyUsed: the used ones, most recent first, capped", () => {
+    expect(recentlyUsed(cat, 2).map((i) => i.id)).toEqual(["cherry_tomatoes", "eggs_whole"]);
+    expect(recentlyUsed(cat).map((i) => i.id)).toEqual(["cherry_tomatoes", "eggs_whole", "olive_oil"]);
+  });
+  it("does not mutate the input", () => {
+    const copy = [...cat]; rankIngredients(cat, ""); expect(cat).toEqual(copy);
+  });
+});
