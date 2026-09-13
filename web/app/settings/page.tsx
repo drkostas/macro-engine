@@ -47,6 +47,47 @@ interface MilestoneEntry {
   achieved_at: string | null;
 }
 
+// Module-level, not created inside the page's render: a component created during render is a new
+// type every render and loses its state (macro-engine#259, M5).
+function FieldRow({ label, tip, children }: { label: string; tip?: string; children: React.ReactNode }) {
+return (
+  <div className="flex items-center justify-between gap-3 py-3 border-b border-border last:border-0">
+    <div className="flex items-center min-w-0 flex-shrink">
+      <span className="text-sm text-text-secondary">{label}</span>
+      {tip && <InfoTip text={tip} />}
+    </div>
+    <div className="flex items-center gap-2 shrink-0">{children}</div>
+  </div>
+);
+}
+
+function NumberInput({
+  value, onChange, step = 1, min, max, unit, width = "w-20",
+}: {
+  value: number | null;
+  onChange: (v: number) => void;
+  step?: number;
+  min?: number;
+  max?: number;
+  unit?: string;
+  width?: string;
+}) {
+return (
+  <>
+    <input
+      type="number"
+      value={value ?? ""}
+      step={step}
+      min={min}
+      max={max}
+      onChange={(e) => onChange(Number(e.target.value))}
+      className={`${width} bg-surface-elevated border border-border-glow rounded-lg px-3 py-1.5 text-sm text-text text-right focus:outline-none focus:border-teal-dim`}
+    />
+    {unit && <span className="text-xs text-text-muted w-8">{unit}</span>}
+  </>
+);
+}
+
 export default function SettingsPage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -101,41 +142,6 @@ export default function SettingsPage() {
       </main>
     );
   }
-
-  const FieldRow = ({ label, tip, children }: { label: string; tip?: string; children: React.ReactNode }) => (
-    <div className="flex items-center justify-between gap-3 py-3 border-b border-border last:border-0">
-      <div className="flex items-center min-w-0 flex-shrink">
-        <span className="text-sm text-text-secondary">{label}</span>
-        {tip && <InfoTip text={tip} />}
-      </div>
-      <div className="flex items-center gap-2 shrink-0">{children}</div>
-    </div>
-  );
-
-  const NumberInput = ({
-    value, onChange, step = 1, min, max, unit, width = "w-20",
-  }: {
-    value: number | null;
-    onChange: (v: number) => void;
-    step?: number;
-    min?: number;
-    max?: number;
-    unit?: string;
-    width?: string;
-  }) => (
-    <>
-      <input
-        type="number"
-        value={value ?? ""}
-        step={step}
-        min={min}
-        max={max}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className={`${width} bg-surface-elevated border border-border-glow rounded-lg px-3 py-1.5 text-sm text-text text-right focus:outline-none focus:border-teal-dim`}
-      />
-      {unit && <span className="text-xs text-text-muted w-8">{unit}</span>}
-    </>
-  );
 
   return (
     <main className="p-4 md:p-6 max-w-4xl mx-auto space-y-4">
@@ -350,6 +356,7 @@ function NutritionContextSection() {
       .finally(() => setLoading(false));
   };
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch on mount; every setState runs after the response
   useEffect(() => { refresh(); }, []);
 
   if (loading) {

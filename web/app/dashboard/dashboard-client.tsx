@@ -198,7 +198,6 @@ function DashboardInner() {
     } finally {
       setLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDate]);
 
   const syncGarmin = useCallback(async () => {
@@ -224,7 +223,7 @@ function DashboardInner() {
   }, [fetchPlan]);
 
   useEffect(() => {
-    setLoading(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch on mount; every setState runs after the response
     fetchPlan();
     const interval = setInterval(() => fetchPlan(), 60000);
     return () => clearInterval(interval);
@@ -250,7 +249,7 @@ function DashboardInner() {
     return (
       <main className="p-6 max-w-lg mx-auto text-center mt-20">
         <h1 className="text-2xl font-bold mb-4">Welcome to MacroEngine</h1>
-        <p className="text-text-secondary mb-6">Let's set up your profile to calculate your targets.</p>
+        <p className="text-text-secondary mb-6">Let&apos;s set up your profile to calculate your targets.</p>
         <a
           href="/onboard"
           className="inline-block bg-teal-dim text-white px-6 py-3 rounded-lg font-medium hover:bg-teal"

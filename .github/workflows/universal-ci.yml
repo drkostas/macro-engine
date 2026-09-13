@@ -26,5 +26,8 @@ jobs:
         run: npm ci
       - name: Typecheck
         run: npm run typecheck
+      - name: Lint
+        # The committed flat config (macro-engine#259, M5); zero warnings is the gate.
+        run: npm run lint -- --max-warnings 0
       - name: Unit tests
         run: npm test

@@ -22,7 +22,7 @@ interface ActivitySelectorProps {
 }
 
 export function ActivitySelector({
-  date, trainingDayType, runEnabled = false, selectedWorkouts = [],
+  date, runEnabled = false, selectedWorkouts = [],
   expectedSteps, disabled = false, onChanged, autoDetected,
 }: ActivitySelectorProps) {
   const [routines, setRoutines] = useState<Routine[]>([]);

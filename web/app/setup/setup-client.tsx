@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const GARMIN_SSO_URL =
   "https://sso.garmin.com/sso/signin?id=gauth-widget&embedWidget=true&gauthHost=https%3A%2F%2Fsso.garmin.com%2Fsso&service=https%3A%2F%2Fsso.garmin.com%2Fsso%2Fembed&source=https%3A%2F%2Fsso.garmin.com%2Fsso%2Fembed&redirectAfterAccountLoginUrl=https%3A%2F%2Fsso.garmin.com%2Fsso%2Fembed&redirectAfterAccountCreationUrl=https%3A%2F%2Fsso.garmin.com%2Fsso%2Fembed";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export function SetupClient({ garminEnabled }: Props) {
+  const router = useRouter();
   const [ticketUrl, setTicketUrl] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -75,7 +77,7 @@ export function SetupClient({ garminEnabled }: Props) {
       if (storeData.ok) {
         setStatus("success");
         setMessage("Connected to Garmin!");
-        setTimeout(() => (window.location.href = "/dashboard"), 3000);
+        setTimeout(() => router.push("/dashboard"), 3000);
       } else {
         setStatus("error");
         setMessage(storeData.error || "Failed to save tokens.");

@@ -33,11 +33,6 @@ export async function GET(req: NextRequest) {
 
     // Search user custom foods first (if source allows)
     if (source === "all" || source === "custom" || source === "favorites") {
-      const customFilter =
-        source === "favorites"
-          ? "AND is_favorite = TRUE"
-          : "";
-
       const pattern = `%${q}%`;
       const custom = source === "favorites"
         ? await sql`

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { InfoTip } from "./info-tip";
 
 interface Reminder {
@@ -20,30 +20,40 @@ const DEFAULT_REMINDERS: Reminder[] = [
 
 const STORAGE_KEY = "macroengine_reminders";
 
+// The browser's permission and the stored reminders are external values, read through
+// useSyncExternalStore (the server snapshot is the default, the client snapshot the real thing)
+// instead of copied into state inside an effect. The reminders snapshot is cached on the raw
+// string so the store returns the same reference while nothing changed.
+const subscribeNoop = () => () => {};
+function readPermission(): NotificationPermission | "unsupported" {
+  return typeof window !== "undefined" && "Notification" in window ? Notification.permission : "unsupported";
+}
+let remindersCache: { raw: string | null; value: Reminder[] } = { raw: null, value: DEFAULT_REMINDERS };
+function readStoredReminders(): Reminder[] {
+  const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+  if (raw === remindersCache.raw) return remindersCache.value;
+  let value = DEFAULT_REMINDERS;
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as Reminder[];
+      // Merge with defaults so new reminder types appear
+      value = DEFAULT_REMINDERS.map((def) => {
+        const saved = parsed.find((r) => r.id === def.id);
+        return saved ? { ...def, ...saved } : def;
+      });
+    } catch { /* ignore */ }
+  }
+  remindersCache = { raw, value };
+  return value;
+}
+
 export function NotificationsSettings() {
-  const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
-  const [reminders, setReminders] = useState<Reminder[]>(DEFAULT_REMINDERS);
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !("Notification" in window)) {
-      setPermission("unsupported");
-      return;
-    }
-    setPermission(Notification.permission);
-
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as Reminder[];
-        // Merge with defaults so new reminder types appear
-        const merged = DEFAULT_REMINDERS.map((def) => {
-          const saved = parsed.find((r) => r.id === def.id);
-          return saved ? { ...def, ...saved } : def;
-        });
-        setReminders(merged);
-      } catch { /* ignore */ }
-    }
-  }, []);
+  const envPermission = useSyncExternalStore(subscribeNoop, readPermission, () => "default" as const);
+  const [granted, setPermission] = useState<NotificationPermission | null>(null);
+  const permission = granted ?? envPermission;
+  const stored = useSyncExternalStore(subscribeNoop, readStoredReminders, () => DEFAULT_REMINDERS);
+  const [edited, setReminders] = useState<Reminder[] | null>(null);
+  const reminders = edited ?? stored;
 
   const requestPermission = async () => {
     if (!("Notification" in window)) return;

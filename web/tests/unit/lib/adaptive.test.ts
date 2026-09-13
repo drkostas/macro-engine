@@ -10,7 +10,6 @@ import {
   detectPlateau,
   recommendDietBreak,
   type DietBreakLevel,
-  type PlateauType,
 } from "@/lib/adaptive";
 import type { DayPoint } from "@/lib/body-comp";
 

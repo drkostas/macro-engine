@@ -47,7 +47,7 @@ export default function OnboardScreen() {
         <View className="gap-1">
           <Text variant="headline">Set Up Your Profile</Text>
           <Text variant="body" className="text-text-secondary">
-            We'll calculate your targets from this info.
+            We&apos;ll calculate your targets from this info.
           </Text>
         </View>
 

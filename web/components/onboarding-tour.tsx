@@ -72,7 +72,12 @@ export function OnboardingTour() {
     if (!open) return;
     const step = STEPS[index];
     const el = document.querySelector<HTMLElement>(`[data-tour="${step.target}"]`);
-    if (!el) { setRect(null); return; }
+    if (!el) {
+      // No target on this page: the centred tooltip, cleared on the next tick like the
+      // measured path (never a synchronous setState inside the effect).
+      const clear = window.setTimeout(() => setRect(null), 0);
+      return () => window.clearTimeout(clear);
+    }
     const target = el;
     let settled = false;
     let fallback = 0;

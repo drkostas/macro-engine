@@ -1,4 +1,4 @@
-import { test, expect, request } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 // Smoke test for /api/nutrition/subjective against the real test-seeded DB.
 // The CI seed ships a baseline Hooper row at CURRENT_DATE - 1 day.

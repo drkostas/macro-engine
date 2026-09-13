@@ -19,6 +19,9 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
       - run: npm ci
+      - name: Lint
+        # eslint flat config (macro-engine#259, M5); `next lint` no longer exists. Zero is the gate.
+        run: npm run lint -- --max-warnings 0
       - run: npm test
 
   e2e:

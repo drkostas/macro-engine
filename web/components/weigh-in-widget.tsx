@@ -18,8 +18,13 @@ export function WeighInWidget({ currentWeight, onSaved }: WeighInWidgetProps) {
     if (open) inputRef.current?.select();
   }, [open]);
 
-  // Keep val in sync when the prop updates (e.g. refetch after save)
-  useEffect(() => { setVal(currentWeight); }, [currentWeight]);
+  // Keep val in sync when the prop updates (e.g. refetch after save): state adjusted during
+  // render (React's derived-state pattern) instead of a setState inside an effect.
+  const [syncedFrom, setSyncedFrom] = useState(currentWeight);
+  if (currentWeight !== syncedFrom) {
+    setSyncedFrom(currentWeight);
+    setVal(currentWeight);
+  }
 
   const save = async () => {
     setError(null);
