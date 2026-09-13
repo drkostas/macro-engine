@@ -12,3 +12,5 @@ tsconfig.tsbuildinfo
 .playwright-mcp/
 web/.next/
 node_modules/
+.vercel
+.env*
