@@ -137,7 +137,7 @@
     "url": "github:drkostas/macro-engine"
   },
   "devDependencies": {
-    "vitest": "^2.1.0",
+    "vitest": "^4.1.11",
     "typescript": "^5.6.0"
   }
 }
