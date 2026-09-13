@@ -8,9 +8,23 @@ test.describe("Onboarding tour", () => {
     await expect(page.getByRole("dialog", { name: "Onboarding tour" })).toBeVisible({ timeout: 3000 });
     await expect(page.getByText("Step 1 of 6")).toBeVisible();
 
+    // The tooltip's box must sit inside the viewport on every step, or Next and Skip cannot be
+    // reached (macro-engine#260: measured mid-scroll, no clamp).
+    const insideViewport = async () => {
+      const box = await page.getByTestId("tour-tooltip").boundingBox();
+      const viewport = page.viewportSize()!;
+      expect(box, "tooltip has a box").not.toBeNull();
+      expect(box!.x).toBeGreaterThanOrEqual(0);
+      expect(box!.y).toBeGreaterThanOrEqual(0);
+      expect(box!.x + box!.width).toBeLessThanOrEqual(viewport.width);
+      expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
+    };
+    await insideViewport();
+
     for (let i = 2; i <= 6; i++) {
       await page.getByRole("button", { name: "Next →" }).click();
       await expect(page.getByText(`Step ${i} of 6`)).toBeVisible();
+      await insideViewport();
     }
 
     await page.getByRole("button", { name: "Finish" }).click();
