@@ -17,13 +17,13 @@ INSERT INTO nutrition_profile (
 ) ON CONFLICT (id) DO NOTHING;
 
 -- One weigh-in so weight trends + hero have data.
-INSERT INTO weight_log (date, weight_grams, source_type, recorded_at)
+INSERT INTO weight_log (date, weight_grams, source_type, synced_at)
 VALUES (CURRENT_DATE, 75000, 'manual', NOW())
 ON CONFLICT (date, weight_grams) DO NOTHING;
 
 -- Banister defaults so training overlays don't crash.
-INSERT INTO banister_params (id, k1, k2, tau1, tau2, baseline_fitness, baseline_fatigue)
-VALUES (1, 1.0, 2.0, 42, 7, 0, 0)
+INSERT INTO banister_params (id, p0, k1, k2, tau1, tau2)
+VALUES (1, 0, 1.0, 2.0, 42, 7)
 ON CONFLICT (id) DO NOTHING;
 
 -- Today's nutrition_day exists so meal log FK references don't fail.

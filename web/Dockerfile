@@ -1,18 +1,15 @@
-# ---------- deps ----------
-FROM node:20-alpine AS deps
+# ---------- builder ----------
+# One install: a separate `npm ci --omit=dev` stage used to feed this one, and the `npm ci` here
+# replaced it wholesale, so the first stage was pure build time (#264).
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
-
-# ---------- builder ----------
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+RUN npm ci
 COPY . .
-RUN npm ci && npm run build
+RUN npm run build
 
 # ---------- runner ----------
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 interface Step {
   target: string;          // value of data-tour attribute on the target element
@@ -64,28 +64,52 @@ export function OnboardingTour() {
     return () => clearTimeout(t);
   }, []);
 
-  // Measure current target's rect (re-measure on resize + scroll)
+  // Bring the step's target into view, then measure it once the scroll has ENDED. A fixed
+  // 300 ms after a smooth scrollIntoView measured mid-scroll on slower machines, which put the
+  // tooltip (and its Next/Skip buttons) outside the viewport (macro-engine#260). `scrollend`
+  // is the signal; a timer covers browsers without it and the case where nothing scrolls.
   useEffect(() => {
     if (!open) return;
     const step = STEPS[index];
-    const measure = () => {
-      const el = document.querySelector<HTMLElement>(`[data-tour="${step.target}"]`);
-      if (!el) { setRect(null); return; }
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-      // Delay to let the scroll settle
-      window.setTimeout(() => {
-        setRect(el.getBoundingClientRect());
-      }, 300);
+    const el = document.querySelector<HTMLElement>(`[data-tour="${step.target}"]`);
+    if (!el) { setRect(null); return; }
+    const target = el;
+    let settled = false;
+    let fallback = 0;
+    const measure = () => setRect(target.getBoundingClientRect());
+    const onScrollEnd = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(fallback);
+      measure();
     };
-    measure();
-    const onResize = () => measure();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onResize, { passive: true });
+    window.addEventListener("scrollend", onScrollEnd, { once: true });
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    fallback = window.setTimeout(onScrollEnd, 700);
+    // After that first measurement, a resize or a user scroll only re-measures; it never scrolls
+    // the page again (the old listener called scrollIntoView on every scroll event).
+    const remeasure = () => { if (settled) measure(); };
+    window.addEventListener("resize", remeasure);
+    window.addEventListener("scroll", remeasure, { passive: true });
     return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onResize);
+      window.clearTimeout(fallback);
+      window.removeEventListener("scrollend", onScrollEnd);
+      window.removeEventListener("resize", remeasure);
+      window.removeEventListener("scroll", remeasure);
     };
   }, [open, index]);
+
+  // The tooltip's real height depends on the step's text, so the clamp below (which uses the
+  // TOOLTIP_H estimate) is corrected against the rendered box before paint: the bottom edge
+  // must stay inside the viewport or Next and Skip are unreachable (macro-engine#260).
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    const el = tooltipRef.current;
+    if (!el) return;
+    const maxTop = window.innerHeight - el.offsetHeight - 16;
+    const top = Number.parseFloat(el.style.top);
+    if (Number.isFinite(top) && top > maxTop) el.style.top = `${Math.max(16, maxTop)}px`;
+  });
 
   const finish = () => {
     localStorage.setItem(STORAGE_KEY, "1");
@@ -107,16 +131,16 @@ export function OnboardingTour() {
   const TOOLTIP_W = 340;
   const TOOLTIP_H = 180;
 
-  // Compute tooltip position
+  // Compute tooltip position, clamped to the viewport on both axes so the buttons are always
+  // reachable whatever the target's position at measurement time.
   let tooltipTop = 0;
   let tooltipLeft = 0;
   if (rect) {
     tooltipLeft = Math.max(16, Math.min(window.innerWidth - TOOLTIP_W - 16,
       rect.left + rect.width / 2 - TOOLTIP_W / 2,
     ));
-    tooltipTop = step.placement === "below"
-      ? rect.bottom + 16
-      : Math.max(16, rect.top - TOOLTIP_H - 16);
+    const wanted = step.placement === "below" ? rect.bottom + 16 : rect.top - TOOLTIP_H - 16;
+    tooltipTop = Math.max(16, Math.min(window.innerHeight - TOOLTIP_H - 16, wanted));
   }
 
   return (
@@ -145,6 +169,8 @@ export function OnboardingTour() {
       {/* Tooltip */}
       {rect && (
         <div
+          ref={tooltipRef}
+          data-testid="tour-tooltip"
           className="absolute bg-surface-elevated border border-border-glow rounded-2xl shadow-2xl p-5"
           style={{ top: tooltipTop, left: tooltipLeft, width: TOOLTIP_W }}
           onClick={(e) => e.stopPropagation()}

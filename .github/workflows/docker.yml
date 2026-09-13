@@ -18,8 +18,8 @@ jobs:
       - name: Create .env from example
         run: |
           cp .env.example .env
-          sed -i 's/please-change-me/test-password-12345/g' .env
-          sed -i 's/please-change-me-with-openssl-rand/test-secret-that-is-at-least-32-bytes-long-for-hmac/g' .env
+          sed -i 's/^MACROENGINE_PASSWORD=.*/MACROENGINE_PASSWORD=test-password-12345/' .env
+          sed -i 's/^MACROENGINE_SECRET=.*/MACROENGINE_SECRET=test-secret-that-is-at-least-32-bytes-long-for-hmac/' .env
       - name: docker compose up
         run: |
           docker compose up -d --build
