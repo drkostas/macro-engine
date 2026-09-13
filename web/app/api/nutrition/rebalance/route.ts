@@ -2,7 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
-  const { date, changedSlot, lockedSlots = [] } = await req.json();
+  // An empty or non-JSON body used to throw at JSON.parse and surface as a 500 (macro-engine#264).
+  let body: { date?: unknown; changedSlot?: unknown; lockedSlots?: unknown } | null = null;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Body must be JSON with date and changedSlot" }, { status: 400 });
+  }
+  const date = typeof body?.date === "string" ? body.date : null;
+  const changedSlot = typeof body?.changedSlot === "string" ? body.changedSlot : null;
+  const lockedSlots = Array.isArray(body?.lockedSlots) ? body.lockedSlots.map(String) : [];
+  if (!date || !changedSlot) {
+    return NextResponse.json({ error: "date and changedSlot are required" }, { status: 400 });
+  }
   const lockedSet = new Set<string>(lockedSlots);
   const sql = getDb();
 
