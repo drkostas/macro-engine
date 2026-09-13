@@ -24,6 +24,7 @@ export function ProgressionCard() {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch on mount; every setState runs after the response
   useEffect(() => { void fetchWindow(window); }, [window, fetchWindow]);
 
   const deltaSign = (n: number | null): string => {

@@ -1,4 +1,4 @@
-import { test, expect, request } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 // Smoke test for /api/nutrition/ffm-anchor against the real test-seeded DB.
 // The CI seed ships a baseline NHANES anchor 30 days old; we layer a Navy tape

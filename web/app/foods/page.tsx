@@ -23,8 +23,6 @@ const SLOT_LABELS: Record<string, string> = {
   pre_sleep: "Pre-Sleep",
 };
 
-const SLOTS = ["breakfast", "lunch", "dinner", "pre_sleep"];
-
 export default function LogPage() {
   return (
     <Suspense fallback={<div className="p-6 text-text-muted">Loading...</div>}>
@@ -35,9 +33,10 @@ export default function LogPage() {
 
 function LogPageInner() {
   const searchParams = useSearchParams();
-  const [activeSlot, setActiveSlot] = useState(searchParams.get("slot") || autoSlot());
+  const [activeSlot] = useState(searchParams.get("slot") || autoSlot());
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<FoodResult[]>([]);
+  const [fetched, setResults] = useState<FoodResult[]>([]);
+  const results = query.length < 2 ? [] : fetched;
   const [searching, setSearching] = useState(false);
   const [selectedFood, setSelectedFood] = useState<FoodResult | null>(null);
   const [grams, setGrams] = useState(100);
@@ -63,11 +62,9 @@ function LogPageInner() {
   }
 
   // Debounced search
+  // A query under two characters shows no results (derived below); the effect only searches.
   useEffect(() => {
-    if (query.length < 2) {
-      setResults([]);
-      return;
-    }
+    if (query.length < 2) return;
 
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {

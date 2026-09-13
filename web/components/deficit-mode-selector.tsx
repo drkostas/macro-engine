@@ -49,6 +49,7 @@ export function DeficitModeSelector() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch on mount; every setState runs after the response
     void refresh();
   }, [refresh]);
 

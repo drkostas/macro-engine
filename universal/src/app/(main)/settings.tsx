@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { Text, Card, Input, Button, Pill, PillGroup, Badge, Sparkline } from "soma-style";
 import { useProfile, updateProfile, useWeightTrend, usePullRefresh } from "../../lib/api";
@@ -22,13 +22,15 @@ export default function SettingsScreen() {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (profile) {
-      const v: Record<string, string> = {};
-      FIELDS.forEach((f) => (v[f.key] = String(profile[f.key] ?? "")));
-      setValues(v);
-    }
-  }, [profile]);
+  // Seed the form from the profile when a new profile arrives: state adjusted during render
+  // (React's derived-state pattern) instead of a setState inside an effect.
+  const [seededFrom, setSeededFrom] = useState<typeof profile>(null);
+  if (profile && profile !== seededFrom) {
+    setSeededFrom(profile);
+    const v: Record<string, string> = {};
+    FIELDS.forEach((f) => (v[f.key] = String(profile[f.key] ?? "")));
+    setValues(v);
+  }
 
   async function saveAll() {
     setSaving(true);

@@ -46,6 +46,7 @@ export function HydrationCard() {
     } catch { /* ignore */ }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fetch on mount; every setState runs after the response
   useEffect(() => { void refresh(); }, [refresh]);
 
   const meta = BEVERAGE_META[beverage];

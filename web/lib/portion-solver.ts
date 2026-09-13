@@ -212,7 +212,6 @@ export function solvePortions(
     if (t.p > remP * 1.05) {
       const proteinIngs = scalable.filter(i => i.protein_per_100g > 5).sort((a, b) => b.protein_per_100g - a.protein_per_100g);
       for (const ing of proteinIngs) {
-        const m = macrosAt(ing, portions[ing.id]);
         const excess = t.p - remP;
         const reduceGrams = Math.round((excess / ing.protein_per_100g) * 100 / proteinIngs.length);
         const [lo] = BOUNDS[ing.category] ?? [10, 300];

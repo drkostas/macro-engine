@@ -51,16 +51,15 @@ export function IngredientPicker({
   const [tab, setTab] = useState<"mine" | "search" | "presets">("mine");
   const [query, setQuery] = useState("");
   const [myFilter, setMyFilter] = useState("");
-  const [searchResults, setSearchResults] = useState<UsdaFood[]>([]);
+  const [fetchedResults, setSearchResults] = useState<UsdaFood[]>([]);
+  const searchResults = tab !== "search" || query.length < 2 ? [] : fetchedResults;
   const [searching, setSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Debounced USDA search
+  // Outside the search tab, or under two characters, there are no results (derived below).
   useEffect(() => {
-    if (tab !== "search" || query.length < 2) {
-      setSearchResults([]);
-      return;
-    }
+    if (tab !== "search" || query.length < 2) return;
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       setSearching(true);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /** macro-engine API base. Override with EXPO_PUBLIC_API_URL for device/prod. */
 const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3457";
@@ -51,30 +51,30 @@ export interface FoodResult {
 /** Debounced food search against the macro-engine API. */
 export function useFoodSearch(query: string) {
   const [results, setResults] = useState<FoodResult[]>([]);
-  const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(0);
+  // Loading is derived from the request key (the query plus the reload counter) and the last
+  // settled key, so the effect only ever completes a request; no setState at its start.
+  const q = query.trim();
+  const active = q.length >= 2;
+  const key = `${q}|${reload}`;
+  const [settled, setSettled] = useState<string | null>(null);
+  const loading = active && settled !== key;
   useEffect(() => {
-    const q = query.trim();
-    if (q.length < 2) {
-      setResults([]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
+    if (!active) return;
     let alive = true;
     const t = setTimeout(() => {
       fetch(`${API_BASE}/api/food/search?q=${encodeURIComponent(q)}`, { headers: AUTH_HEADERS })
         .then((r) => r.json())
         .then((d) => alive && setResults(d.results ?? []))
         .catch(() => alive && setResults([]))
-        .finally(() => alive && setLoading(false));
+        .finally(() => alive && setSettled(key));
     }, 250);
     return () => {
       alive = false;
       clearTimeout(t);
     };
-  }, [query, reload]);
-  return { results, loading, refetch: () => setReload((n) => n + 1) };
+  }, [active, key, q]);
+  return { results: active ? results : [], loading, refetch: () => setReload((n) => n + 1) };
 }
 
 export interface OnboardProfile {
@@ -158,20 +158,26 @@ export async function logMeal(
 
 /** Fetch the day plan from the macro-engine API. */
 export function usePlan(date: string): PlanState & { refetch: () => void } {
-  const [state, setState] = useState<PlanState>({ data: null, loading: true, error: null });
+  const [data, setData] = useState<Plan | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [reload, setReload] = useState(0);
+  // Loading is derived from the request key and the last settled key, so the effect only ever
+  // completes a request; no setState at its start.
+  const key = `${date}|${reload}`;
+  const [settled, setSettled] = useState<string | null>(null);
+  const loading = settled !== key;
   useEffect(() => {
     let alive = true;
-    setState((s) => ({ ...s, loading: true, error: null }));
     fetch(`${API_BASE}/api/nutrition/plan?date=${date}`, { headers: AUTH_HEADERS })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((data: Plan) => alive && setState({ data, loading: false, error: null }))
-      .catch((e) => alive && setState({ data: null, loading: false, error: String(e.message ?? e) }));
+      .then((d: Plan) => alive && (setData(d), setError(null)))
+      .catch((e) => alive && (setData(null), setError(String(e.message ?? e))))
+      .finally(() => alive && setSettled(key));
     return () => {
       alive = false;
     };
-  }, [date, reload]);
-  return { ...state, refetch: () => setReload((n) => n + 1) };
+  }, [date, key]);
+  return { data, loading, error, refetch: () => setReload((n) => n + 1) };
 }
 
 export interface Wrapup {
@@ -219,14 +225,19 @@ export async function closeDay(date: string): Promise<string | null> {
  * Pull-to-refresh helper: wraps one or more refetch callbacks in a spinner-
  * friendly `refreshing` flag (drops after a short beat so the control settles).
  */
-export function usePullRefresh(...refetchers: Array<() => void>) {
+export function usePullRefresh(...refetchers: (() => void)[]) {
   const [refreshing, setRefreshing] = useState(false);
+  // The rest parameter is a new array every render; the callback reads the latest one through
+  // a ref (written after render) so its own identity stays stable.
+  const latest = useRef(refetchers);
+  useEffect(() => {
+    latest.current = refetchers;
+  });
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    refetchers.forEach((r) => r());
+    latest.current.forEach((r) => r());
     setTimeout(() => setRefreshing(false), 900);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, refetchers);
+  }, []);
   return { refreshing, onRefresh };
 }
 

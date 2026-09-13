@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function OnboardPage() {
+  const router = useRouter();
   const [weight, setWeight] = useState("80");
   const [height, setHeight] = useState("177");
   const [age, setAge] = useState("30");
@@ -69,7 +71,7 @@ export default function OnboardPage() {
         const data = await resp.json();
         throw new Error(data.error || "Failed to save");
       }
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to save profile");
     } finally {
@@ -83,7 +85,7 @@ export default function OnboardPage() {
         <div>
           <h1 className="text-2xl font-bold">Set Up Your Profile</h1>
           <p className="text-text-secondary mt-1 text-sm">
-            We'll calculate your targets from this info.
+            We&apos;ll calculate your targets from this info.
           </p>
         </div>
 

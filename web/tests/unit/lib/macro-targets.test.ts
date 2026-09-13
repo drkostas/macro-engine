@@ -16,7 +16,7 @@ import {
   proteinGPerKg,
   type Band,
 } from "@/lib/macro-targets";
-import { ALL_MODES, type Mode } from "@/lib/mode-engine";
+import { ALL_MODES } from "@/lib/mode-engine";
 
 const TIERS = ["T1", "T2", "T3", "T4", "T5"] as const;
 

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import {
   computeStepCalories,
-  computeTdee,
   applyAlcoholOffset,
   redistributeRemaining,
   type MacroTargets,

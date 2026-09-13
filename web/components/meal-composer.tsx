@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type { Ingredient } from "@/lib/portion-solver";
 import { solvePortions, computeItemMacros } from "@/lib/portion-solver";
 import { autoCategorizeFood } from "@/lib/auto-categorize";
@@ -40,9 +40,12 @@ export function MealComposer({
 
   const active = variations.find((v) => v.id === activeId) ?? variations[0];
 
-  // Ref tracks latest activeId so updateActive never reads a stale closure.
+  // Ref tracks latest activeId so updateActive never reads a stale closure; written after
+  // render (updateActive runs from events, after commit), never during it.
   const activeIdRef = useRef(activeId);
-  activeIdRef.current = activeId;
+  useEffect(() => {
+    activeIdRef.current = activeId;
+  }, [activeId]);
 
   const updateActive = useCallback(
     (updater: (v: Variation) => Variation) => {
@@ -207,7 +210,9 @@ export function MealComposer({
   // Live preview: send totals to parent whenever portions change
   // Use a ref for the callback to avoid dependency cycle
   const previewRef = useRef(onTotalsPreview);
-  previewRef.current = onTotalsPreview;
+  useEffect(() => {
+    previewRef.current = onTotalsPreview;
+  }, [onTotalsPreview]);
 
   useEffect(() => {
     if (!previewRef.current) return;
