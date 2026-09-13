@@ -117,3 +117,116 @@ export async function searchOpenFoodFacts(query: string, options: OpenFoodFactsO
   for (const pr of await offProducts(query, o)) { const p = proposalFromOff(pr); if (p) out.push(p); }
   return out;
 }
+
+/* ── The client half: naming a candidate, one-tap defaults, and the order the picker shows the
+ *    catalog in. Shared so soma's app and web (and any other consumer) judge a candidate and
+ *    rank the list the same way (soma#932, macro-engine#251). ─────────────────────────────── */
+
+/** The source name of an ingredient whose macros were estimated by a model rather than read
+ *  from a food table. Consumers mark these ("est.") wherever the ingredient is shown. */
+export const ESTIMATE_SOURCE = "claude";
+
+/** A catalog row as a picker sees it: identity plus, when the API supplies them, how it has been used. */
+export interface CatalogIngredient {
+  id: string;
+  name: string;
+  category?: string | null;
+  /** Times the ingredient appears in the meal log. */
+  use_count?: number | null;
+  /** ISO date (YYYY-MM-DD) of the last meal that used it. */
+  last_used?: string | null;
+  /** Preset meals that name it. */
+  in_presets?: number | null;
+  is_favorite?: boolean | null;
+  source?: string | null;
+  confidence?: number | null;
+}
+
+/** True when the ingredient's macros came from an estimate (see ESTIMATE_SOURCE). */
+export function isEstimated(ing: Pick<CatalogIngredient, "source">): boolean {
+  return ing.source === ESTIMATE_SOURCE;
+}
+
+/** A catalog id from a food name: ASCII, lower case, a-z 0-9 and underscore, at most 60 chars. */
+export function slugify(name: string): string {
+  return name.toLowerCase().normalize("NFKD").replace(/[^\x00-\x7f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 60);
+}
+
+/** The picker category a food name suggests; "snack" when nothing matches. Dairy and protein are
+ *  tested before vegetable so "cottage cheese with peppers" stays dairy. */
+export function guessCategory(name: string): Category {
+  const n = name.toLowerCase();
+  if (/\b(?:kefir|yog|milk|cheese|skyr|quark|cottage|feta|halloumi)/.test(n)) return "dairy";
+  if (/\b(?:chicken|beef|pork|turkey|fish|salmon|tuna|egg(?!plant)|tofu|whey|shrimp|lamb|sardine|cod\b)/.test(n)) return "protein";
+  if (/\b(?:rice|pasta|bread|oat|potato|quinoa|noodle|tortilla|cereal|pita\b|couscous|bulgur)/.test(n)) return "carbs";
+  if (/\b(?:apple|banana|berr|orange|grape|mango|melon|kiwi|pear|peach|fig\b|date\b|cherr|plum|apricot)/.test(n)) return "fruit";
+  if (/\b(?:oil|butter|nut|walnut|hazelnut|cashew|pistachio|almond|peanut|avocado|seed|tahini|olive)/.test(n)) return "fat";
+  if (/\b(?:broccoli|spinach|tomato|lettuce|pepper|onion|carrot|cucumber|zucchini|salad|vegetable|cabbage|kale|leek|mushroom|eggplant|aubergine|courgette)/.test(n)) return "vegetable";
+  if (/\b(?:sauce|dressing|ketchup|mayo|mustard|tzatziki)/.test(n)) return "sauce";
+  if (/\b(?:juice|coffee|tea\b|soda|cola|beer|wine|drink)/.test(n)) return "drink";
+  if (/\b(?:chocolate|cake|cookie|biscuit|ice cream|pastry|baklava)/.test(n)) return "dessert";
+  return "snack";
+}
+
+/** True only when all five per-100 g macros are known: an unknown is not 0, and a one-tap confirm
+ *  must not invent one. A candidate that fails this goes through the edit form instead. */
+export function canQuickAdd(p: Macros): boolean {
+  return p.calories_per_100g != null && p.protein_per_100g != null && p.carbs_per_100g != null && p.fat_per_100g != null && p.fiber_per_100g != null;
+}
+
+export interface QuickAddDefaults {
+  id: string;
+  name: string;
+  category: Category;
+  is_raw: boolean;
+  unit: string;
+  grams_per_unit: number | null;
+}
+
+/** The defaults a one-tap confirm sends: the source's name (brand in parentheses), an id from the
+ *  name, a guessed category, weighed as eaten (is_raw false), in grams. Owner edits win over these
+ *  in the edit form; the catalog can be corrected later. */
+export function quickAddDefaults(p: Pick<Proposal, "name" | "brand">): QuickAddDefaults {
+  const base = p.name.trim();
+  const name = (p.brand ? `${base} (${p.brand.trim()})` : base).slice(0, 120);
+  const id = slugify(base) || "ingredient";
+  return { id, name, category: guessCategory(base), is_raw: false, unit: "g", grams_per_unit: null };
+}
+
+const matchPos = (name: string, q: string): number => {
+  const i = name.toLowerCase().indexOf(q);
+  return i < 0 ? Number.POSITIVE_INFINITY : i;
+};
+/** 0 = used before (meal log), 1 = in a preset or a favourite, 2 = the rest. */
+const tier = (ing: CatalogIngredient): number => {
+  if (ing.last_used || (ing.use_count ?? 0) > 0) return 0;
+  if ((ing.in_presets ?? 0) > 0 || ing.is_favorite) return 1;
+  return 2;
+};
+
+/** The ingredients that have been used before, most recent first (for a "Recently used" group). */
+export function recentlyUsed<T extends CatalogIngredient>(list: T[], limit = 8): T[] {
+  return list.filter((i) => tier(i) === 0).sort(byRecency).slice(0, limit);
+}
+
+const byRecency = (a: CatalogIngredient, b: CatalogIngredient): number =>
+  (b.last_used ?? "").localeCompare(a.last_used ?? "") || (b.use_count ?? 0) - (a.use_count ?? 0) || a.name.localeCompare(b.name);
+
+/**
+ * The picker's order for a typed query (or for the whole catalog when the query is empty):
+ * the ones already used first (most recent first), then the ones a preset or a favourite names,
+ * then the rest; inside a tier a match at the start of the name beats one in the middle, then the
+ * name. Filters by the query as a case-insensitive substring of the name.
+ */
+export function rankIngredients<T extends CatalogIngredient>(list: T[], query: string): T[] {
+  const q = query.trim().toLowerCase();
+  const hits = q ? list.filter((i) => i.name.toLowerCase().includes(q)) : [...list];
+  return hits.sort((a, b) => {
+    const t = tier(a) - tier(b);
+    if (t) return t;
+    if (tier(a) === 0) return byRecency(a, b);
+    if (tier(a) === 1) { const d = (b.in_presets ?? 0) - (a.in_presets ?? 0); if (d) return d; }
+    if (q) { const d = matchPos(a.name, q) - matchPos(b.name, q); if (d) return d; }
+    return a.name.localeCompare(b.name);
+  });
+}
