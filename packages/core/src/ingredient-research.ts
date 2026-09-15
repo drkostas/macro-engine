@@ -39,15 +39,52 @@ export function num(v: unknown): number | null {
   return typeof n === "number" && Number.isFinite(n) ? Math.round(n * 100) / 100 : null;
 }
 
-/** Flags a candidate whose macros don't add up: holes, or per-serving values filed as per-100 g. */
+/**
+ * The smallest disagreement worth flagging, in kcal.
+ *
+ * 4/4/9 are averages. USDA publishes food-specific Atwater factors and counts
+ * fibre differently, so a low-kcal food can disagree with the averages by a few
+ * kcal while being perfectly correct. Below this the percentage rule fires on
+ * ordinary vegetables, and a flag that fires on raw spinach is one people learn
+ * to ignore (#253).
+ */
+const KCAL_MISMATCH_FLOOR = 10;
+
+/**
+ * Flags a candidate whose macros don't add up: holes, or per-serving values
+ * filed as per-100 g.
+ *
+ * The mismatch rule stays a 20% comparison against 4/4/9, because the error it
+ * exists to catch is an order-of-magnitude one: a row claiming 100 kcal whose
+ * macros compute to 250 is still flagged by a wide margin. What changed is the
+ * bottom end. The floor is absolute now, and a disagreement that fibre explains
+ * is not a disagreement.
+ */
 export function sanityFlags(p: Macros): string[] {
   const flags: string[] = [];
   for (const k of ["calories_per_100g", "protein_per_100g", "carbs_per_100g", "fat_per_100g", "fiber_per_100g"] as const) {
     if (p[k] == null) flags.push(`missing:${k.replace("_per_100g", "")}`);
   }
   if (p.calories_per_100g != null && p.protein_per_100g != null && p.carbs_per_100g != null && p.fat_per_100g != null) {
+    const kcal = p.calories_per_100g;
     const est = 4 * p.protein_per_100g + 4 * p.carbs_per_100g + 9 * p.fat_per_100g;
-    if (Math.abs(est - p.calories_per_100g) > 0.2 * Math.max(p.calories_per_100g, 20)) flags.push("kcal_macro_mismatch");
+    const tolerance = Math.max(0.2 * kcal, KCAL_MISMATCH_FLOOR);
+    let mismatch = Math.abs(est - kcal) > tolerance;
+
+    // USDA carbohydrate is by difference, so it already contains the fibre, and
+    // fibre yields about 2 kcal/g rather than 4. Counting it that way is what
+    // reconciles most vegetables: raw spinach computes to 29.5 by plain 4/4/9
+    // against a published 23, and to 25.1 once fibre is counted at its own rate.
+    if (mismatch && p.fiber_per_100g != null) {
+      const fibre = p.fiber_per_100g;
+      // Clamped: a row whose fibre exceeds its carbohydrate is itself wrong, and
+      // must not be rescued by a negative term.
+      const digestibleCarbs = Math.max(p.carbs_per_100g - fibre, 0);
+      const estWithFibre = 4 * p.protein_per_100g + 4 * digestibleCarbs + 9 * p.fat_per_100g + 2 * fibre;
+      if (Math.abs(estWithFibre - kcal) <= tolerance) mismatch = false;
+    }
+
+    if (mismatch) flags.push("kcal_macro_mismatch");
   }
   return flags;
 }

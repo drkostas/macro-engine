@@ -14,8 +14,47 @@ describe("sanityFlags", () => {
     expect(sanityFlags({ calories_per_100g: 500, protein_per_100g: 10, carbs_per_100g: 10, fat_per_100g: 5, fiber_per_100g: 1 })).toEqual(["kcal_macro_mismatch"]);
     expect(sanityFlags({ calories_per_100g: 125, protein_per_100g: 10, carbs_per_100g: 10, fat_per_100g: 5, fiber_per_100g: 1 })).toEqual([]);
   });
-  it("tiny kcal use a 20 kcal floor for the tolerance", () => {
+  it("tiny kcal use an absolute floor for the tolerance", () => {
     expect(sanityFlags({ calories_per_100g: 2, protein_per_100g: 0, carbs_per_100g: 1, fat_per_100g: 0, fiber_per_100g: 0 })).toEqual([]);
+  });
+
+  // #253: sanityFlags marked most USDA vegetables kcal_macro_mismatch. 4/4/9 are
+  // averages; USDA uses food-specific Atwater factors and counts fibre at its own
+  // rate, so low-kcal high-fibre foods disagree by design. A flag that fires on raw
+  // spinach is one people learn to ignore, which costs more than it catches.
+  //
+  // These three are the real rows, read from the usda_foods table, not invented.
+  describe("ordinary vegetables are not suspicious (#253)", () => {
+    it("raw spinach: 23 kcal published, 29.5 by plain 4/4/9", () => {
+      expect(sanityFlags({ calories_per_100g: 23, protein_per_100g: 2.86, carbs_per_100g: 3.63, fat_per_100g: 0.39, fiber_per_100g: 2.2 })).toEqual([]);
+    });
+    it("white mushrooms: needs BOTH the floor and the fibre rule", () => {
+      // Its gap once fibre is counted is 4.46, which still cleared the old 4.40
+      // tolerance. Either rule alone would have left this one flagged.
+      expect(sanityFlags({ calories_per_100g: 22, protein_per_100g: 3.09, carbs_per_100g: 3.26, fat_per_100g: 0.34, fiber_per_100g: 1.0 })).toEqual([]);
+    });
+    it("baby zucchini", () => {
+      expect(sanityFlags({ calories_per_100g: 21, protein_per_100g: 2.71, carbs_per_100g: 3.11, fat_per_100g: 0.4, fiber_per_100g: 1.1 })).toEqual([]);
+    });
+  });
+
+  describe("the error it exists to catch still fires", () => {
+    it("per-serving macros filed as per-100 g", () => {
+      // 100 kcal claimed, 250 computed. Fibre cannot explain a gap that size and
+      // the floor is nowhere near it.
+      expect(sanityFlags({ calories_per_100g: 100, protein_per_100g: 20, carbs_per_100g: 20, fat_per_100g: 10, fiber_per_100g: 3 })).toEqual(["kcal_macro_mismatch"]);
+    });
+    it("fibre rescues only what fibre can explain", () => {
+      // Same food, but the kcal are wrong by far more than its 2 g of fibre is worth.
+      expect(sanityFlags({ calories_per_100g: 60, protein_per_100g: 2, carbs_per_100g: 4, fat_per_100g: 0.5, fiber_per_100g: 2 })).toEqual(["kcal_macro_mismatch"]);
+    });
+    it("fibre exceeding carbohydrate cannot rescue a row by going negative", () => {
+      // A row like this is itself nonsense; clamping keeps it flagged.
+      expect(sanityFlags({ calories_per_100g: 400, protein_per_100g: 1, carbs_per_100g: 2, fat_per_100g: 1, fiber_per_100g: 50 })).toEqual(["kcal_macro_mismatch"]);
+    });
+    it("a missing fibre value leaves the plain rule in charge", () => {
+      expect(sanityFlags({ calories_per_100g: 100, protein_per_100g: 20, carbs_per_100g: 20, fat_per_100g: 10, fiber_per_100g: null })).toEqual(["missing:fiber", "kcal_macro_mismatch"]);
+    });
   });
 });
 
