@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import postgres from "postgres";
-import { getDb } from "@/lib/db";
+import { getDb, sqlFor } from "@/lib/db";
 
 /**
  * GET /api/garmin/sync
@@ -23,7 +22,9 @@ export async function GET() {
     );
   }
 
-  const somaSql = postgres(somaUrl, { prepare: false, idle_timeout: 5 });
+  // Through sqlFor, not postgres() directly: SOMA_DATABASE_URL names the home gateway, which a
+  // socket driver cannot open (#270).
+  const somaSql = sqlFor(somaUrl, "SOMA_DATABASE_URL", { idle_timeout: 5 });
   const sql = getDb();
 
   try {

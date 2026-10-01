@@ -14,6 +14,8 @@ type Row = any;
 type SqlTag = {
   (strings: TemplateStringsArray, ...values: unknown[]): Promise<Row[]>;
   json: <T>(value: T) => unknown;
+  /** Close the connection. A no-op over the gateway, where each query is its own request. */
+  end: () => Promise<void>;
 };
 
 let cached: SqlTag | null = null;
@@ -46,6 +48,41 @@ function gatewayTag(url: string): SqlTag {
   }) as SqlTag;
   // A JSONB payload goes over the wire as an object; the gateway hands it to pg unchanged.
   tag.json = <T,>(value: T) => value as unknown;
+  tag.end = async () => {};
+  return tag;
+}
+
+/**
+ * The SQL tag for any connection string: the gateway over HTTPS for a `pg.` host, a
+ * `postgres.js` socket otherwise. NOT cached, so each caller decides how long to keep it.
+ *
+ * Exists for connections other than DATABASE_URL. The Garmin sync opened SOMA_DATABASE_URL
+ * with `postgres(url)` itself, so when that moved to the gateway the route failed with
+ * `ENOTFOUND pg.gkos.dev` while `getDb()` kept working (#270). `name` only labels the error.
+ */
+export function sqlFor(
+  url: string,
+  name = "connection string",
+  opts: { idle_timeout?: number } = {},
+): SqlTag {
+  let host = "";
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    // Fail where the mistake is, rather than as a confusing connection error later.
+    throw new Error(`${name} is not a valid connection string`);
+  }
+  if (host.startsWith("pg.")) return gatewayTag(url);
+
+  const client = postgres(url, { prepare: false, ...opts });
+
+  const tag = ((strings: TemplateStringsArray, ...values: unknown[]) =>
+    (client as unknown as (s: TemplateStringsArray, ...v: unknown[]) => Promise<unknown[]>)(strings, ...values)
+      .then((rows) => Array.from(rows) as Row[])) as SqlTag;
+
+  tag.json = <T,>(value: T) => (client as unknown as { json: (v: T) => unknown }).json(value);
+  tag.end = () => client.end();
+
   return tag;
 }
 
@@ -55,25 +92,6 @@ export function getDb(): SqlTag {
   if (!url) {
     throw new Error("DATABASE_URL not set");
   }
-  let host = "";
-  try {
-    host = new URL(url).hostname;
-  } catch {
-    // Fail where the mistake is, rather than as a confusing connection error later.
-    throw new Error("DATABASE_URL is not a valid connection string");
-  }
-  if (host.startsWith("pg.")) {
-    cached = gatewayTag(url);
-    return cached;
-  }
-  const client = postgres(url, { prepare: false });
-
-  const tag = ((strings: TemplateStringsArray, ...values: unknown[]) =>
-    (client as unknown as (s: TemplateStringsArray, ...v: unknown[]) => Promise<unknown[]>)(strings, ...values)
-      .then((rows) => Array.from(rows) as Row[])) as SqlTag;
-
-  tag.json = <T,>(value: T) => (client as unknown as { json: (v: T) => unknown }).json(value);
-
-  cached = tag;
+  cached = sqlFor(url, "DATABASE_URL");
   return cached;
 }
