@@ -1,7 +1,7 @@
 {
   "name": "macro-engine-core",
-  "version": "0.3.1",
-  "description": "Nutrition engine core \u2014 TDEE, macro targets, safety rails, meal solver. Pure logic, zero runtime deps.",
+  "version": "0.4.0",
+  "description": "Nutrition engine core — TDEE, macro targets, safety rails, meal solver. Pure logic, zero runtime deps.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
