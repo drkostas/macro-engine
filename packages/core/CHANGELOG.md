@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- `Ingredient.unit` accepts `null`, which is what a database or an API sends for an ingredient measured in grams. The functions already treated it as grams.
+
 ## 0.5.0
 
 - `meal-protein`: per-meal protein judged against body weight (0.4 g/kg is the synthesis floor, 0.55 g/kg is more than a meal needs), with fixed grams when no weight is known. `checkPerMealProtein` takes an optional weight and follows the same rule when it has one.
