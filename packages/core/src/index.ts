@@ -28,3 +28,19 @@ export { TaperPhase, classifyTaperPhase, taperCarbGPerKg, taperProteinGPerKg } f
 export { DayRecord as WrapupDayRecord, Grade, WeeklyWrapup, adherenceGrade, computeWeeklyWrapup, wrapupTakeaway } from "./weekly-wrapup";
 export { MonthSummary, YearDayRecord, YearReview, computeYearReview } from "./year-review";
 export * from "./ingredient-research";
+
+// Meal capture, weigh-ins and engagement, moved from soma (macro-engine#274).
+export { WeighIn, Discarded, OUTLIER_KG, LOCAL_WINDOW_DAYS, localMedian, flagOutliers } from "./weigh-in";
+export { PortionBand, MIN_OBSERVATIONS, GENERIC_BANDS, bandFor } from "./portion-bands";
+export { Quantity, ResolvableItem, ResolvedItem, WeighMethod, BITE_FRACTION, BITE_DEFAULT_G, ResolveInput, ResolveResult, resolveQuantities } from "./meal-quantity";
+export { CatalogEntry, fastParse } from "./meal-fast-path";
+export { SlotStats, HistoryStats, MIN_MEALS, FALLBACK_SLOT_KCAL, FALLBACK_DAY_KCAL, MIN_SHARE_OF_SLOT, MIN_OVERSHOOT_KCAL, SLOT_SIGMA, DAY_SIGMA, amountsWereStated, slotCeiling, dayCeiling, PlausibilityInput, PlausibilityResult, enforcePlausibility } from "./meal-plausibility";
+export { KCAL_PER_KG, DayIn, DaySource, DayOut, reconcile } from "./energy-reconcile";
+export { isObservedDay } from "./observed-day";
+export { ALL_SLOTS, Slot, COVERAGE_FLOOR, STREAK_MAX_GAP_DAYS, slotCoverage, meetsCoverageFloor, daysBetween } from "./coverage";
+export { WindowDay, DeficitWindow, countsForDeficit, deficitWindow, windowLabel } from "./deficit-window";
+export { AdherenceStatus, Adherence, ADHERENCE_TOLERANCE, computeWeeklyAdherence } from "./adherence";
+export { TrendAteInput, trendAte } from "./trend-ate";
+export { EngagementState, Engagement, WEEK_ENGAGEMENT_FLOOR_DAYS, WEEK_WINDOW_DAYS, NutritionDayInput, nutritionDayState, nutritionEngagement } from "./engagement";
+export { DayRow as AdaptiveDayRow, contributes as contributesToAdaptiveTdee, countDeficitDuration, buildDayPoints } from "./adaptive-input";
+export { DAY_SLOTS, DaySlot, DEFAULT_MEAL_KCAL, slotForHour, emptySlots, nextMealSlot, slotsRemaining, slotBudget } from "./meal-slots";
