@@ -47,3 +47,26 @@ describe("slot budget", () => {
     expect(slotBudget({ dayTarget: 0, consumed: 0, slotsLeft: 4 })).toBe(DEFAULT_MEAL_KCAL);
   });
 });
+
+import { SLOT_KCAL_SHARES, slotBudgetByShare } from "../src/meal-slots";
+
+describe("slotBudgetByShare (the plan's shares)", () => {
+  const day = { dayTarget: 2000, consumed: 0 };
+  it("gives breakfast its 28% of a fresh day", () => {
+    expect(slotBudgetByShare({ ...day, slot: "breakfast" })).toBe(560);
+  });
+  it("gives dinner 37/47 of what is left once breakfast and lunch are done", () => {
+    expect(slotBudgetByShare({ dayTarget: 2000, consumed: 1000, slot: "dinner" })).toBe(787);
+  });
+  it("gives the last slot everything left, like the plan does", () => {
+    expect(slotBudgetByShare({ dayTarget: 2000, consumed: 1700, slot: "pre_sleep" })).toBe(300);
+  });
+  it("gives a slot outside the day what is left, nothing once the day is spent, and a default without a plan", () => {
+    expect(slotBudgetByShare({ dayTarget: 2000, consumed: 1500, slot: "during_workout" })).toBe(500);
+    expect(slotBudgetByShare({ dayTarget: 2000, consumed: 2100, slot: "lunch" })).toBe(0);
+    expect(slotBudgetByShare({ dayTarget: 0, consumed: 0, slot: "lunch" })).toBe(500);
+  });
+  it("uses the same shares as the plan", () => {
+    expect(SLOT_KCAL_SHARES).toEqual({ breakfast: 0.28, lunch: 0.25, dinner: 0.37, pre_sleep: 0.1 });
+  });
+});
