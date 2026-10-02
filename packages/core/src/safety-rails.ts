@@ -13,6 +13,8 @@
 // TIER FRAMEWORK (M1.1) — BF%-based master mode selector
 // ============================================================================
 
+import { mealProteinLevel } from "./meal-protein";
+
 export const HYSTERESIS_PCT = 1.0;
 
 export type Tier = "T1" | "T2" | "T3" | "T4" | "T5";
@@ -424,7 +426,15 @@ export function checkProteinFloor(recentIntakes: number[], weightKg: number): Pr
   };
 }
 
-export function checkPerMealProtein(proteinG: number): PerMealProteinLevel {
+/**
+ * Per-meal protein. With a body weight it follows the weight-scaled rule in meal-protein, which is
+ * the one apps should show. Without one it keeps the original fixed grams.
+ */
+export function checkPerMealProtein(proteinG: number, weightKg?: number | null): PerMealProteinLevel {
+  if (weightKg && weightKg > 0) {
+    const level = mealProteinLevel(proteinG, weightKg);
+    return level === "plenty" ? "no_warning" : level;
+  }
   if (proteinG <= 14) return "red";
   if (proteinG <= 24) return "amber";
   if (proteinG <= 29) return "yellow";

@@ -43,4 +43,5 @@ export { AdherenceStatus, Adherence, ADHERENCE_TOLERANCE, computeWeeklyAdherence
 export { TrendAteInput, trendAte } from "./trend-ate";
 export { EngagementState, Engagement, WEEK_ENGAGEMENT_FLOOR_DAYS, WEEK_WINDOW_DAYS, NutritionDayInput, nutritionDayState, nutritionEngagement } from "./engagement";
 export { DayRow as AdaptiveDayRow, contributes as contributesToAdaptiveTdee, countDeficitDuration, buildDayPoints } from "./adaptive-input";
-export { DAY_SLOTS, DaySlot, DEFAULT_MEAL_KCAL, slotForHour, emptySlots, nextMealSlot, slotsRemaining, slotBudget } from "./meal-slots";
+export { DAY_SLOTS, DaySlot, DEFAULT_MEAL_KCAL, slotForHour, emptySlots, nextMealSlot, slotsRemaining, slotBudget, SLOT_KCAL_SHARES, slotBudgetByShare } from "./meal-slots";
+export { MealProteinLevel, MealProteinThresholds, MPS_G_PER_KG, PLENTY_G_PER_KG, mealProteinThresholds, mealProteinLevel } from "./meal-protein";

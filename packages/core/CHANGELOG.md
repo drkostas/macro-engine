@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+- `meal-protein`: per-meal protein judged against body weight (0.4 g/kg is the synthesis floor, 0.55 g/kg is more than a meal needs), with fixed grams when no weight is known. `checkPerMealProtein` takes an optional weight and follows the same rule when it has one.
+- `meal-slots`: `slotBudgetByShare` and `SLOT_KCAL_SHARES`, so a meal's budget uses the same shares as the plan (breakfast 28%, lunch 25%, dinner 37%, pre-sleep 10%) over the slots still ahead.
+
 ## 0.4.0
 
 New modules, moved from the soma app where they were first written (macro-engine#274):
