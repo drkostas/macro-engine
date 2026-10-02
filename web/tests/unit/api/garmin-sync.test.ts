@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-// #270: in production the route answered 500 "getaddrinfo ENOTFOUND pg.gkos.dev" because it opened
+// #270: in production the route answered 500 "getaddrinfo ENOTFOUND pg.example.dev" because it opened
 // SOMA_DATABASE_URL with postgres.js. Over the gateway it must read soma and answer 200.
 const writes: string[] = [];
 vi.mock("@/lib/db", async (importOriginal) => {
@@ -19,7 +19,7 @@ vi.mock("postgres", () => ({ default: postgresMock }));
 describe("GET /api/garmin/sync over the gateway", () => {
   beforeEach(() => {
     writes.length = 0;
-    vi.stubEnv("SOMA_DATABASE_URL", "postgresql://soma_ro:pw@pg.gkos.dev/soma?sslmode=require");
+    vi.stubEnv("SOMA_DATABASE_URL", "postgresql://soma_ro:pw@pg.example.dev/soma?sslmode=require");
     vi.stubGlobal(
       "fetch",
       vi.fn(async (_url: string, init: RequestInit) => {

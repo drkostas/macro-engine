@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2
+
+- A README for the npm page, and an MIT LICENSE file in the package.
+- Every module added in 0.4.0 and 0.5.0 is also exported on its own path (for example `macro-engine-core/meal-slots`), like the older ones.
+
 ## 0.5.1
 
 - `Ingredient.unit` accepts `null`, which is what a database or an API sends for an ingredient measured in grams. The functions already treated it as grams.

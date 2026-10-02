@@ -1,6 +1,6 @@
 {
   "name": "macro-engine-core",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Nutrition engine core — TDEE, macro targets, safety rails, meal solver. Pure logic, zero runtime deps.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -120,6 +120,66 @@
     "./ingredient-research": {
       "types": "./dist/ingredient-research.d.ts",
       "default": "./dist/ingredient-research.js"
+    },
+    "./adaptive-input": {
+      "types": "./dist/adaptive-input.d.ts",
+      "default": "./dist/adaptive-input.js"
+    },
+    "./adherence": {
+      "types": "./dist/adherence.d.ts",
+      "default": "./dist/adherence.js"
+    },
+    "./coverage": {
+      "types": "./dist/coverage.d.ts",
+      "default": "./dist/coverage.js"
+    },
+    "./deficit-window": {
+      "types": "./dist/deficit-window.d.ts",
+      "default": "./dist/deficit-window.js"
+    },
+    "./energy-reconcile": {
+      "types": "./dist/energy-reconcile.d.ts",
+      "default": "./dist/energy-reconcile.js"
+    },
+    "./engagement": {
+      "types": "./dist/engagement.d.ts",
+      "default": "./dist/engagement.js"
+    },
+    "./meal-fast-path": {
+      "types": "./dist/meal-fast-path.d.ts",
+      "default": "./dist/meal-fast-path.js"
+    },
+    "./meal-plausibility": {
+      "types": "./dist/meal-plausibility.d.ts",
+      "default": "./dist/meal-plausibility.js"
+    },
+    "./meal-protein": {
+      "types": "./dist/meal-protein.d.ts",
+      "default": "./dist/meal-protein.js"
+    },
+    "./meal-quantity": {
+      "types": "./dist/meal-quantity.d.ts",
+      "default": "./dist/meal-quantity.js"
+    },
+    "./meal-slots": {
+      "types": "./dist/meal-slots.d.ts",
+      "default": "./dist/meal-slots.js"
+    },
+    "./observed-day": {
+      "types": "./dist/observed-day.d.ts",
+      "default": "./dist/observed-day.js"
+    },
+    "./portion-bands": {
+      "types": "./dist/portion-bands.d.ts",
+      "default": "./dist/portion-bands.js"
+    },
+    "./trend-ate": {
+      "types": "./dist/trend-ate.d.ts",
+      "default": "./dist/trend-ate.js"
+    },
+    "./weigh-in": {
+      "types": "./dist/weigh-in.d.ts",
+      "default": "./dist/weigh-in.js"
     }
   },
   "files": [
