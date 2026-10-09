@@ -26,7 +26,7 @@ let cached: SqlTag | null = null;
  * internet is not an option. It is reached over HTTPS instead, at the endpoint derived from the
  * connection host the way Neon's own driver derives it: the first label becomes `api.`.
  *
- * `postgres.js` holds a real socket, so pointed at `pg.gkos.dev` it tries to RESOLVE it and the
+ * `postgres.js` holds a real socket, so pointed at `pg.example.dev` it tries to RESOLVE it and the
  * app reports `db: disconnected` while every page still renders. That is what this fixes.
  */
 function gatewayTag(url: string): SqlTag {
@@ -58,7 +58,7 @@ function gatewayTag(url: string): SqlTag {
  *
  * Exists for connections other than DATABASE_URL. The Garmin sync opened SOMA_DATABASE_URL
  * with `postgres(url)` itself, so when that moved to the gateway the route failed with
- * `ENOTFOUND pg.gkos.dev` while `getDb()` kept working (#270). `name` only labels the error.
+ * `ENOTFOUND pg.example.dev` while `getDb()` kept working (#270). `name` only labels the error.
  */
 export function sqlFor(
   url: string,
