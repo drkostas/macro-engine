@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.2
+
+- A README for the npm page, and an MIT LICENSE file in the package.
+- Every module added in 0.4.0 and 0.5.0 is also exported on its own path (for example `macro-engine-core/meal-slots`), like the older ones.
+
+## 0.5.1
+
+- `Ingredient.unit` accepts `null`, which is what a database or an API sends for an ingredient measured in grams. The functions already treated it as grams.
+
+## 0.5.0
+
+- `meal-protein`: per-meal protein judged against body weight (0.4 g/kg is the synthesis floor, 0.55 g/kg is more than a meal needs), with fixed grams when no weight is known. `checkPerMealProtein` takes an optional weight and follows the same rule when it has one.
+- `meal-slots`: `slotBudgetByShare` and `SLOT_KCAL_SHARES`, so a meal's budget uses the same shares as the plan (breakfast 28%, lunch 25%, dinner 37%, pre-sleep 10%) over the slots still ahead.
+
 ## 0.4.0
 
 New modules, moved from the soma app where they were first written (macro-engine#274):

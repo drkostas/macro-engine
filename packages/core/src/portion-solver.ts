@@ -22,7 +22,7 @@ export interface Ingredient {
   category: string;
   is_raw?: boolean;
   raw_to_cooked_ratio?: number | null;
-  unit?: string;
+  unit?: string | null;
   grams_per_unit?: number | null;
   unit_step?: number | null;
 }

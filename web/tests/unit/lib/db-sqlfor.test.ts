@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 // #270: the Garmin sync opened SOMA_DATABASE_URL with postgres.js itself, so once that string named
-// the home gateway (pg.gkos.dev, not a real host) the route failed with ENOTFOUND.
+// the home gateway (pg.example.dev, not a real host) the route failed with ENOTFOUND.
 const postgresMock = vi.fn(() => {
   const client = Object.assign(vi.fn(async () => []), { end: vi.fn(async () => {}), json: (v: unknown) => v });
   return client;
 });
 vi.mock("postgres", () => ({ default: postgresMock }));
 
-const GATEWAY_SOMA = "postgresql://soma_ro:pw@pg.gkos.dev/soma?sslmode=require";
-const GATEWAY_ME = "postgresql://macroengine_app:pw@pg.gkos.dev/macroengine?sslmode=require";
+const GATEWAY_SOMA = "postgresql://soma_ro:pw@pg.example.dev/soma?sslmode=require";
+const GATEWAY_ME = "postgresql://macroengine_app:pw@pg.example.dev/macroengine?sslmode=require";
 
 describe("sqlFor", () => {
   let fetchMock: ReturnType<typeof vi.fn>;
@@ -33,7 +33,7 @@ describe("sqlFor", () => {
     expect(rows).toEqual([{ n: 1 }]);
     expect(postgresMock).not.toHaveBeenCalled();
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(url).toBe("https://api.gkos.dev/sql");
+    expect(url).toBe("https://api.example.dev/sql");
     expect((init.headers as Record<string, string>)["Neon-Connection-String"]).toBe(GATEWAY_SOMA);
     expect(JSON.parse(String(init.body))).toEqual({ query: "SELECT $1 AS n", params: [1] });
     await expect(sql.end()).resolves.toBeUndefined();

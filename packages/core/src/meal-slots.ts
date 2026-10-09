@@ -60,3 +60,24 @@ export function slotBudget(o: { dayTarget: number; consumed: number; slotsLeft: 
   if (left <= 0) return 0;
   return Math.round(left / Math.max(1, o.slotsLeft));
 }
+
+/** The share of the day's calories each slot gets in a plan: breakfast 28%, lunch 25%, dinner 37%, pre-sleep 10%. */
+export const SLOT_KCAL_SHARES: Readonly<Record<DaySlot, number>> = { breakfast: 0.28, lunch: 0.25, dinner: 0.37, pre_sleep: 0.1 };
+
+/**
+ * What is left of the day for this slot, split by the plan's shares over this slot and the ones
+ * after it. Earlier slots count as done, eaten or not, which is how a plan redistributes too. A slot
+ * outside the day (during_workout) gets what is left.
+ */
+export function slotBudgetByShare(o: {
+  dayTarget: number; consumed: number; slot: string; shares?: Readonly<Record<string, number>>;
+}): number {
+  if (!o.dayTarget) return DEFAULT_MEAL_KCAL;
+  const left = o.dayTarget - o.consumed;
+  if (left <= 0) return 0;
+  const shares: Readonly<Record<string, number>> = o.shares ?? SLOT_KCAL_SHARES;
+  const i = DAY_SLOTS.indexOf(o.slot as DaySlot);
+  if (i < 0) return Math.round(left);
+  const ahead = DAY_SLOTS.slice(i).reduce((s, x) => s + (shares[x] ?? 0), 0);
+  return ahead > 0 ? Math.round(left * (shares[o.slot] ?? 0) / ahead) : Math.round(left);
+}
