@@ -1,3 +1,5 @@
+![macro-engine](docs/images/banner.png)
+
 # MacroEngine
 
 MacroEngine is a self-hosted nutrition tracker for people who take their macros
