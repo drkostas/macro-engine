@@ -66,6 +66,8 @@ const PUBLIC_PATHS = [
   "/api/auth/login",
   "/api/auth/logout",
   "/api/health",
+  // Optional error reports from a visitor's browser; forwarded only when a collector is set.
+  "/api/client-error",
 ];
 
 const STATIC_PREFIX = /^\/(_next|favicon|manifest|icons|sw\.js|robots|sitemap)/;
