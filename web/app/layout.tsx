@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { NavBar } from "@/components/nav-bar";
 import { UndoToastProvider } from "@/lib/use-undo-toast";
+import { clientErrorScript } from "@/lib/visit-counter";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark">
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        {/* Optional error reports: forwarded only when a collector is configured. */}
+        <script dangerouslySetInnerHTML={{ __html: clientErrorScript() }} />
       </head>
       <body className="bg-base text-text min-h-screen antialiased">
         <UndoToastProvider>
