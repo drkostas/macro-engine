@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
+import { countVisit } from "@/lib/visit-counter";
 
 /* Session verify is inlined here (rather than imported from @/lib/auth) because
    Vercel's Edge middleware bundler rejects a cross-module reference from the
@@ -98,7 +99,9 @@ function hasApiToken(req: NextRequest): boolean {
   return req.headers.get("authorization") === `Bearer ${token}`;
 }
 
-export async function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest, event?: NextFetchEvent) {
+  // Optional visit counter: does nothing unless COLLECTOR_URL and COLLECTOR_TOKEN are set.
+  countVisit(req, event);
   const { pathname } = req.nextUrl;
   const isApi = pathname.startsWith("/api/");
   if (STATIC_PREFIX.test(pathname)) return NextResponse.next();
