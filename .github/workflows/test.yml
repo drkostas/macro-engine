@@ -25,7 +25,9 @@ jobs:
       - run: npm test
 
   e2e:
-    runs-on: ubuntu-latest
+    # ubuntu-latest is now 26.04, which Playwright 1.59.1 cannot install its
+    # browsers on. Pin to 24.04 until Playwright supports 26.04.
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:17-alpine
